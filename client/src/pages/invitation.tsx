@@ -362,18 +362,15 @@ export default function InvitationPage() {
           transition={{ duration: 1.2 }}
           className="flex flex-col items-center pt-12 pb-6 px-4"
         >
-          <div className="relative w-72 h-72 sm:w-80 sm:h-80 mx-auto mb-8">
-            <img
-              src="/images/couple.png"
-              alt="Ana Maria y Carlos Eduardo"
-              className="absolute inset-[12%] w-[76%] h-[76%] object-cover rounded-full"
-              data-testid="img-couple"
-            />
-            <img
-              src="/images/floral-frame.png"
-              alt="Marco floral"
-              className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-            />
+          <div className="relative w-64 h-64 sm:w-72 sm:h-72 mx-auto mb-8">
+            <div className="w-full h-full rounded-full border-4 border-[#C9A96E]/50 p-1">
+              <img
+                src="/images/couple.png"
+                alt="Ana Maria y Carlos Eduardo"
+                className="w-full h-full object-cover rounded-full"
+                data-testid="img-couple"
+              />
+            </div>
           </div>
 
           <motion.h1
