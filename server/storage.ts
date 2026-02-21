@@ -7,6 +7,7 @@ export interface IStorage {
   getInvitation(id: string): Promise<Invitation | undefined>;
   createInvitation(invitation: InsertInvitation): Promise<Invitation>;
   updateInvitation(id: string, data: Partial<InsertInvitation>): Promise<Invitation | undefined>;
+  updateQRCode(id: string, qrCode: string): Promise<Invitation | undefined>;
   deleteInvitation(id: string): Promise<boolean>;
   respondInvitation(id: string, status: string, confirmedSeats: number): Promise<Invitation | undefined>;
 }
@@ -27,7 +28,22 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateInvitation(id: string, data: Partial<InsertInvitation>): Promise<Invitation | undefined> {
-    const [updated] = await db.update(invitations).set(data).where(eq(invitations.id, id)).returning();
+    const updateData: any = {};
+    if (data.guestName !== undefined) updateData.guestName = data.guestName;
+    if (data.seats !== undefined) updateData.seats = data.seats;
+    if (data.status !== undefined) updateData.status = data.status;
+    if (data.confirmedSeats !== undefined) updateData.confirmedSeats = data.confirmedSeats;
+
+    if (Object.keys(updateData).length === 0) {
+      return await this.getInvitation(id);
+    }
+
+    const [updated] = await db.update(invitations).set(updateData).where(eq(invitations.id, id)).returning();
+    return updated;
+  }
+
+  async updateQRCode(id: string, qrCode: string): Promise<Invitation | undefined> {
+    const [updated] = await db.update(invitations).set({ qrCode }).where(eq(invitations.id, id)).returning();
     return updated;
   }
 
