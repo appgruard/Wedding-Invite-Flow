@@ -1,4 +1,4 @@
-import { type Invitation, type InsertInvitation, invitations } from "@shared/schema";
+import { type Invitation, type InsertInvitation, type Settings, invitations, settings } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
@@ -10,6 +10,8 @@ export interface IStorage {
   updateQRCode(id: string, qrCode: string): Promise<Invitation | undefined>;
   deleteInvitation(id: string): Promise<boolean>;
   respondInvitation(id: string, status: string, confirmedSeats: number): Promise<Invitation | undefined>;
+  getSettings(): Promise<Settings>;
+  updateSettings(activeStyle: string): Promise<Settings>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -56,6 +58,22 @@ export class DatabaseStorage implements IStorage {
     const [updated] = await db.update(invitations)
       .set({ status, confirmedSeats })
       .where(eq(invitations.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getSettings(): Promise<Settings> {
+    const [existing] = await db.select().from(settings).where(eq(settings.id, "main"));
+    if (existing) return existing;
+    const [created] = await db.insert(settings).values({ id: "main", activeStyle: "clasico" }).returning();
+    return created;
+  }
+
+  async updateSettings(activeStyle: string): Promise<Settings> {
+    const existing = await this.getSettings();
+    const [updated] = await db.update(settings)
+      .set({ activeStyle })
+      .where(eq(settings.id, "main"))
       .returning();
     return updated;
   }
