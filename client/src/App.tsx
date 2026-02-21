@@ -7,6 +7,8 @@ import NotFound from "@/pages/not-found";
 import InvitationPage from "@/pages/invitation";
 import AdminPage from "@/pages/admin";
 import ConfirmPage from "@/pages/confirm";
+import LoginPage from "@/pages/login";
+import EstilosPage from "@/pages/estilos";
 
 function Router() {
   return (
@@ -14,7 +16,9 @@ function Router() {
       <Route path="/" component={InvitationPage} />
       <Route path="/invitation" component={InvitationPage} />
       <Route path="/confirm" component={ConfirmPage} />
+      <Route path="/login" component={LoginPage} />
       <Route path="/admin" component={AdminPage} />
+      <Route path="/estilos" component={EstilosPage} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -27,17 +27,29 @@ import {
 } from "lucide-react";
 import type { Invitation } from "@shared/schema";
 
+type StyleDef = { id: string; name: string; description: string; preview: { bg: string; primary: string; accent: string; text: string } };
+type Colors = { bg: string; primary: string; accent: string; text: string };
+
+const FALLBACK_COLORS: Colors = { bg: "#FDF8F0", primary: "#800020", accent: "#C9A96E", text: "#5C4033" };
+
+function darkenHex(hex: string, amount: number): string {
+  const r = Math.max(0, parseInt(hex.slice(1, 3), 16) - amount);
+  const g = Math.max(0, parseInt(hex.slice(3, 5), 16) - amount);
+  const b = Math.max(0, parseInt(hex.slice(5, 7), 16) - amount);
+  return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+}
+
 function getInvitationId(): string | null {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
 }
 
-function GoldDivider() {
+function GoldDivider({ colors }: { colors: Colors }) {
   return (
     <div className="flex items-center justify-center gap-4 my-8">
-      <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#C9A96E]" />
-      <Heart className="w-4 h-4 text-[#C9A96E] fill-[#C9A96E]" />
-      <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#C9A96E]" />
+      <div className="h-px w-16" style={{ background: `linear-gradient(to right, transparent, ${colors.accent})` }} />
+      <Heart className="w-4 h-4" style={{ color: colors.accent, fill: colors.accent }} />
+      <div className="h-px w-16" style={{ background: `linear-gradient(to left, transparent, ${colors.accent})` }} />
     </div>
   );
 }
@@ -62,7 +74,8 @@ function SectionWrapper({
   );
 }
 
-function CountdownTimer() {
+function CountdownTimer({ colors }: { colors: Colors }) {
+  const textMuted = colors.text + "BB";
   const targetDate = new Date("2026-03-15T16:00:00").getTime();
   const [now, setNow] = useState(Date.now());
 
@@ -89,12 +102,13 @@ function CountdownTimer() {
       {units.map((u) => (
         <div
           key={u.label}
-          className="flex flex-col items-center rounded-md border border-[#C9A96E]/30 bg-white/60 dark:bg-black/30 px-4 py-3 min-w-[70px]"
+          className="flex flex-col items-center rounded-md bg-white/60 dark:bg-black/30 px-4 py-3 min-w-[70px]"
+          style={{ borderWidth: 1, borderStyle: "solid", borderColor: colors.accent + "4D" }}
         >
-          <span className="text-3xl font-sans font-bold text-[#800020]">
+          <span className="text-3xl font-sans font-bold" style={{ color: colors.primary }}>
             {String(u.value).padStart(2, "0")}
           </span>
-          <span className="text-xs font-serif text-[#8B7355] uppercase tracking-widest mt-1">
+          <span className="text-xs font-serif uppercase tracking-widest mt-1" style={{ color: textMuted }}>
             {u.label}
           </span>
         </div>
@@ -106,10 +120,13 @@ function CountdownTimer() {
 function RSVPSection({
   invitation,
   invitationId,
+  colors,
 }: {
   invitation: Invitation;
   invitationId: string;
+  colors: Colors;
 }) {
+  const textMuted = colors.text + "BB";
   const { toast } = useToast();
   const [selectedSeats, setSelectedSeats] = useState("1");
   const [responded, setResponded] = useState(invitation.status !== "pending");
@@ -145,19 +162,22 @@ function RSVPSection({
   if (responded || invitation.status !== "pending") {
     return (
       <SectionWrapper>
-        <div className="rounded-md border border-[#C9A96E]/30 bg-white/70 dark:bg-black/30 p-8">
+        <div
+          className="rounded-md bg-white/70 dark:bg-black/30 p-8"
+          style={{ borderWidth: 1, borderStyle: "solid", borderColor: colors.accent + "4D" }}
+        >
           <Check className="w-12 h-12 text-[#9CAF88] mx-auto mb-4" />
-          <h3 className="text-2xl font-sans text-[#800020] mb-2">
+          <h3 className="text-2xl font-sans mb-2" style={{ color: colors.primary }}>
             {invitation.status === "accepted" ? "Asistencia Confirmada" : invitation.status === "declined" ? "Invitación Declinada" : "Respuesta Registrada"}
           </h3>
-          <p className="font-serif text-[#8B7355]" data-testid="text-rsvp-status">
+          <p className="font-serif" style={{ color: textMuted }} data-testid="text-rsvp-status">
             {invitation.status === "accepted"
               ? `Has confirmado ${invitation.confirmedSeats} lugar${(invitation.confirmedSeats || 0) > 1 ? "es" : ""}.`
               : invitation.status === "declined"
               ? "Lamentamos que no puedas asistir."
               : "Tu respuesta ha sido registrada."}
           </p>
-          <p className="font-serif text-[#8B7355] mt-4 italic">
+          <p className="font-serif mt-4 italic" style={{ color: textMuted }}>
             Gracias, {invitation.guestName}
           </p>
         </div>
@@ -167,18 +187,21 @@ function RSVPSection({
 
   return (
     <SectionWrapper>
-      <h2 className="text-3xl font-sans text-[#800020] mb-2">Confirma tu Asistencia</h2>
-      <GoldDivider />
-      <div className="rounded-md border border-[#C9A96E]/30 bg-white/70 dark:bg-black/30 p-8 space-y-6">
-        <p className="font-serif text-lg text-[#5C4033]" data-testid="text-guest-name">
+      <h2 className="text-3xl font-sans mb-2" style={{ color: colors.primary }}>Confirma tu Asistencia</h2>
+      <GoldDivider colors={colors} />
+      <div
+        className="rounded-md bg-white/70 dark:bg-black/30 p-8 space-y-6"
+        style={{ borderWidth: 1, borderStyle: "solid", borderColor: colors.accent + "4D" }}
+      >
+        <p className="font-serif text-lg" style={{ color: colors.text }} data-testid="text-guest-name">
           Estimado/a <span className="font-bold">{invitation.guestName}</span>
         </p>
-        <p className="font-serif text-[#8B7355]" data-testid="text-assigned-seats">
+        <p className="font-serif" style={{ color: textMuted }} data-testid="text-assigned-seats">
           Lugares asignados: <span className="font-bold">{invitation.seats}</span>
         </p>
 
         <div className="space-y-2">
-          <label className="text-sm font-serif text-[#8B7355]">
+          <label className="text-sm font-serif" style={{ color: textMuted }}>
             ¿Cuántos lugares confirmas?
           </label>
           <Select value={selectedSeats} onValueChange={setSelectedSeats}>
@@ -198,7 +221,8 @@ function RSVPSection({
         <div className="flex justify-center gap-4 flex-wrap">
           <Button
             data-testid="button-accept"
-            className="bg-[#800020] text-white border-[#800020]"
+            className="text-white"
+            style={{ backgroundColor: colors.primary, borderColor: colors.primary }}
             disabled={respondMutation.isPending}
             onClick={() =>
               respondMutation.mutate({
@@ -227,13 +251,17 @@ function RSVPSection({
   );
 }
 
-function QRCodeSection({ invitation }: { invitation: Invitation }) {
+function QRCodeSection({ invitation, colors }: { invitation: Invitation; colors: Colors }) {
+  const textMuted = colors.text + "BB";
   if (!invitation.qrCode) return null;
   return (
     <SectionWrapper>
-      <h2 className="text-2xl font-sans text-[#800020] mb-2">Código QR</h2>
-      <GoldDivider />
-      <div className="rounded-md border border-[#C9A96E]/30 bg-white/80 dark:bg-black/30 p-6 inline-block">
+      <h2 className="text-2xl font-sans mb-2" style={{ color: colors.primary }}>Código QR</h2>
+      <GoldDivider colors={colors} />
+      <div
+        className="rounded-md bg-white/80 dark:bg-black/30 p-6 inline-block"
+        style={{ borderWidth: 1, borderStyle: "solid", borderColor: colors.accent + "4D" }}
+      >
         <img
           src={invitation.qrCode}
           alt="QR Code de invitación"
@@ -241,7 +269,7 @@ function QRCodeSection({ invitation }: { invitation: Invitation }) {
           data-testid="img-qr-code"
         />
       </div>
-      <p className="font-serif text-[#8B7355] mt-4 italic text-sm">
+      <p className="font-serif mt-4 italic text-sm" style={{ color: textMuted }}>
         Presenta este código QR en la entrada
       </p>
     </SectionWrapper>
@@ -252,6 +280,14 @@ export default function InvitationPage() {
   const [curtainsOpen, setCurtainsOpen] = useState(false);
   const [contentVisible, setContentVisible] = useState(false);
   const invitationId = getInvitationId();
+
+  const { data: settingsData } = useQuery<{ id: string; activeStyle: string }>({ queryKey: ["/api/settings"] });
+  const { data: styles } = useQuery<StyleDef[]>({ queryKey: ["/api/styles"] });
+  const activeStyle = styles?.find(s => s.id === settingsData?.activeStyle) ?? null;
+  const colors: Colors = activeStyle?.preview ?? FALLBACK_COLORS;
+  const textMuted = colors.text + "BB";
+
+  const primaryDark = darkenHex(colors.primary, 36);
 
   const { data: invitation, isLoading } = useQuery<Invitation>({
     queryKey: ["/api/invitations", invitationId],
@@ -283,7 +319,11 @@ export default function InvitationPage() {
         backgroundSize: "300px",
       }}
     >
-      <div className="absolute inset-0 bg-[#FDF8F0]/90 dark:bg-[#1a1512]/90 pointer-events-none" />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ backgroundColor: colors.bg + "E6" }}
+      />
+      <div className="absolute inset-0 dark:bg-[#1a1512]/90 pointer-events-none" />
 
       <div className="relative z-10">
         {/* Curtain Overlay */}
@@ -297,19 +337,19 @@ export default function InvitationPage() {
                 transition={{ duration: 1, ease: "easeInOut" }}
                 className="fixed inset-y-0 left-0 w-1/2 z-50"
                 style={{
-                  background: "linear-gradient(135deg, #800020 0%, #5C0015 50%, #800020 100%)",
+                  background: `linear-gradient(135deg, ${colors.primary} 0%, ${primaryDark} 50%, ${colors.primary} 100%)`,
                   backgroundImage:
-                    "linear-gradient(135deg, #800020 0%, #5C0015 50%, #800020 100%), repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px)",
+                    `linear-gradient(135deg, ${colors.primary} 0%, ${primaryDark} 50%, ${colors.primary} 100%), repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px)`,
                 }}
               >
                 <div className="absolute inset-0 flex items-center justify-end pr-4">
-                  <div className="w-8 h-full bg-gradient-to-r from-transparent to-[#600018] opacity-50" />
+                  <div className="w-8 h-full opacity-50" style={{ background: `linear-gradient(to right, transparent, ${primaryDark})` }} />
                 </div>
                 <div
                   className="absolute right-0 top-0 bottom-0 w-6"
                   style={{
                     background:
-                      "repeating-linear-gradient(180deg, #C9A96E 0px, #C9A96E 2px, transparent 2px, transparent 20px)",
+                      `repeating-linear-gradient(180deg, ${colors.accent} 0px, ${colors.accent} 2px, transparent 2px, transparent 20px)`,
                     opacity: 0.3,
                   }}
                 />
@@ -321,19 +361,19 @@ export default function InvitationPage() {
                 transition={{ duration: 1, ease: "easeInOut" }}
                 className="fixed inset-y-0 right-0 w-1/2 z-50"
                 style={{
-                  background: "linear-gradient(225deg, #800020 0%, #5C0015 50%, #800020 100%)",
+                  background: `linear-gradient(225deg, ${colors.primary} 0%, ${primaryDark} 50%, ${colors.primary} 100%)`,
                   backgroundImage:
-                    "linear-gradient(225deg, #800020 0%, #5C0015 50%, #800020 100%), repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px)",
+                    `linear-gradient(225deg, ${colors.primary} 0%, ${primaryDark} 50%, ${colors.primary} 100%), repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px)`,
                 }}
               >
                 <div className="absolute inset-0 flex items-center justify-start pl-4">
-                  <div className="w-8 h-full bg-gradient-to-l from-transparent to-[#600018] opacity-50" />
+                  <div className="w-8 h-full opacity-50" style={{ background: `linear-gradient(to left, transparent, ${primaryDark})` }} />
                 </div>
                 <div
                   className="absolute left-0 top-0 bottom-0 w-6"
                   style={{
                     background:
-                      "repeating-linear-gradient(180deg, #C9A96E 0px, #C9A96E 2px, transparent 2px, transparent 20px)",
+                      `repeating-linear-gradient(180deg, ${colors.accent} 0px, ${colors.accent} 2px, transparent 2px, transparent 20px)`,
                     opacity: 0.3,
                   }}
                 />
@@ -346,7 +386,7 @@ export default function InvitationPage() {
                 className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
               >
                 <div className="text-center">
-                  <p className="text-[#C9A96E] font-sans text-lg tracking-[0.3em] uppercase">
+                  <p className="font-sans text-lg tracking-[0.3em] uppercase" style={{ color: colors.accent }}>
                     Estás Invitado
                   </p>
                 </div>
@@ -363,7 +403,10 @@ export default function InvitationPage() {
           className="flex flex-col items-center pt-12 pb-6 px-4"
         >
           <div className="relative w-64 h-64 sm:w-72 sm:h-72 mx-auto mb-8">
-            <div className="w-full h-full rounded-full border-4 border-[#C9A96E]/50 p-1">
+            <div
+              className="w-full h-full rounded-full p-1"
+              style={{ borderWidth: 4, borderStyle: "solid", borderColor: colors.accent + "80" }}
+            >
               <img
                 src="/images/couple.png"
                 alt="Ana Maria y Carlos Eduardo"
@@ -377,11 +420,12 @@ export default function InvitationPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: contentVisible ? 1 : 0, y: contentVisible ? 0 : 20 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-4xl sm:text-5xl font-sans text-[#800020] text-center leading-tight"
+            className="text-4xl sm:text-5xl font-sans text-center leading-tight"
+            style={{ color: colors.primary }}
             data-testid="text-couple-names"
           >
             Ana Maria
-            <span className="block text-2xl text-[#C9A96E] my-1">&</span>
+            <span className="block text-2xl my-1" style={{ color: colors.accent }}>&</span>
             Carlos Eduardo
           </motion.h1>
 
@@ -389,19 +433,21 @@ export default function InvitationPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: contentVisible ? 1 : 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="font-serif text-lg text-[#8B7355] mt-4 tracking-widest uppercase"
+            className="font-serif text-lg mt-4 tracking-widest uppercase"
+            style={{ color: textMuted }}
             data-testid="text-wedding-date"
           >
             15 de Marzo, 2026
           </motion.p>
 
-          <GoldDivider />
+          <GoldDivider colors={colors} />
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: contentVisible ? 1 : 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            className="font-serif text-[#8B7355] text-center max-w-md italic"
+            className="font-serif text-center max-w-md italic"
+            style={{ color: textMuted }}
           >
             Con la bendición de Dios y de nuestros padres, tenemos el honor de
             invitarte a celebrar nuestra unión en matrimonio.
@@ -411,11 +457,14 @@ export default function InvitationPage() {
         {/* Ceremonia Religiosa */}
         <SectionWrapper>
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Church className="w-6 h-6 text-[#C9A96E]" />
-            <h2 className="text-3xl font-sans text-[#800020]">Ceremonia Religiosa</h2>
+            <Church className="w-6 h-6" style={{ color: colors.accent }} />
+            <h2 className="text-3xl font-sans" style={{ color: colors.primary }}>Ceremonia Religiosa</h2>
           </div>
-          <GoldDivider />
-          <div className="rounded-md border border-[#C9A96E]/20 overflow-visible bg-white/50 dark:bg-black/20">
+          <GoldDivider colors={colors} />
+          <div
+            className="rounded-md overflow-visible bg-white/50 dark:bg-black/20"
+            style={{ borderWidth: 1, borderStyle: "solid", borderColor: colors.accent + "33" }}
+          >
             <img
               src="/images/church.png"
               alt="Parroquia San José"
@@ -423,8 +472,8 @@ export default function InvitationPage() {
               data-testid="img-church"
             />
             <div className="p-6">
-              <h3 className="text-xl font-sans text-[#5C4033] mb-1">Parroquia San José</h3>
-              <p className="font-serif text-[#8B7355] mb-1">
+              <h3 className="text-xl font-sans mb-1" style={{ color: colors.text }}>Parroquia San José</h3>
+              <p className="font-serif mb-1" style={{ color: textMuted }}>
                 <Clock className="w-4 h-4 inline mr-1" />
                 4:00 PM
               </p>
@@ -446,11 +495,14 @@ export default function InvitationPage() {
         {/* Recepción */}
         <SectionWrapper>
           <div className="flex items-center justify-center gap-2 mb-4">
-            <PartyPopper className="w-6 h-6 text-[#C9A96E]" />
-            <h2 className="text-3xl font-sans text-[#800020]">Recepción</h2>
+            <PartyPopper className="w-6 h-6" style={{ color: colors.accent }} />
+            <h2 className="text-3xl font-sans" style={{ color: colors.primary }}>Recepción</h2>
           </div>
-          <GoldDivider />
-          <div className="rounded-md border border-[#C9A96E]/20 overflow-visible bg-white/50 dark:bg-black/20">
+          <GoldDivider colors={colors} />
+          <div
+            className="rounded-md overflow-visible bg-white/50 dark:bg-black/20"
+            style={{ borderWidth: 1, borderStyle: "solid", borderColor: colors.accent + "33" }}
+          >
             <img
               src="/images/venue.png"
               alt="Salón Imperial"
@@ -458,8 +510,8 @@ export default function InvitationPage() {
               data-testid="img-venue"
             />
             <div className="p-6">
-              <h3 className="text-xl font-sans text-[#5C4033] mb-1">Salón Imperial</h3>
-              <p className="font-serif text-[#8B7355] mb-1">
+              <h3 className="text-xl font-sans mb-1" style={{ color: colors.text }}>Salón Imperial</h3>
+              <p className="font-serif mb-1" style={{ color: textMuted }}>
                 <Clock className="w-4 h-4 inline mr-1" />
                 7:00 PM
               </p>
@@ -481,16 +533,19 @@ export default function InvitationPage() {
         {/* Código de Vestimenta */}
         <SectionWrapper>
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Shirt className="w-6 h-6 text-[#C9A96E]" />
-            <h2 className="text-3xl font-sans text-[#800020]">Código de Vestimenta</h2>
+            <Shirt className="w-6 h-6" style={{ color: colors.accent }} />
+            <h2 className="text-3xl font-sans" style={{ color: colors.primary }}>Código de Vestimenta</h2>
           </div>
-          <GoldDivider />
-          <div className="rounded-md border border-[#C9A96E]/20 bg-white/50 dark:bg-black/20 p-8">
-            <p className="text-2xl font-sans text-[#5C4033] mb-4">Formal / Etiqueta</p>
-            <p className="font-serif text-[#8B7355]">
+          <GoldDivider colors={colors} />
+          <div
+            className="rounded-md bg-white/50 dark:bg-black/20 p-8"
+            style={{ borderWidth: 1, borderStyle: "solid", borderColor: colors.accent + "33" }}
+          >
+            <p className="text-2xl font-sans mb-4" style={{ color: colors.text }}>Formal / Etiqueta</p>
+            <p className="font-serif" style={{ color: textMuted }}>
               Caballeros: Traje oscuro
             </p>
-            <p className="font-serif text-[#8B7355] mt-1">
+            <p className="font-serif mt-1" style={{ color: textMuted }}>
               Damas: Vestido largo
             </p>
           </div>
@@ -499,10 +554,10 @@ export default function InvitationPage() {
         {/* Colores Permitidos */}
         <SectionWrapper>
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Palette className="w-6 h-6 text-[#C9A96E]" />
-            <h2 className="text-3xl font-sans text-[#800020]">Paleta de Colores</h2>
+            <Palette className="w-6 h-6" style={{ color: colors.accent }} />
+            <h2 className="text-3xl font-sans" style={{ color: colors.primary }}>Paleta de Colores</h2>
           </div>
-          <GoldDivider />
+          <GoldDivider colors={colors} />
           <div className="flex justify-center gap-4 flex-wrap mb-6">
             {[
               { color: "#1B2A4A", name: "Navy" },
@@ -513,14 +568,14 @@ export default function InvitationPage() {
             ].map((c) => (
               <div key={c.name} className="flex flex-col items-center gap-2" data-testid={`swatch-${c.name.toLowerCase().replace(" ", "-")}`}>
                 <div
-                  className="w-14 h-14 rounded-full border-2 border-[#C9A96E]/40"
-                  style={{ backgroundColor: c.color }}
+                  className="w-14 h-14 rounded-full"
+                  style={{ backgroundColor: c.color, borderWidth: 2, borderStyle: "solid", borderColor: colors.accent + "66" }}
                 />
-                <span className="text-xs font-serif text-[#8B7355]">{c.name}</span>
+                <span className="text-xs font-serif" style={{ color: textMuted }}>{c.name}</span>
               </div>
             ))}
           </div>
-          <p className="font-serif text-[#800020] italic text-sm">
+          <p className="font-serif italic text-sm" style={{ color: colors.primary }}>
             Por favor evitar el color blanco
           </p>
         </SectionWrapper>
@@ -528,14 +583,17 @@ export default function InvitationPage() {
         {/* Mesa de Regalos */}
         <SectionWrapper>
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Gift className="w-6 h-6 text-[#C9A96E]" />
-            <h2 className="text-3xl font-sans text-[#800020]">Mesa de Regalos</h2>
+            <Gift className="w-6 h-6" style={{ color: colors.accent }} />
+            <h2 className="text-3xl font-sans" style={{ color: colors.primary }}>Mesa de Regalos</h2>
           </div>
-          <GoldDivider />
+          <GoldDivider colors={colors} />
           <div className="space-y-4">
-            <div className="rounded-md border border-[#C9A96E]/20 bg-white/50 dark:bg-black/20 p-6">
-              <h3 className="font-sans text-lg text-[#5C4033] mb-1">Liverpool</h3>
-              <p className="font-serif text-[#8B7355] text-sm mb-3">Lista de regalos #12345</p>
+            <div
+              className="rounded-md bg-white/50 dark:bg-black/20 p-6"
+              style={{ borderWidth: 1, borderStyle: "solid", borderColor: colors.accent + "33" }}
+            >
+              <h3 className="font-sans text-lg mb-1" style={{ color: colors.text }}>Liverpool</h3>
+              <p className="font-serif text-sm mb-3" style={{ color: textMuted }}>Lista de regalos #12345</p>
               <Button
                 variant="outline"
                 data-testid="button-liverpool"
@@ -545,9 +603,12 @@ export default function InvitationPage() {
                 Ver Lista
               </Button>
             </div>
-            <div className="rounded-md border border-[#C9A96E]/20 bg-white/50 dark:bg-black/20 p-6">
-              <h3 className="font-sans text-lg text-[#5C4033] mb-1">Amazon</h3>
-              <p className="font-serif text-[#8B7355] text-sm mb-3">Lista de regalos</p>
+            <div
+              className="rounded-md bg-white/50 dark:bg-black/20 p-6"
+              style={{ borderWidth: 1, borderStyle: "solid", borderColor: colors.accent + "33" }}
+            >
+              <h3 className="font-sans text-lg mb-1" style={{ color: colors.text }}>Amazon</h3>
+              <p className="font-serif text-sm mb-3" style={{ color: textMuted }}>Lista de regalos</p>
               <Button
                 variant="outline"
                 data-testid="button-amazon"
@@ -563,22 +624,29 @@ export default function InvitationPage() {
         {/* Lluvia de Sobres */}
         <SectionWrapper>
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Banknote className="w-6 h-6 text-[#C9A96E]" />
-            <h2 className="text-3xl font-sans text-[#800020]">Lluvia de Sobres</h2>
+            <Banknote className="w-6 h-6" style={{ color: colors.accent }} />
+            <h2 className="text-3xl font-sans" style={{ color: colors.primary }}>Lluvia de Sobres</h2>
           </div>
-          <GoldDivider />
-          <div className="rounded-md border border-[#C9A96E]/20 bg-white/50 dark:bg-black/20 p-8">
-            <p className="font-serif text-[#8B7355] mb-6 italic">
+          <GoldDivider colors={colors} />
+          <div
+            className="rounded-md bg-white/50 dark:bg-black/20 p-8"
+            style={{ borderWidth: 1, borderStyle: "solid", borderColor: colors.accent + "33" }}
+          >
+            <p className="font-serif mb-6 italic" style={{ color: textMuted }}>
               Si deseas obsequiarnos un detalle monetario, puedes hacerlo a
               través de la siguiente cuenta bancaria:
             </p>
-            <div className="bg-[#FDF8F0] dark:bg-black/30 rounded-md p-4 mb-4">
-              <p className="font-serif text-xs text-[#8B7355] uppercase tracking-wider mb-1">
+            <div
+              className="rounded-md p-4 mb-4 dark:bg-black/30"
+              style={{ backgroundColor: colors.bg }}
+            >
+              <p className="font-serif text-xs uppercase tracking-wider mb-1" style={{ color: textMuted }}>
                 CLABE Interbancaria
               </p>
               <div className="flex items-center justify-center gap-2">
                 <p
-                  className="font-mono text-lg text-[#5C4033] tracking-wider"
+                  className="font-mono text-lg tracking-wider"
+                  style={{ color: colors.text }}
                   data-testid="text-clabe"
                 >
                   012345678901234567
@@ -593,7 +661,7 @@ export default function InvitationPage() {
                 </Button>
               </div>
             </div>
-            <p className="font-serif text-[#C9A96E] italic text-sm">
+            <p className="font-serif italic text-sm" style={{ color: colors.accent }}>
               Tu presencia es nuestro mejor regalo
             </p>
           </div>
@@ -602,26 +670,26 @@ export default function InvitationPage() {
         {/* Countdown */}
         <SectionWrapper>
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Clock className="w-6 h-6 text-[#C9A96E]" />
-            <h2 className="text-3xl font-sans text-[#800020]">Cuenta Regresiva</h2>
+            <Clock className="w-6 h-6" style={{ color: colors.accent }} />
+            <h2 className="text-3xl font-sans" style={{ color: colors.primary }}>Cuenta Regresiva</h2>
           </div>
-          <GoldDivider />
-          <CountdownTimer />
+          <GoldDivider colors={colors} />
+          <CountdownTimer colors={colors} />
         </SectionWrapper>
 
         {/* RSVP Section */}
         {invitationId && !isLoading && invitation && (
           <>
-            <RSVPSection invitation={invitation} invitationId={invitationId} />
-            <QRCodeSection invitation={invitation} />
+            <RSVPSection invitation={invitation} invitationId={invitationId} colors={colors} />
+            <QRCodeSection invitation={invitation} colors={colors} />
           </>
         )}
 
         {invitationId && isLoading && (
           <SectionWrapper>
             <div className="animate-pulse space-y-4">
-              <div className="h-8 bg-[#C9A96E]/20 rounded-md w-3/4 mx-auto" />
-              <div className="h-4 bg-[#C9A96E]/10 rounded-md w-1/2 mx-auto" />
+              <div className="h-8 rounded-md w-3/4 mx-auto" style={{ backgroundColor: colors.accent + "33" }} />
+              <div className="h-4 rounded-md w-1/2 mx-auto" style={{ backgroundColor: colors.accent + "1A" }} />
             </div>
           </SectionWrapper>
         )}
@@ -634,14 +702,14 @@ export default function InvitationPage() {
           transition={{ duration: 0.8 }}
           className="text-center py-12 px-4"
         >
-          <GoldDivider />
-          <p className="font-sans text-2xl text-[#800020]">
+          <GoldDivider colors={colors} />
+          <p className="font-sans text-2xl" style={{ color: colors.primary }}>
             Ana Maria & Carlos Eduardo
           </p>
-          <p className="font-serif text-[#8B7355] mt-2 text-sm tracking-widest uppercase">
+          <p className="font-serif mt-2 text-sm tracking-widest uppercase" style={{ color: textMuted }}>
             15 de Marzo, 2026
           </p>
-          <p className="font-serif text-[#C9A96E] mt-4 italic text-sm">
+          <p className="font-serif mt-4 italic text-sm" style={{ color: colors.accent }}>
             Con amor, los esperamos
           </p>
         </motion.footer>

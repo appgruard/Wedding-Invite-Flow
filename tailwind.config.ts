@@ -81,6 +81,11 @@ export default {
           busy: "rgb(239 68 68)",
           offline: "rgb(156 163 175)",
         },
+        wedding: {
+          gold: "hsl(var(--wedding-gold) / <alpha-value>)",
+          burgundy: "hsl(var(--wedding-burgundy) / <alpha-value>)",
+          cream: "hsl(var(--wedding-cream) / <alpha-value>)",
+        },
       },
       fontFamily: {
         sans: ["var(--font-sans)"],

@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { Link, useLocation } from "wouter";
 import type { Invitation } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
@@ -68,6 +70,8 @@ import {
   Armchair,
   QrCode,
   Eye,
+  LogOut,
+  Palette,
 } from "lucide-react";
 
 const createInvitationSchema = z.object({
@@ -116,6 +120,8 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function AdminPage() {
+  const [, setLocation] = useLocation();
+  const { authenticated, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -124,6 +130,20 @@ export default function AdminPage() {
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   const [selectedInvitation, setSelectedInvitation] =
     useState<Invitation | null>(null);
+
+  useEffect(() => {
+    if (!authLoading && !authenticated) {
+      setLocation("/login?returnTo=/admin");
+    }
+  }, [authenticated, authLoading, setLocation]);
+
+  if (authLoading || !authenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-8 h-8 border-4 border-[#C9A96E] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const { data: invitations = [], isLoading } = useQuery<Invitation[]>({
     queryKey: ["/api/invitations"],
@@ -192,6 +212,16 @@ export default function AdminPage() {
         description: error.message,
         variant: "destructive",
       });
+    },
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest("POST", "/api/auth/logout");
+    },
+    onSuccess: () => {
+      queryClient.clear();
+      setLocation("/login");
     },
   });
 
@@ -335,6 +365,24 @@ export default function AdminPage() {
           >
             Boda Ana Maria & Carlos Eduardo
           </p>
+        </div>
+
+        <div className="flex items-center gap-3 flex-wrap">
+          <Link href="/estilos">
+            <Button variant="outline" data-testid="button-estilos">
+              <Palette className="w-4 h-4 mr-2" />
+              Selector de Estilos
+            </Button>
+          </Link>
+          <Button
+            variant="outline"
+            onClick={() => logoutMutation.mutate()}
+            disabled={logoutMutation.isPending}
+            data-testid="button-logout"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Cerrar Sesión
+          </Button>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
