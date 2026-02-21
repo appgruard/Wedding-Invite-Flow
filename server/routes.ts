@@ -5,7 +5,7 @@ import QRCode from "qrcode";
 import { seedDatabase } from "./seed";
 
 async function generateQRCode(invitationId: string, baseUrl: string): Promise<string> {
-  const url = `${baseUrl}/invitation?id=${invitationId}`;
+  const url = `${baseUrl}/confirm?id=${invitationId}`;
   const qrDataUrl = await QRCode.toDataURL(url, {
     width: 300,
     margin: 2,
