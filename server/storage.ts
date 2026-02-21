@@ -1,38 +1,48 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { type Invitation, type InsertInvitation, invitations } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getInvitations(): Promise<Invitation[]>;
+  getInvitation(id: string): Promise<Invitation | undefined>;
+  createInvitation(invitation: InsertInvitation): Promise<Invitation>;
+  updateInvitation(id: string, data: Partial<InsertInvitation>): Promise<Invitation | undefined>;
+  deleteInvitation(id: string): Promise<boolean>;
+  respondInvitation(id: string, status: string, confirmedSeats: number): Promise<Invitation | undefined>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
+export class DatabaseStorage implements IStorage {
+  async getInvitations(): Promise<Invitation[]> {
+    return await db.select().from(invitations);
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async getInvitation(id: string): Promise<Invitation | undefined> {
+    const [invitation] = await db.select().from(invitations).where(eq(invitations.id, id));
+    return invitation;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async createInvitation(data: InsertInvitation): Promise<Invitation> {
+    const [invitation] = await db.insert(invitations).values(data).returning();
+    return invitation;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async updateInvitation(id: string, data: Partial<InsertInvitation>): Promise<Invitation | undefined> {
+    const [updated] = await db.update(invitations).set(data).where(eq(invitations.id, id)).returning();
+    return updated;
+  }
+
+  async deleteInvitation(id: string): Promise<boolean> {
+    const result = await db.delete(invitations).where(eq(invitations.id, id)).returning();
+    return result.length > 0;
+  }
+
+  async respondInvitation(id: string, status: string, confirmedSeats: number): Promise<Invitation | undefined> {
+    const [updated] = await db.update(invitations)
+      .set({ status, confirmedSeats })
+      .where(eq(invitations.id, id))
+      .returning();
+    return updated;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
