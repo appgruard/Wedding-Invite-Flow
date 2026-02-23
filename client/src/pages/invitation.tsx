@@ -347,8 +347,13 @@ export default function InvitationPage() {
               "--rn-light": primaryLight,
             } as React.CSSProperties}
           >
-            <div className={`rn-inner${curtainsOpen ? " rn-open" : ""}`}>
-              {Array.from({ length: 10 }).map((_, i) => (
+            <div className={`rn-inner-left${curtainsOpen ? " rn-open" : ""}`}>
+              {Array.from({ length: 12 }).map((_, i) => (
+                <div key={i} className="rn-unit" />
+              ))}
+            </div>
+            <div className={`rn-inner-right${curtainsOpen ? " rn-open" : ""}`}>
+              {Array.from({ length: 12 }).map((_, i) => (
                 <div key={i} className="rn-unit" />
               ))}
             </div>
