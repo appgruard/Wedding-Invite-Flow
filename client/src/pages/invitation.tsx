@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,13 @@ function darkenHex(hex: string, amount: number): string {
   const r = Math.max(0, parseInt(hex.slice(1, 3), 16) - amount);
   const g = Math.max(0, parseInt(hex.slice(3, 5), 16) - amount);
   const b = Math.max(0, parseInt(hex.slice(5, 7), 16) - amount);
+  return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+}
+
+function lightenHex(hex: string, amount: number): string {
+  const r = Math.min(255, parseInt(hex.slice(1, 3), 16) + amount);
+  const g = Math.min(255, parseInt(hex.slice(3, 5), 16) + amount);
+  const b = Math.min(255, parseInt(hex.slice(5, 7), 16) + amount);
   return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
 }
 
@@ -278,6 +285,7 @@ function QRCodeSection({ invitation, colors }: { invitation: Invitation; colors:
 
 export default function InvitationPage() {
   const [curtainsOpen, setCurtainsOpen] = useState(false);
+  const [curtainsMounted, setCurtainsMounted] = useState(true);
   const [contentVisible, setContentVisible] = useState(false);
   const invitationId = getInvitationId();
 
@@ -288,6 +296,7 @@ export default function InvitationPage() {
   const textMuted = colors.text + "BB";
 
   const primaryDark = darkenHex(colors.primary, 36);
+  const primaryLight = lightenHex(colors.primary, 50);
 
   const { data: invitation, isLoading } = useQuery<Invitation>({
     queryKey: ["/api/invitations", invitationId],
@@ -297,9 +306,11 @@ export default function InvitationPage() {
   useEffect(() => {
     const timer1 = setTimeout(() => setCurtainsOpen(true), 2000);
     const timer2 = setTimeout(() => setContentVisible(true), 3200);
+    const timer3 = setTimeout(() => setCurtainsMounted(false), 3600);
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
+      clearTimeout(timer3);
     };
   }, []);
 
@@ -326,74 +337,28 @@ export default function InvitationPage() {
       <div className="absolute inset-0 dark:bg-[#1a1512]/90 pointer-events-none" />
 
       <div className="relative z-10">
-        {/* Curtain Overlay */}
-        <AnimatePresence>
-          {!curtainsOpen && (
-            <>
-              <motion.div
-                key="curtain-left"
-                initial={{ x: 0 }}
-                exit={{ x: "-100%" }}
-                transition={{ duration: 1, ease: "easeInOut" }}
-                className="fixed inset-y-0 left-0 w-1/2 z-50"
-                style={{
-                  background: `linear-gradient(135deg, ${colors.primary} 0%, ${primaryDark} 50%, ${colors.primary} 100%)`,
-                  backgroundImage:
-                    `linear-gradient(135deg, ${colors.primary} 0%, ${primaryDark} 50%, ${colors.primary} 100%), repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px)`,
-                }}
-              >
-                <div className="absolute inset-0 flex items-center justify-end pr-4">
-                  <div className="w-8 h-full opacity-50" style={{ background: `linear-gradient(to right, transparent, ${primaryDark})` }} />
-                </div>
-                <div
-                  className="absolute right-0 top-0 bottom-0 w-6"
-                  style={{
-                    background:
-                      `repeating-linear-gradient(180deg, ${colors.accent} 0px, ${colors.accent} 2px, transparent 2px, transparent 20px)`,
-                    opacity: 0.3,
-                  }}
-                />
-              </motion.div>
-              <motion.div
-                key="curtain-right"
-                initial={{ x: 0 }}
-                exit={{ x: "100%" }}
-                transition={{ duration: 1, ease: "easeInOut" }}
-                className="fixed inset-y-0 right-0 w-1/2 z-50"
-                style={{
-                  background: `linear-gradient(225deg, ${colors.primary} 0%, ${primaryDark} 50%, ${colors.primary} 100%)`,
-                  backgroundImage:
-                    `linear-gradient(225deg, ${colors.primary} 0%, ${primaryDark} 50%, ${colors.primary} 100%), repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px)`,
-                }}
-              >
-                <div className="absolute inset-0 flex items-center justify-start pl-4">
-                  <div className="w-8 h-full opacity-50" style={{ background: `linear-gradient(to left, transparent, ${primaryDark})` }} />
-                </div>
-                <div
-                  className="absolute left-0 top-0 bottom-0 w-6"
-                  style={{
-                    background:
-                      `repeating-linear-gradient(180deg, ${colors.accent} 0px, ${colors.accent} 2px, transparent 2px, transparent 20px)`,
-                    opacity: 0.3,
-                  }}
-                />
-              </motion.div>
-              <motion.div
-                key="curtain-center-text"
-                initial={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
-              >
-                <div className="text-center">
-                  <p className="font-sans text-lg tracking-[0.3em] uppercase" style={{ color: colors.accent }}>
-                    Estás Invitado
-                  </p>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+        {/* Curtain Overlay – TimLamber / jEmEaP style */}
+        {curtainsMounted && (
+          <div
+            className="rn-outer"
+            style={{
+              "--rn-accent": colors.primary,
+              "--rn-dark": primaryDark,
+              "--rn-light": primaryLight,
+            } as React.CSSProperties}
+          >
+            <div className={`rn-inner${curtainsOpen ? " rn-open" : ""}`}>
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className="rn-unit" />
+              ))}
+            </div>
+            <div className={`rn-center-text${curtainsOpen ? " rn-text-hide" : ""}`}>
+              <p className="font-sans text-lg tracking-[0.3em] uppercase" style={{ color: colors.accent }}>
+                Estás Invitado
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Hero / Couple Photo Section */}
         <motion.div
