@@ -208,5 +208,46 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json(updated);
   });
 
+  app.get("/api/demo/:template", (req, res) => {
+    const template = String(req.params.template);
+    const allowed = ["clasico", "netflix", "nineties"];
+    if (!allowed.includes(template)) return res.status(400).json({ message: "Plantilla no válida" });
+    const demoWedding = {
+      id: `demo-${template}`,
+      coupleName: "Sofía & Daniel",
+      weddingDate: "20 de junio de 2026",
+      venueName: "Gran Salón Versalles",
+      venueAddress: "Av. Reforma 123, Ciudad de México",
+      venueTime: "20:00 hrs",
+      churchName: "Parroquia de San Francisco",
+      churchAddress: "Calle 5 de Mayo 45, Ciudad de México",
+      churchTime: "17:00 hrs",
+      dressCode: "Formal / Etiqueta",
+      message: "Con inmensa alegría los invitamos a compartir este momento tan especial en nuestras vidas.",
+      giftUrl1: "#",
+      giftLabel1: "Liverpool",
+      giftUrl2: "#",
+      giftLabel2: "Amazon",
+      couplePhotoUrl: "/images/couple.png",
+      template,
+      colorStyleId: "clasico",
+      videoUrl: "",
+      videoType: "none",
+      introDuration: 4000,
+      createdAt: new Date(),
+    };
+    res.json({
+      id: `demo-${template}`,
+      weddingId: `demo-${template}`,
+      guestName: "Invitado Especial",
+      seats: 2,
+      confirmedSeats: 0,
+      status: "pending",
+      qrCode: null,
+      createdAt: new Date(),
+      wedding: demoWedding,
+    });
+  });
+
   return httpServer;
 }

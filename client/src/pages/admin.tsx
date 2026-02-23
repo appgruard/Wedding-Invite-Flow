@@ -158,20 +158,6 @@ export default function AdminPage() {
   const [selectedInvitation, setSelectedInvitation] =
     useState<Invitation | null>(null);
 
-  useEffect(() => {
-    if (!authLoading && !authenticated) {
-      setLocation("/login?returnTo=/admin");
-    }
-  }, [authenticated, authLoading, setLocation]);
-
-  if (authLoading || !authenticated) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-4 border-[#C9A96E] border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
   const { data: weddings = [], isLoading: weddingsLoading } = useQuery<Wedding[]>({
     queryKey: ["/api/weddings"],
   });
@@ -529,6 +515,20 @@ export default function AdminPage() {
       toast({ title: "Error al subir archivo", variant: "destructive" });
     }
   };
+
+  useEffect(() => {
+    if (!authLoading && !authenticated) {
+      setLocation("/login?returnTo=/admin");
+    }
+  }, [authenticated, authLoading, setLocation]);
+
+  if (authLoading || !authenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-8 h-8 border-4 border-[#C9A96E] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (weddingsLoading || invitationsLoading) {
     return (

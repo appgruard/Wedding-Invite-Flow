@@ -33,6 +33,11 @@ function getInvitationId(): string | null {
   return params.get("id");
 }
 
+function getPreviewTemplate(): string | null {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("preview");
+}
+
 const NetflixIntro = ({
   duration,
   videoUrl,
@@ -128,11 +133,20 @@ const NetflixIntro = ({
 export default function NetflixInvitationPage() {
   const [showIntro, setShowIntro] = useState(true);
   const invitationId = getInvitationId();
+  const previewTemplate = getPreviewTemplate();
   const { toast } = useToast();
 
   const { data: invitation, isLoading } = useQuery<InvitationWithWedding>({
-    queryKey: ["/api/invitations", invitationId],
-    enabled: !!invitationId,
+    queryKey: previewTemplate
+      ? ["/api/demo", previewTemplate]
+      : ["/api/invitations", invitationId],
+    queryFn: previewTemplate
+      ? async () => {
+          const res = await fetch(`/api/demo/${previewTemplate}`);
+          return res.json();
+        }
+      : undefined,
+    enabled: previewTemplate ? true : !!invitationId,
   });
 
   useEffect(() => {

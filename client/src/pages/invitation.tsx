@@ -54,6 +54,11 @@ function getInvitationId(): string | null {
   return params.get("id");
 }
 
+function getPreviewTemplate(): string | null {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("preview");
+}
+
 function GoldDivider({ colors }: { colors: Colors }) {
   return (
     <div className="flex items-center justify-center gap-4 my-8">
@@ -541,13 +546,22 @@ function ClassicTemplate({ invData, invitationId }: { invData: InvitationWithWed
 
 export default function InvitationPage() {
   const invitationId = getInvitationId();
+  const previewTemplate = getPreviewTemplate();
 
   const { data: invData, isLoading } = useQuery<InvitationWithWedding>({
-    queryKey: ["/api/invitations", invitationId],
-    enabled: !!invitationId,
+    queryKey: previewTemplate
+      ? ["/api/demo", previewTemplate]
+      : ["/api/invitations", invitationId],
+    queryFn: previewTemplate
+      ? async () => {
+          const res = await fetch(`/api/demo/${previewTemplate}`);
+          return res.json();
+        }
+      : undefined,
+    enabled: previewTemplate ? true : !!invitationId,
   });
 
-  const template = invData?.wedding?.template ?? "clasico";
+  const template = invData?.wedding?.template ?? previewTemplate ?? "clasico";
 
   if (isLoading || (invitationId && !invData)) {
     return (

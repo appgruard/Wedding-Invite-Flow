@@ -15,10 +15,19 @@ export default function NinetiesInvitationPage() {
 
   const params = new URLSearchParams(window.location.search);
   const invitationId = params.get("id");
+  const previewTemplate = params.get("preview");
 
   const { data, isLoading } = useQuery<InvitationWithWedding>({
-    queryKey: ["/api/invitations", invitationId],
-    enabled: !!invitationId,
+    queryKey: previewTemplate
+      ? ["/api/demo", previewTemplate]
+      : ["/api/invitations", invitationId],
+    queryFn: previewTemplate
+      ? async () => {
+          const res = await fetch(`/api/demo/${previewTemplate}`);
+          return res.json();
+        }
+      : undefined,
+    enabled: previewTemplate ? true : !!invitationId,
   });
 
   const wedding = data?.wedding;

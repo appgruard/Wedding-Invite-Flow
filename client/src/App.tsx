@@ -9,11 +9,12 @@ import AdminPage from "@/pages/admin";
 import ConfirmPage from "@/pages/confirm";
 import LoginPage from "@/pages/login";
 import EstilosPage from "@/pages/estilos";
+import LandingPage from "@/pages/landing";
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={InvitationPage} />
+      <Route path="/" component={LandingPage} />
       <Route path="/invitation" component={InvitationPage} />
       <Route path="/confirm" component={ConfirmPage} />
       <Route path="/login" component={LoginPage} />
