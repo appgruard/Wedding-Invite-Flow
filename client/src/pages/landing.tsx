@@ -71,31 +71,29 @@ const templates = [
   {
     id: "nineties",
     name: "Años 90",
-    description: "Salvapantallas retro con tostadoras voladoras estilo Windows 95, soporte de video con efecto glitch de TV antigua.",
+    description: "Intro estilo TV vintage de los 90 con efecto VCR, tostadoras voladoras y estética de telenovela con colores dorados.",
     icon: <Monitor className="w-7 h-7" />,
     previewPath: "/invitation?preview=nineties",
-    bg: "from-[#000060] to-[#008080]",
-    accent: "#00FFFF",
-    accentBg: "bg-[#00FFFF]",
-    textAccent: "text-[#00FFFF]",
-    borderAccent: "border-[#00FFFF]",
-    badge: "Retro",
-    badgeColor: "bg-[#00FFFF] text-black",
+    bg: "from-[#1A0E00] to-[#080500]",
+    accent: "#C9A84C",
+    accentBg: "bg-[#C9A84C]",
+    textAccent: "text-[#C9A84C]",
+    borderAccent: "border-[#C9A84C]",
+    badge: "Vintage",
+    badgeColor: "bg-[#C9A84C] text-black",
     mockup: (
-      <div className="relative w-full aspect-[9/16] max-w-[120px] mx-auto rounded-xl overflow-hidden shadow-2xl border border-[#00FFFF]/30">
-        <div className="absolute inset-0 bg-[#008080] flex flex-col items-start justify-start p-1.5 gap-1">
-          <div className="w-full bg-[#000080] text-white text-[6px] px-1 py-0.5 flex items-center gap-1 rounded-t">
-            <div className="w-2 h-2 bg-[#C0C0C0] rounded-sm text-[4px] text-black flex items-center justify-center font-bold">W</div>
-            <span className="font-mono">Invitacion.exe</span>
-          </div>
-          <div className="w-full bg-[#C0C0C0] flex-1 rounded-b p-1 flex flex-col gap-1 border-2 border-t-white border-l-white border-b-[#808080] border-r-[#808080]">
-            <div className="h-1 w-12 bg-[#000080] rounded" />
-            <div className="h-0.5 w-10 bg-[#404040] rounded" />
-            <div className="h-0.5 w-8 bg-[#404040] rounded" />
-            <div className="h-0.5 w-10 bg-[#404040] rounded" />
-            <div className="h-3 w-full bg-[#000080] mt-1 rounded flex items-center justify-center">
-              <span className="text-white text-[5px] font-mono">CONFIRMAR</span>
-            </div>
+      <div className="relative w-full aspect-[9/16] max-w-[120px] mx-auto rounded-xl overflow-hidden shadow-2xl border border-[#C9A84C]/30">
+        <div className="absolute inset-0 bg-[#080500] flex flex-col items-center justify-center p-2 gap-2">
+          <div className="h-px w-16 bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent" />
+          <div className="text-[#C9A84C] text-[7px] font-serif italic font-bold text-center leading-tight">Sofía &amp; Daniel</div>
+          <div className="text-[#C9A84C80] text-[5px] tracking-widest">✦ su boda ✦</div>
+          <div className="h-px w-12 bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent" />
+          <div className="h-1 w-10 bg-[#C9A84C20] rounded mt-1" />
+          <div className="h-0.5 w-8 bg-[#C9A84C20] rounded" />
+          <div className="h-0.5 w-10 bg-[#C9A84C20] rounded" />
+          <div className="h-px w-12 bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent mt-1" />
+          <div className="h-4 w-14 rounded border border-[#C9A84C80] flex items-center justify-center mt-1">
+            <span className="text-[#C9A84C] text-[5px] tracking-wider">CONFIRMAR</span>
           </div>
         </div>
       </div>
@@ -119,14 +117,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 bg-[#080D1A]/90 backdrop-blur-md border-b border-white/5">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-[#1B2A4A] border border-[#C9A96E]/40 flex items-center justify-center">
-              <svg viewBox="0 0 36 36" className="w-5 h-5" fill="none">
-                <path d="M4 10C4 9.17 4.67 8.5 5.5 8.5H30.5C31.33 8.5 32 9.17 32 10V26C32 26.83 31.33 27.5 30.5 27.5H5.5C4.67 27.5 4 26.83 4 26V10Z" stroke="#C9A96E" strokeWidth="1.5"/>
-                <path d="M4 10L18 20L32 10" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round"/>
-                <path d="M4 26L13 19" stroke="#C9A96E" strokeWidth="1.2" strokeLinecap="round" opacity="0.6"/>
-                <path d="M32 26L23 19" stroke="#C9A96E" strokeWidth="1.2" strokeLinecap="round" opacity="0.6"/>
-              </svg>
-            </div>
+            <img src="/logo.png" alt="Cartas y Eventos" className="w-9 h-9 rounded-lg object-cover" />
             <span className="font-semibold text-white text-sm">Cartas y Eventos</span>
           </div>
           <nav className="flex items-center gap-3">
