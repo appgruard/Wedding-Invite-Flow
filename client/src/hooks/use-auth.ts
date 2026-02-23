@@ -11,3 +11,14 @@ export function useAuth() {
     isLoading,
   };
 }
+
+export function useClientAuth() {
+  const { data, isLoading } = useQuery<{ authenticated: boolean } | null>({
+    queryKey: ["/api/auth/client-check"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+  return {
+    authenticated: data?.authenticated ?? false,
+    isLoading,
+  };
+}

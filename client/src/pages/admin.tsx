@@ -150,6 +150,8 @@ export default function AdminPage() {
   const [, setLocation] = useLocation();
   const { authenticated, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
+  const [adminLoginPassword, setAdminLoginPassword] = useState("");
+  const [adminLoginLoading, setAdminLoginLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -346,9 +348,31 @@ export default function AdminPage() {
     },
     onSuccess: () => {
       queryClient.clear();
-      setLocation("/login");
+      queryClient.setQueryData(["/api/auth/check"], { authenticated: false });
     },
   });
+
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminLoginPassword) return;
+    setAdminLoginLoading(true);
+    try {
+      const res = await apiRequest("POST", "/api/auth/login", { password: adminLoginPassword });
+      if (res.ok) {
+        queryClient.setQueryData(["/api/auth/check"], { authenticated: true });
+        queryClient.invalidateQueries({ queryKey: ["/api/weddings"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/invitations"] });
+        setAdminLoginPassword("");
+        toast({ title: "Bienvenido", description: "Acceso de administrador concedido" });
+      } else {
+        toast({ title: "Error", description: "Contraseña incorrecta", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Error", description: "Error de conexión", variant: "destructive" });
+    } finally {
+      setAdminLoginLoading(false);
+    }
+  };
 
   const filteredInvitations = invitations.filter((inv) => {
     const matchesSearch = inv.guestName
@@ -516,16 +540,57 @@ export default function AdminPage() {
     }
   };
 
-  useEffect(() => {
-    if (!authLoading && !authenticated) {
-      setLocation("/login?returnTo=/admin");
-    }
-  }, [authenticated, authLoading, setLocation]);
-
-  if (authLoading || !authenticated) {
+  if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-8 h-8 border-4 border-[#C9A96E] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!authenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-wedding-cream">
+        <Card className="w-full max-w-md border-wedding-gold">
+          <CardHeader className="text-center space-y-4">
+            <div className="flex justify-center">
+              <Heart className="w-8 h-8 text-wedding-burgundy fill-wedding-burgundy" />
+            </div>
+            <div>
+              <CardTitle className="text-3xl font-sans text-wedding-burgundy">Administrador</CardTitle>
+              <CardDescription className="mt-2 text-sm font-serif text-wedding-gold">
+                Panel de gestión completo
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleAdminLogin} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="admin-password" className="text-sm font-medium font-serif text-wedding-burgundy">
+                  Contraseña de administrador
+                </label>
+                <Input
+                  id="admin-password"
+                  type="password"
+                  placeholder="Ingresa la contraseña"
+                  value={adminLoginPassword}
+                  onChange={(e) => setAdminLoginPassword(e.target.value)}
+                  disabled={adminLoginLoading}
+                  data-testid="input-admin-password"
+                  className="font-serif border-wedding-gold"
+                />
+              </div>
+              <Button
+                type="submit"
+                disabled={adminLoginLoading}
+                data-testid="button-admin-login"
+                className="w-full font-serif text-white bg-wedding-burgundy"
+              >
+                {adminLoginLoading ? "Ingresando..." : "Ingresar"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -1074,12 +1139,14 @@ export default function AdminPage() {
                 data-testid="form-wedding"
               >
                 <Tabs defaultValue="pareja">
-                  <TabsList className="grid w-full grid-cols-5">
+                  <TabsList className={`grid w-full ${weddingForm.watch("template") === "nineties" ? "grid-cols-5" : "grid-cols-4"}`}>
                     <TabsTrigger value="pareja">Pareja</TabsTrigger>
                     <TabsTrigger value="evento">Evento</TabsTrigger>
                     <TabsTrigger value="regalos">Regalos</TabsTrigger>
                     <TabsTrigger value="plantilla">Plantilla</TabsTrigger>
-                    <TabsTrigger value="video">Video</TabsTrigger>
+                    {weddingForm.watch("template") === "nineties" && (
+                      <TabsTrigger value="video">Video</TabsTrigger>
+                    )}
                   </TabsList>
 
                   <TabsContent value="pareja" className="space-y-4 pt-4">
@@ -1354,7 +1421,7 @@ export default function AdminPage() {
                     )}
                   </TabsContent>
 
-                  <TabsContent value="video" className="space-y-6 pt-4">
+                  {weddingForm.watch("template") === "nineties" && <TabsContent value="video" className="space-y-6 pt-4">
                     <FormField
                       control={weddingForm.control}
                       name="videoType"
@@ -1453,7 +1520,7 @@ export default function AdminPage() {
                         </FormItem>
                       )}
                     />
-                  </TabsContent>
+                  </TabsContent>}
                 </Tabs>
 
                 <Button

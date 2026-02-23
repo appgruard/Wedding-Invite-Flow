@@ -6,9 +6,10 @@ A multi-wedding invitation management system with animated invitation pages (3 t
 ## Pages
 - `/` or `/invitation` - Wedding invitation page (add `?id=INVITATION_ID` for personalized RSVP). Routes to the correct template based on wedding settings.
 - `/confirm` - QR code validation page showing guest confirmation data
-- `/admin` - Admin panel for managing weddings and invitations (password protected)
+- `/admin` - Admin panel for managing weddings and invitations. Has inline login (password: `ADMIN_PASSWORD` env var). Full control.
+- `/login` - **Client login** (password: `CLIENT_PASSWORD` env var). Redirects to `/client` after auth.
+- `/client` - **Client panel**: create invitations for existing weddings only. Cannot edit weddings, templates, or settings.
 - `/estilos` - Invitation style selector panel (password protected)
-- `/login` - Login page (password: stored in ADMIN_PASSWORD env var)
 
 ## Features
 - **3 invitation templates**: Clásico (curtain reveal), Netflix (N logo animation), 90s (Flying Toasters / Windows 95)
@@ -27,15 +28,19 @@ A multi-wedding invitation management system with animated invitation pages (3 t
 - **Netflix** (`netflix`): Netflix "N" logo animation intro + dark themed invitation styled like Netflix UI.
 - **90s** (`nineties`): Flying Toasters screensaver intro + Windows 95/98 aesthetic invitation with dialog boxes.
 
-## Video Intro (per template)
-- `videoType = "none"`: Uses the template's built-in CSS animation
-- `videoType = "youtube"`: YouTube embed plays fullscreen for `introDuration` ms then invitation appears
-- `videoType = "mp4"`: Uploaded MP4 plays fullscreen for `introDuration` ms then invitation appears
+## Video Intro (90s template only)
+- Only the `nineties` template supports video; it plays **inside the TV screen** in the intro
+- `videoType = "none"`: Flying Toasters animation inside the TV (default for 90s)
+- `videoType = "youtube"`: YouTube embed plays inside the TV screen
+- `videoType = "mp4"`: Uploaded MP4 plays inside the TV screen
+- The Video tab in admin is only shown when the selected template is `nineties`
+- Clásico and Netflix templates always use their native CSS animation (curtains / N logo)
 
 ## Authentication
-- Password: Stored in `ADMIN_PASSWORD` environment variable
-- Session-based using express-session with MemoryStore
-- Login redirects back to the intended page via `returnTo` query param
+- **Admin** (`/admin`): Uses `ADMIN_PASSWORD` env var. Inline login form directly in the admin page. Full CRUD on weddings + invitations.
+- **Client** (`/login` → `/client`): Uses `CLIENT_PASSWORD` env var. Can only create invitations for existing weddings. Cannot manage weddings or change templates.
+- Session-based using express-session with MemoryStore (24h)
+- `requireAuth` = admin only, `requireAnyAuth` = admin or client, `requireClientAuth` = client only
 
 ## Database Tables
 - `weddings` - Wedding event metadata (names, dates, venues, template, video, photos, gifts, etc.)
@@ -58,7 +63,8 @@ A multi-wedding invitation management system with animated invitation pages (3 t
 - **`captain-definition`** — `{ "schemaVersion": 2, "dockerfilePath": "./Dockerfile" }`
 - **Persistent volume**: Mount `/data` in CapRover to persist DB + uploads between deployments
 - **Environment variables to set in CapRover**:
-  - `ADMIN_PASSWORD` — admin panel password
+  - `ADMIN_PASSWORD` — admin panel password (for `/admin`)
+  - `CLIENT_PASSWORD` — client portal password (for `/login` → `/client`)
   - `SESSION_SECRET` — session secret (any random string)
   - `DB_PATH=/data/db.sqlite` — SQLite file location
   - `UPLOADS_DIR=/data/uploads` — uploaded files location

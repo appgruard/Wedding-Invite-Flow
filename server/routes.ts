@@ -44,6 +44,16 @@ function requireAuth(req: Request, res: Response, next: NextFunction) {
   return res.status(401).json({ message: "No autorizado" });
 }
 
+function requireClientAuth(req: Request, res: Response, next: NextFunction) {
+  if (req.session && (req.session as any).clientAuthenticated) return next();
+  return res.status(401).json({ message: "No autorizado" });
+}
+
+function requireAnyAuth(req: Request, res: Response, next: NextFunction) {
+  if (req.session && ((req.session as any).authenticated || (req.session as any).clientAuthenticated)) return next();
+  return res.status(401).json({ message: "No autorizado" });
+}
+
 export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
   app.use(
     session({
@@ -82,6 +92,20 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json({ authenticated: !!(req.session && (req.session as any).authenticated) });
   });
 
+  app.post("/api/auth/client-login", (req, res) => {
+    const { password } = req.body;
+    const clientPassword = process.env.CLIENT_PASSWORD || "PScliente99";
+    if (password === clientPassword) {
+      (req.session as any).clientAuthenticated = true;
+      return res.json({ success: true });
+    }
+    return res.status(401).json({ message: "Contraseña incorrecta" });
+  });
+
+  app.get("/api/auth/client-check", (req, res) => {
+    res.json({ authenticated: !!(req.session && (req.session as any).clientAuthenticated) });
+  });
+
   // ── File Upload ──────────────────────────────────────────────────────────────
   app.post("/api/upload", requireAuth, upload.single("file"), (req, res) => {
     if (!req.file) return res.status(400).json({ message: "No se recibió archivo" });
@@ -106,7 +130,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   // ── Weddings ────────────────────────────────────────────────────────────────
-  app.get("/api/weddings", requireAuth, async (_req, res) => {
+  app.get("/api/weddings", requireAnyAuth, async (_req, res) => {
     const all = await storage.getWeddings();
     res.json(all);
   });
@@ -143,7 +167,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json(await storage.getInvitations());
   });
 
-  app.get("/api/invitations/wedding/:weddingId", requireAuth, async (req, res) => {
+  app.get("/api/invitations/wedding/:weddingId", requireAnyAuth, async (req, res) => {
     res.json(await storage.getInvitationsByWedding(String(req.params.weddingId)));
   });
 
@@ -155,7 +179,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json({ ...invitation, wedding });
   });
 
-  app.post("/api/invitations", requireAuth, async (req, res) => {
+  app.post("/api/invitations", requireAnyAuth, async (req, res) => {
     try {
       const { guestName, seats, confirmedSeats, status, weddingId } = req.body;
       if (!guestName) return res.status(400).json({ message: "El nombre del invitado es requerido" });

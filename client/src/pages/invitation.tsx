@@ -230,74 +230,13 @@ function QRCodeSection({ invitation, colors }: { invitation: Invitation; colors:
   );
 }
 
-function VideoIntro({ wedding, onDone }: { wedding: Wedding; onDone: () => void }) {
-  useEffect(() => {
-    const timer = setTimeout(onDone, wedding.introDuration);
-    return () => clearTimeout(timer);
-  }, [wedding.introDuration, onDone]);
-
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    const hideTimer = setTimeout(() => setVisible(false), wedding.introDuration - 400);
-    return () => clearTimeout(hideTimer);
-  }, [wedding.introDuration]);
-
-  if (!visible) return null;
-
-  if (wedding.videoType === "youtube" && wedding.videoUrl) {
-    const videoId = wedding.videoUrl.includes("youtu.be/")
-      ? wedding.videoUrl.split("youtu.be/")[1]?.split("?")[0]
-      : wedding.videoUrl.split("v=")[1]?.split("&")[0];
-    return (
-      <motion.div
-        className="fixed inset-0 z-50 bg-black flex items-center justify-center"
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        {videoId && (
-          <iframe
-            className="w-full h-full"
-            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1`}
-            allow="autoplay; fullscreen"
-            allowFullScreen
-          />
-        )}
-      </motion.div>
-    );
-  }
-
-  if (wedding.videoType === "mp4" && wedding.videoUrl) {
-    return (
-      <motion.div
-        className="fixed inset-0 z-50 bg-black flex items-center justify-center"
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <video
-          className="w-full h-full object-cover"
-          src={wedding.videoUrl}
-          autoPlay
-          muted
-          playsInline
-          loop
-        />
-      </motion.div>
-    );
-  }
-
-  return null;
-}
-
 function ClassicTemplate({ invData, invitationId }: { invData: InvitationWithWedding; invitationId: string }) {
   const wedding = invData.wedding;
   const introDuration = wedding?.introDuration ?? 4000;
-  const videoType = wedding?.videoType ?? "none";
 
   const [curtainsOpen, setCurtainsOpen] = useState(false);
-  const [curtainsMounted, setCurtainsMounted] = useState(videoType === "none");
+  const [curtainsMounted, setCurtainsMounted] = useState(true);
   const [contentVisible, setContentVisible] = useState(false);
-  const [videoDone, setVideoDone] = useState(videoType === "none");
 
   const colorStyleId = wedding?.colorStyleId ?? "clasico";
   const styleDef = INVITATION_STYLES.find(s => s.id === colorStyleId);
@@ -313,18 +252,12 @@ function ClassicTemplate({ invData, invitationId }: { invData: InvitationWithWed
   };
 
   useEffect(() => {
-    if (!videoDone) return;
     const openDelay = Math.max(500, introDuration - 2200);
     const t1 = setTimeout(() => setCurtainsOpen(true), openDelay);
     const t2 = setTimeout(() => setContentVisible(true), introDuration);
     const t3 = setTimeout(() => setCurtainsMounted(false), introDuration + 400);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, [videoDone, introDuration]);
-
-  const handleVideoDone = () => {
-    setVideoDone(true);
-    setCurtainsMounted(true);
-  };
+  }, [introDuration]);
 
   const coupleName = wedding?.coupleName ?? "Ana María & Carlos Eduardo";
   const [name1, name2] = coupleName.includes("&") ? coupleName.split("&").map(s => s.trim()) : [coupleName, ""];
@@ -347,10 +280,6 @@ function ClassicTemplate({ invData, invitationId }: { invData: InvitationWithWed
     <div className="relative min-h-screen overflow-x-hidden" style={{ backgroundImage: "url(/images/pattern-bg.png)", backgroundRepeat: "repeat", backgroundSize: "300px" }}>
       <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: colors.bg + "E6" }} />
       <div className="absolute inset-0 dark:bg-[#1a1512]/90 pointer-events-none" />
-
-      {videoType !== "none" && !videoDone && (
-        <VideoIntro wedding={wedding!} onDone={handleVideoDone} />
-      )}
 
       <div className="relative z-10">
         {curtainsMounted && (

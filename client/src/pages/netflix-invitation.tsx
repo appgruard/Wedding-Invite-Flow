@@ -110,34 +110,9 @@ function EffectLumieres() {
 }
 
 /* ─── Intro wrapper ──────────────────────────────────────────────────────── */
-const NetflixIntro = ({
-  videoUrl,
-  videoType,
-}: {
+const NetflixIntro = ({}: {
   duration: number;
-  videoUrl?: string | null;
-  videoType: string;
 }) => {
-  if (videoType === "youtube" && videoUrl) {
-    const vid = videoUrl.includes("v=") ? videoUrl.split("v=")[1]!.split("&")[0] : videoUrl.split("/").pop();
-    return (
-      <div className="fixed inset-0 z-50 bg-black">
-        <iframe className="w-full h-full border-none"
-          src={`https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1`}
-          allow="autoplay; encrypted-media" allowFullScreen />
-      </div>
-    );
-  }
-  if (videoType === "mp4" && videoUrl) {
-    return (
-      <div className="fixed inset-0 z-50 bg-black">
-        <video className="w-full h-full object-cover" autoPlay muted playsInline>
-          <source src={videoUrl} type="video/mp4" />
-        </video>
-      </div>
-    );
-  }
-
   /* ── CodePen mdryxPv exact recreation ── */
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black overflow-hidden">
@@ -268,7 +243,7 @@ export default function NetflixInvitationPage() {
       <AnimatePresence>
         {showIntro && (
           <motion.div key="intro" exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <NetflixIntro duration={wedding.introDuration} videoUrl={wedding.videoUrl} videoType={wedding.videoType} />
+            <NetflixIntro duration={wedding.introDuration} />
           </motion.div>
         )}
       </AnimatePresence>
