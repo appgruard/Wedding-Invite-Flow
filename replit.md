@@ -1,53 +1,51 @@
 # Wedding Invitation System
 
 ## Overview
-A complete wedding invitation management system with an animated invitation page, admin panel, and multiple selectable invitation styles protected by password authentication.
+A multi-wedding invitation management system with animated invitation pages (3 templates), admin panel for full customization, RSVP tracking, and video intro support.
 
 ## Pages
-- `/` or `/invitation` - Wedding invitation page (add `?id=INVITATION_ID` for personalized RSVP)
+- `/` or `/invitation` - Wedding invitation page (add `?id=INVITATION_ID` for personalized RSVP). Routes to the correct template based on wedding settings.
 - `/confirm` - QR code validation page showing guest confirmation data
-- `/admin` - Admin panel for managing invitations (password protected)
+- `/admin` - Admin panel for managing weddings and invitations (password protected)
 - `/estilos` - Invitation style selector panel (password protected)
 - `/login` - Login page (password: stored in ADMIN_PASSWORD env var)
 
 ## Features
-- **Curtain reveal animation** on invitation intro
-- **Full wedding info**: ceremony, reception, dress code, color palette, gift registry, envelope rain, countdown
+- **3 invitation templates**: Clásico (curtain reveal), Netflix (N logo animation), 90s (Flying Toasters / Windows 95)
+- **Multi-wedding management**: Create/edit/delete multiple wedding events from the admin panel
+- **Per-wedding customization**: couple names, dates, venues, church, photos, messages, gift registries
+- **Video intro support**: YouTube link or MP4 upload, configurable duration
+- **Full wedding info**: ceremony, reception, dress code, gift registry, envelope rain, countdown
 - **RSVP system** with seat confirmation
 - **QR code generation** for each invitation (points to `/confirm` page)
-- **Admin panel**: CRUD invitations, track RSVPs, filter/search, PDF export
-- **5 invitation styles**: clasico, romantico, moderno, rustico, jardin
-- **Style selector panel**: Choose active style from exclusive panel
-- **Password protection**: Session-based auth for admin and style panels
-- **Seed data**: 5 sample invitations with various statuses
+- **Admin panel**: Wedding CRUD + Invitation CRUD per wedding, track RSVPs, filter/search, PDF export
+- **5 color styles** for Clásico template: clasico, romantico, moderno, rustico, jardin
+- **Password protection**: Session-based auth for admin panel
+
+## Templates
+- **Clásico** (`clasico`): Theater curtain reveal animation + elegant wedding invitation layout. Color scheme customizable from 5 options.
+- **Netflix** (`netflix`): Netflix "N" logo animation intro + dark themed invitation styled like Netflix UI.
+- **90s** (`nineties`): Flying Toasters screensaver intro + Windows 95/98 aesthetic invitation with dialog boxes.
+
+## Video Intro (per template)
+- `videoType = "none"`: Uses the template's built-in CSS animation
+- `videoType = "youtube"`: YouTube embed plays fullscreen for `introDuration` ms then invitation appears
+- `videoType = "mp4"`: Uploaded MP4 plays fullscreen for `introDuration` ms then invitation appears
 
 ## Authentication
 - Password: Stored in `ADMIN_PASSWORD` environment variable
 - Session-based using express-session with MemoryStore
-- Both `/admin` and `/estilos` require authentication
 - Login redirects back to the intended page via `returnTo` query param
 
-## Invitation Styles
-- **Clasico Elegante**: Gold, burgundy, cream (default)
-- **Romantico Rosa**: Pink, rose, lavender
-- **Moderno Minimal**: Black, white, gold accents
-- **Rustico Natural**: Earth tones, olive, sienna
-- **Jardin Botanico**: Greens, lavender, coral
+## Database Tables
+- `weddings` - Wedding event metadata (names, dates, venues, template, video, photos, gifts, etc.)
+- `invitations` - Guest invitations with weddingId FK, RSVP status, seats, QR codes
+- `settings` - App settings including active invitation style
 
 ## Tech Stack
 - Frontend: React, TanStack Query, Framer Motion, Shadcn UI, Tailwind CSS, wouter
-- Backend: Express, Drizzle ORM, PostgreSQL, express-session
+- Backend: Express, Drizzle ORM, PostgreSQL, express-session, multer (file uploads)
 - Extras: jspdf + jspdf-autotable (PDF), qrcode (QR generation)
-
-## Database Tables
-- `invitations` - Guest invitations with RSVP status, seats, QR codes
-- `settings` - App settings including active invitation style
-
-## Customization
-- Couple names/details: Edit `client/src/pages/invitation.tsx`
-- Images: Replace files in `client/public/images/` (couple.png, church.png, venue.png, pattern-bg.png)
-- Colors/theme: Change style via `/estilos` panel or edit styles in `shared/schema.ts`
-- Wedding date: Edit countdown target in `invitation.tsx`
 
 ## API Routes
 - `POST /api/auth/login` - Login (body: { password })
@@ -55,10 +53,26 @@ A complete wedding invitation management system with an animated invitation page
 - `GET /api/auth/check` - Check auth status
 - `GET /api/settings` - Get current settings (public)
 - `PATCH /api/settings` - Update settings (auth required)
-- `GET /api/styles` - List available styles (public)
-- `GET /api/invitations` - List all (auth required)
-- `GET /api/invitations/:id` - Get one (public for RSVP)
+- `GET /api/styles` - List available color styles (public)
+- `GET /api/weddings` - List all weddings (auth required)
+- `GET /api/weddings/:id` - Get one wedding (public)
+- `POST /api/weddings` - Create wedding (auth required)
+- `PATCH /api/weddings/:id` - Update wedding (auth required)
+- `DELETE /api/weddings/:id` - Delete wedding (auth required)
+- `POST /api/upload` - Upload image/video file (auth required, returns { url })
+- `GET /api/invitations` - List all invitations (auth required)
+- `GET /api/invitations/wedding/:weddingId` - Invitations for a wedding (auth required)
+- `GET /api/invitations/:id` - Get one invitation with wedding data (public)
 - `POST /api/invitations` - Create (auth required)
 - `PATCH /api/invitations/:id` - Update (auth required)
 - `DELETE /api/invitations/:id` - Delete (auth required)
 - `POST /api/invitations/:id/respond` - RSVP (public)
+
+## File Structure (key files)
+- `shared/schema.ts` - DB schema (weddings, invitations, settings) + INVITATION_STYLES + TEMPLATES constants
+- `server/storage.ts` - Database storage interface and implementation
+- `server/routes.ts` - Express API routes including wedding CRUD + file upload
+- `client/src/pages/invitation.tsx` - Main invitation router (routes to correct template based on wedding.template)
+- `client/src/pages/netflix-invitation.tsx` - Netflix-themed template
+- `client/src/pages/nineties-invitation.tsx` - 90s Windows-themed template
+- `client/src/pages/admin.tsx` - Admin panel with wedding + invitation management

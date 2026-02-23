@@ -6,7 +6,8 @@ import { z } from "zod";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Link, useLocation } from "wouter";
-import type { Invitation } from "@shared/schema";
+import type { Invitation, Wedding } from "@shared/schema";
+import { TEMPLATES, INVITATION_STYLES, insertWeddingSchema } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
@@ -57,6 +58,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@/components/ui/radio-group";
+import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
+import {
   Plus,
   Pencil,
   Trash2,
@@ -72,20 +85,34 @@ import {
   Eye,
   LogOut,
   Palette,
+  Heart,
+  Calendar as CalendarIcon,
+  Music,
+  Video,
+  Gift,
+  Layout,
+  Upload,
 } from "lucide-react";
 
 const createInvitationSchema = z.object({
   guestName: z.string().min(1, "El nombre es requerido"),
   seats: z.coerce.number().min(1).max(10).default(2),
+  weddingId: z.string().min(1, "Debe seleccionar una boda"),
 });
 
 const editInvitationSchema = z.object({
   guestName: z.string().min(1, "El nombre es requerido"),
   seats: z.coerce.number().min(1).max(10),
+  weddingId: z.string().min(1, "Debe seleccionar una boda"),
+});
+
+const weddingFormSchema = insertWeddingSchema.extend({
+  introDuration: z.coerce.number().min(1000).max(10000),
 });
 
 type CreateFormValues = z.infer<typeof createInvitationSchema>;
 type EditFormValues = z.infer<typeof editInvitationSchema>;
+type WeddingFormValues = z.infer<typeof weddingFormSchema>;
 
 function StatusBadge({ status }: { status: string }) {
   if (status === "accepted") {
@@ -145,18 +172,121 @@ export default function AdminPage() {
     );
   }
 
-  const { data: invitations = [], isLoading } = useQuery<Invitation[]>({
-    queryKey: ["/api/invitations"],
+  const { data: weddings = [], isLoading: weddingsLoading } = useQuery<Wedding[]>({
+    queryKey: ["/api/weddings"],
+  });
+
+  const [selectedWeddingId, setSelectedWeddingId] = useState<string | null>(null);
+
+  const selectedWedding = weddings.find(w => w.id === selectedWeddingId);
+
+  const { data: invitations = [], isLoading: invitationsLoading } = useQuery<Invitation[]>({
+    queryKey: selectedWeddingId ? ["/api/invitations/wedding", selectedWeddingId] : ["/api/invitations"],
+    enabled: true,
+  });
+
+  const [weddingDialogOpen, setWeddingDialogOpen] = useState(false);
+  const [editingWedding, setEditingWedding] = useState<Wedding | null>(null);
+
+  const weddingForm = useForm<WeddingFormValues>({
+    resolver: zodResolver(weddingFormSchema),
+    defaultValues: {
+      coupleName: "Ana María & Carlos Eduardo",
+      weddingDate: "15 de marzo de 2026",
+      venueName: "Salón Gran Fiesta",
+      venueAddress: "Av. Insurgentes Sur 1234, CDMX",
+      venueTime: "20:00 hrs",
+      churchName: "Parroquia de Santa María",
+      churchAddress: "Calle Iglesia 45, CDMX",
+      churchTime: "18:00 hrs",
+      dressCode: "Formal / Etiqueta",
+      message: "",
+      giftUrl1: "https://www.liverpool.com.mx",
+      giftLabel1: "Liverpool",
+      giftUrl2: "https://www.amazon.com.mx",
+      giftLabel2: "Amazon",
+      couplePhotoUrl: "/images/couple.png",
+      template: "clasico",
+      colorStyleId: "clasico",
+      videoUrl: "",
+      videoType: "none",
+      introDuration: 4000,
+    },
+  });
+
+  const createWeddingMutation = useMutation({
+    mutationFn: async (data: WeddingFormValues) => {
+      await apiRequest("POST", "/api/weddings", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weddings"] });
+      setWeddingDialogOpen(false);
+      weddingForm.reset();
+      toast({ title: "Boda creada exitosamente" });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error al crear boda",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateWeddingMutation = useMutation({
+    mutationFn: async (data: WeddingFormValues & { id: string }) => {
+      const { id, ...body } = data;
+      await apiRequest("PATCH", `/api/weddings/${id}`, body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weddings"] });
+      setWeddingDialogOpen(false);
+      setEditingWedding(null);
+      toast({ title: "Boda actualizada exitosamente" });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error al actualizar boda",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteWeddingMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/weddings/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/weddings"] });
+      if (selectedWeddingId === editingWedding?.id) {
+        setSelectedWeddingId(null);
+      }
+      toast({ title: "Boda eliminada exitosamente" });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error al eliminar boda",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
   const createForm = useForm<CreateFormValues>({
     resolver: zodResolver(createInvitationSchema),
-    defaultValues: { guestName: "", seats: 2 },
+    defaultValues: { guestName: "", seats: 2, weddingId: selectedWeddingId || "" },
   });
+
+  useEffect(() => {
+    if (selectedWeddingId) {
+      createForm.setValue("weddingId", selectedWeddingId);
+    }
+  }, [selectedWeddingId, createForm]);
 
   const editForm = useForm<EditFormValues>({
     resolver: zodResolver(editInvitationSchema),
-    defaultValues: { guestName: "", seats: 2 },
+    defaultValues: { guestName: "", seats: 2, weddingId: "" },
   });
 
   const createMutation = useMutation({
@@ -165,8 +295,11 @@ export default function AdminPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/invitations"] });
+      if (selectedWeddingId) {
+        queryClient.invalidateQueries({ queryKey: ["/api/invitations/wedding", selectedWeddingId] });
+      }
       setCreateDialogOpen(false);
-      createForm.reset();
+      createForm.reset({ guestName: "", seats: 2, weddingId: selectedWeddingId || "" });
       toast({ title: "Invitación creada exitosamente" });
     },
     onError: (error: Error) => {
@@ -185,6 +318,9 @@ export default function AdminPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/invitations"] });
+      if (selectedWeddingId) {
+        queryClient.invalidateQueries({ queryKey: ["/api/invitations/wedding", selectedWeddingId] });
+      }
       setEditDialogOpen(false);
       setSelectedInvitation(null);
       toast({ title: "Invitación actualizada exitosamente" });
@@ -204,6 +340,9 @@ export default function AdminPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/invitations"] });
+      if (selectedWeddingId) {
+        queryClient.invalidateQueries({ queryKey: ["/api/invitations/wedding", selectedWeddingId] });
+      }
       toast({ title: "Invitación eliminada exitosamente" });
     },
     onError: (error: Error) => {
@@ -256,15 +395,6 @@ export default function AdminPage() {
     toast({ title: "Enlace copiado al portapapeles" });
   }
 
-  function openEdit(invitation: Invitation) {
-    setSelectedInvitation(invitation);
-    editForm.reset({
-      guestName: invitation.guestName,
-      seats: invitation.seats,
-    });
-    setEditDialogOpen(true);
-  }
-
   function openQrPreview(invitation: Invitation) {
     setSelectedInvitation(invitation);
     setQrDialogOpen(true);
@@ -274,7 +404,7 @@ export default function AdminPage() {
     const doc = new jsPDF();
     doc.setFontSize(18);
     doc.setTextColor(180, 130, 50);
-    doc.text("Lista de Invitados - Boda Ana Maria & Carlos Eduardo", 14, 20);
+    doc.text(`Lista de Invitados - Boda ${selectedWedding?.coupleName || ""}`, 14, 20);
 
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
@@ -337,11 +467,70 @@ export default function AdminPage() {
       summaryY + 24
     );
 
-    doc.save("lista-invitados-boda.pdf");
+    doc.save(`lista-invitados-boda-${selectedWedding?.coupleName || "boda"}.pdf`);
     toast({ title: "PDF descargado exitosamente" });
   }
 
-  if (isLoading) {
+  function openEdit(invitation: Invitation) {
+    setSelectedInvitation(invitation);
+    editForm.reset({
+      guestName: invitation.guestName,
+      seats: invitation.seats,
+      weddingId: invitation.weddingId || "",
+    });
+    setEditDialogOpen(true);
+  }
+
+  function openEditWedding(wedding: Wedding) {
+    setEditingWedding(wedding);
+    weddingForm.reset({
+      coupleName: wedding.coupleName,
+      weddingDate: wedding.weddingDate,
+      venueName: wedding.venueName || "",
+      venueAddress: wedding.venueAddress || "",
+      venueTime: wedding.venueTime || "",
+      churchName: wedding.churchName || "",
+      churchAddress: wedding.churchAddress || "",
+      churchTime: wedding.churchTime || "",
+      dressCode: wedding.dressCode || "",
+      message: wedding.message || "",
+      giftUrl1: wedding.giftUrl1 || "",
+      giftLabel1: wedding.giftLabel1 || "",
+      giftUrl2: wedding.giftUrl2 || "",
+      giftLabel2: wedding.giftLabel2 || "",
+      couplePhotoUrl: wedding.couplePhotoUrl || "/images/couple.png",
+      template: wedding.template,
+      colorStyleId: wedding.colorStyleId,
+      videoUrl: wedding.videoUrl || "",
+      videoType: wedding.videoType,
+      introDuration: wedding.introDuration,
+    });
+    setWeddingDialogOpen(true);
+  }
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.url) {
+        weddingForm.setValue(field as any, data.url);
+        toast({ title: "Archivo subido correctamente" });
+      }
+    } catch (error) {
+      toast({ title: "Error al subir archivo", variant: "destructive" });
+    }
+  };
+
+  if (weddingsLoading || invitationsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-muted-foreground">Cargando...</div>
@@ -352,361 +541,120 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="space-y-1">
-          <h1
-            className="text-2xl md:text-3xl font-bold"
-            data-testid="text-admin-title"
-          >
-            Panel de Administración
-          </h1>
-          <p
-            className="text-muted-foreground"
-            data-testid="text-admin-subtitle"
-          >
-            Boda Ana Maria & Carlos Eduardo
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3 flex-wrap">
-          <Link href="/estilos">
-            <Button variant="outline" data-testid="button-estilos">
-              <Palette className="w-4 h-4 mr-2" />
-              Selector de Estilos
-            </Button>
-          </Link>
-          <Button
-            variant="outline"
-            onClick={() => logoutMutation.mutate()}
-            disabled={logoutMutation.isPending}
-            data-testid="button-logout"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Cerrar Sesión
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          <Card data-testid="card-total-invitations">
-            <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Invitaciones
-              </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold" data-testid="text-total-count">
-                {totalInvitations}
-              </div>
-            </CardContent>
-          </Card>
-          <Card data-testid="card-accepted-count">
-            <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Aceptadas</CardTitle>
-              <CheckCircle className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div
-                className="text-2xl font-bold text-green-600"
-                data-testid="text-accepted-count"
-              >
-                {acceptedCount}
-              </div>
-            </CardContent>
-          </Card>
-          <Card data-testid="card-declined-count">
-            <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Declinadas</CardTitle>
-              <XCircle className="h-4 w-4 text-destructive" />
-            </CardHeader>
-            <CardContent>
-              <div
-                className="text-2xl font-bold text-destructive"
-                data-testid="text-declined-count"
-              >
-                {declinedCount}
-              </div>
-            </CardContent>
-          </Card>
-          <Card data-testid="card-pending-count">
-            <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pendientes</CardTitle>
-              <Clock className="h-4 w-4 text-amber-500" />
-            </CardHeader>
-            <CardContent>
-              <div
-                className="text-2xl font-bold text-amber-500"
-                data-testid="text-pending-count"
-              >
-                {pendingCount}
-              </div>
-            </CardContent>
-          </Card>
-          <Card data-testid="card-confirmed-seats">
-            <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Asientos Confirmados
-              </CardTitle>
-              <Armchair className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div
-                className="text-2xl font-bold"
-                data-testid="text-confirmed-seats"
-              >
-                {totalConfirmedSeats}
-              </div>
-            </CardContent>
-          </Card>
-          <Card data-testid="card-total-seats">
-            <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Asientos Totales
-              </CardTitle>
-              <Armchair className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold" data-testid="text-total-seats">
-                {totalSeats}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 flex-wrap">
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                data-testid="input-search"
-                placeholder="Buscar por nombre..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 w-60"
-              />
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger
-                className="w-40"
-                data-testid="select-status-filter"
-              >
-                <SelectValue placeholder="Estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="pending">Pendientes</SelectItem>
-                <SelectItem value="accepted">Aceptadas</SelectItem>
-                <SelectItem value="declined">Declinadas</SelectItem>
-              </SelectContent>
-            </Select>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h1
+              className="text-2xl md:text-3xl font-bold"
+              data-testid="text-admin-title"
+            >
+              Panel de Administración
+            </h1>
+            <p
+              className="text-muted-foreground"
+              data-testid="text-admin-subtitle"
+            >
+              {selectedWedding ? `Boda ${selectedWedding.coupleName}` : "Gestión de Bodas e Invitados"}
+            </p>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
+            <Link href="/estilos">
+              <Button variant="outline" data-testid="button-estilos">
+                <Palette className="w-4 h-4 mr-2" />
+                Selector de Estilos
+              </Button>
+            </Link>
             <Button
               variant="outline"
-              onClick={downloadPDF}
-              data-testid="button-download-pdf"
+              onClick={() => logoutMutation.mutate()}
+              disabled={logoutMutation.isPending}
+              data-testid="button-logout"
             >
-              <Download />
-              Descargar Lista de Invitados (PDF)
+              <LogOut className="w-4 h-4 mr-2" />
+              Cerrar Sesión
             </Button>
-
-            <Dialog
-              open={createDialogOpen}
-              onOpenChange={setCreateDialogOpen}
-            >
-              <DialogTrigger asChild>
-                <Button data-testid="button-create-invitation">
-                  <Plus />
-                  Nueva Invitación
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Crear Nueva Invitación</DialogTitle>
-                </DialogHeader>
-                <Form {...createForm}>
-                  <form
-                    onSubmit={createForm.handleSubmit((data) =>
-                      createMutation.mutate(data)
-                    )}
-                    className="space-y-4"
-                    data-testid="form-create-invitation"
-                  >
-                    <FormField
-                      control={createForm.control}
-                      name="guestName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nombre del Invitado</FormLabel>
-                          <FormControl>
-                            <Input
-                              data-testid="input-guest-name"
-                              placeholder="Nombre completo"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={createForm.control}
-                      name="seats"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Número de Asientos</FormLabel>
-                          <FormControl>
-                            <Input
-                              data-testid="input-seats"
-                              type="number"
-                              min={1}
-                              max={10}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={createMutation.isPending}
-                      data-testid="button-submit-create"
-                    >
-                      {createMutation.isPending
-                        ? "Creando..."
-                        : "Crear Invitación"}
-                    </Button>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
           </div>
         </div>
 
-        <Card>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Invitado</TableHead>
-                  <TableHead className="text-center">Asientos</TableHead>
-                  <TableHead className="text-center">Confirmados</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className="text-center">QR</TableHead>
-                  <TableHead>Enlace</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredInvitations.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="text-center text-muted-foreground py-8"
-                    >
-                      No se encontraron invitaciones
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredInvitations.map((invitation) => (
-                    <TableRow
-                      key={invitation.id}
-                      data-testid={`row-invitation-${invitation.id}`}
-                    >
-                      <TableCell
-                        className="font-medium"
-                        data-testid={`text-guest-name-${invitation.id}`}
-                      >
-                        {invitation.guestName}
-                      </TableCell>
-                      <TableCell
-                        className="text-center"
-                        data-testid={`text-seats-${invitation.id}`}
-                      >
-                        {invitation.seats}
-                      </TableCell>
-                      <TableCell
-                        className="text-center"
-                        data-testid={`text-confirmed-${invitation.id}`}
-                      >
-                        {invitation.confirmedSeats ?? 0}
-                      </TableCell>
-                      <TableCell>
-                        <StatusBadge status={invitation.status} />
-                      </TableCell>
-                      <TableCell className="text-center">
-                        {invitation.qrCode ? (
-                          <button
-                            onClick={() => openQrPreview(invitation)}
-                            className="inline-block cursor-pointer"
-                            data-testid={`button-qr-preview-${invitation.id}`}
+        <Tabs defaultValue="bodas" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="bodas" data-testid="tab-weddings">
+              <Heart className="w-4 h-4 mr-2" />
+              Bodas
+            </TabsTrigger>
+            <TabsTrigger value="invitados" data-testid="tab-invitations">
+              <Users className="w-4 h-4 mr-2" />
+              Invitados
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="bodas" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Mis Bodas</h2>
+              <Button onClick={() => {
+                setEditingWedding(null);
+                weddingForm.reset();
+                setWeddingDialogOpen(true);
+              }} data-testid="button-new-wedding">
+                <Plus className="w-4 h-4 mr-2" />
+                Nueva Boda
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {weddings.map((wedding) => {
+                const template = TEMPLATES.find(t => t.id === wedding.template);
+                return (
+                  <Card 
+                    key={wedding.id} 
+                    className={`hover-elevate cursor-pointer ${selectedWeddingId === wedding.id ? 'ring-2 ring-primary' : ''}`}
+                    onClick={() => setSelectedWeddingId(wedding.id)}
+                    data-testid={`card-wedding-${wedding.id}`}
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-start">
+                        <CardTitle className="text-lg">{wedding.coupleName}</CardTitle>
+                        <Badge variant="outline">
+                          {template?.thumbnail} {template?.name}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <CalendarIcon className="w-4 h-4 mr-2" />
+                        {wedding.weddingDate}
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex justify-between items-center mt-4">
+                        <div className="text-sm font-medium">
+                          {invitations.filter(i => i.weddingId === wedding.id).length} Invitaciones
+                        </div>
+                        <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => openEditWedding(wedding)}
+                            data-testid={`button-edit-wedding-${wedding.id}`}
                           >
-                            <img
-                              src={invitation.qrCode}
-                              alt="QR Code"
-                              className="w-8 h-8 inline-block rounded-sm"
-                            />
-                          </button>
-                        ) : (
-                          <QrCode className="h-4 w-4 text-muted-foreground mx-auto" />
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => copyLink(invitation)}
-                          data-testid={`button-copy-link-${invitation.id}`}
-                        >
-                          <Copy />
-                          Copiar
-                        </Button>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => openEdit(invitation)}
-                            data-testid={`button-edit-${invitation.id}`}
-                          >
-                            <Pencil />
+                            <Pencil className="w-4 h-4" />
                           </Button>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                data-testid={`button-delete-${invitation.id}`}
-                              >
-                                <Trash2 className="text-destructive" />
+                              <Button variant="ghost" size="icon" data-testid={`button-delete-wedding-${wedding.id}`}>
+                                <Trash2 className="w-4 h-4 text-destructive" />
                               </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Eliminar Invitación
-                                </AlertDialogTitle>
+                                <AlertDialogTitle>¿Eliminar boda?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  ¿Estás seguro de que deseas eliminar la
-                                  invitación de{" "}
-                                  <strong>{invitation.guestName}</strong>? Esta
-                                  acción no se puede deshacer.
+                                  Esto eliminará también todas las invitaciones asociadas.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel
-                                  data-testid="button-cancel-delete"
-                                >
-                                  Cancelar
-                                </AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() =>
-                                    deleteMutation.mutate(invitation.id)
-                                  }
-                                  data-testid="button-confirm-delete"
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction 
+                                  onClick={() => deleteWeddingMutation.mutate(wedding.id)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                 >
                                   Eliminar
                                 </AlertDialogAction>
@@ -714,15 +662,816 @@ export default function AdminPage() {
                             </AlertDialogContent>
                           </AlertDialog>
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </TabsContent>
 
+          <TabsContent value="invitados" className="space-y-6">
+            {!selectedWeddingId ? (
+              <Card className="p-12 text-center">
+                <div className="flex flex-col items-center gap-4">
+                  <Heart className="w-12 h-12 text-muted-foreground opacity-20" />
+                  <h3 className="text-xl font-medium">Seleccionar boda</h3>
+                  <p className="text-muted-foreground">Selecciona una boda en la pestaña "Bodas" para gestionar sus invitados.</p>
+                  <Button variant="outline" onClick={() => {
+                    const tab = document.querySelector('[value="bodas"]') as HTMLButtonElement;
+                    tab?.click();
+                  }}>
+                    Ver Bodas
+                  </Button>
+                </div>
+              </Card>
+            ) : (
+              <>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <h2 className="text-xl font-semibold">Invitados de: {selectedWedding?.coupleName}</h2>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                  <Card data-testid="card-total-invitations">
+                    <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        Total Invitaciones
+                      </CardTitle>
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold" data-testid="text-total-count">
+                        {totalInvitations}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card data-testid="card-accepted-count">
+                    <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Aceptadas</CardTitle>
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                    </CardHeader>
+                    <CardContent>
+                      <div
+                        className="text-2xl font-bold text-green-600"
+                        data-testid="text-accepted-count"
+                      >
+                        {acceptedCount}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card data-testid="card-declined-count">
+                    <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Declinadas</CardTitle>
+                      <XCircle className="h-4 w-4 text-destructive" />
+                    </CardHeader>
+                    <CardContent>
+                      <div
+                        className="text-2xl font-bold text-destructive"
+                        data-testid="text-declined-count"
+                      >
+                        {declinedCount}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card data-testid="card-pending-count">
+                    <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Pendientes</CardTitle>
+                      <Clock className="h-4 w-4 text-amber-500" />
+                    </CardHeader>
+                    <CardContent>
+                      <div
+                        className="text-2xl font-bold text-amber-500"
+                        data-testid="text-pending-count"
+                      >
+                        {pendingCount}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card data-testid="card-confirmed-seats">
+                    <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        Asientos Confirmados
+                      </CardTitle>
+                      <Armchair className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div
+                        className="text-2xl font-bold"
+                        data-testid="text-confirmed-seats"
+                      >
+                        {totalConfirmedSeats}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card data-testid="card-total-seats">
+                    <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        Asientos Totales
+                      </CardTitle>
+                      <Armchair className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold" data-testid="text-total-seats">
+                        {totalSeats}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 flex-wrap">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        data-testid="input-search"
+                        placeholder="Buscar por nombre..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9 w-60"
+                      />
+                    </div>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger
+                        className="w-40"
+                        data-testid="select-status-filter"
+                      >
+                        <SelectValue placeholder="Estado" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos</SelectItem>
+                        <SelectItem value="pending">Pendientes</SelectItem>
+                        <SelectItem value="accepted">Aceptadas</SelectItem>
+                        <SelectItem value="declined">Declinadas</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <Button
+                      variant="outline"
+                      onClick={downloadPDF}
+                      data-testid="button-download-pdf"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Descargar Lista (PDF)
+                    </Button>
+
+                    <Dialog
+                      open={createDialogOpen}
+                      onOpenChange={setCreateDialogOpen}
+                    >
+                      <DialogTrigger asChild>
+                        <Button data-testid="button-create-invitation">
+                          <Plus className="w-4 h-4 mr-2" />
+                          Nueva Invitación
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Crear Nueva Invitación</DialogTitle>
+                        </DialogHeader>
+                        <Form {...createForm}>
+                          <form
+                            onSubmit={createForm.handleSubmit((data) =>
+                              createMutation.mutate(data)
+                            )}
+                            className="space-y-4"
+                            data-testid="form-create-invitation"
+                          >
+                            <FormField
+                              control={createForm.control}
+                              name="weddingId"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Boda</FormLabel>
+                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                      <SelectTrigger data-testid="select-wedding">
+                                        <SelectValue placeholder="Seleccionar boda" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      {weddings.map((wedding) => (
+                                        <SelectItem key={wedding.id} value={wedding.id}>
+                                          {wedding.coupleName}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={createForm.control}
+                              name="guestName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Nombre del Invitado</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      data-testid="input-guest-name"
+                                      placeholder="Nombre completo"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={createForm.control}
+                              name="seats"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Número de Asientos</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      data-testid="input-seats"
+                                      type="number"
+                                      min={1}
+                                      max={10}
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <Button
+                              type="submit"
+                              className="w-full"
+                              disabled={createMutation.isPending}
+                              data-testid="button-submit-create"
+                            >
+                              {createMutation.isPending
+                                ? "Creando..."
+                                : "Crear Invitación"}
+                            </Button>
+                          </form>
+                        </Form>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
+
+                <Card>
+                  <CardContent className="p-0">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Invitado</TableHead>
+                          <TableHead className="text-center">Asientos</TableHead>
+                          <TableHead className="text-center">Confirmados</TableHead>
+                          <TableHead>Estado</TableHead>
+                          <TableHead className="text-center">QR</TableHead>
+                          <TableHead>Enlace</TableHead>
+                          <TableHead className="text-right">Acciones</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredInvitations.length === 0 ? (
+                          <TableRow>
+                            <TableCell
+                              colSpan={7}
+                              className="text-center text-muted-foreground py-8"
+                            >
+                              No se encontraron invitaciones
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          filteredInvitations.map((invitation) => (
+                            <TableRow
+                              key={invitation.id}
+                              data-testid={`row-invitation-${invitation.id}`}
+                            >
+                              <TableCell
+                                className="font-medium"
+                                data-testid={`text-guest-name-${invitation.id}`}
+                              >
+                                {invitation.guestName}
+                              </TableCell>
+                              <TableCell
+                                className="text-center"
+                                data-testid={`text-seats-${invitation.id}`}
+                              >
+                                {invitation.seats}
+                              </TableCell>
+                              <TableCell
+                                className="text-center"
+                                data-testid={`text-confirmed-${invitation.id}`}
+                              >
+                                {invitation.confirmedSeats ?? 0}
+                              </TableCell>
+                              <TableCell>
+                                <StatusBadge status={invitation.status} />
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {invitation.qrCode ? (
+                                  <button
+                                    onClick={() => openQrPreview(invitation)}
+                                    className="inline-block cursor-pointer"
+                                    data-testid={`button-qr-preview-${invitation.id}`}
+                                  >
+                                    <img
+                                      src={invitation.qrCode}
+                                      alt="QR Code"
+                                      className="w-8 h-8 inline-block rounded-sm"
+                                    />
+                                  </button>
+                                ) : (
+                                  <QrCode className="h-4 w-4 text-muted-foreground mx-auto" />
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => copyLink(invitation)}
+                                  data-testid={`button-copy-link-${invitation.id}`}
+                                >
+                                  <Copy className="w-4 h-4 mr-2" />
+                                  Copiar
+                                </Button>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex items-center justify-end gap-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => openEdit(invitation)}
+                                    data-testid={`button-edit-${invitation.id}`}
+                                  >
+                                    <Pencil className="w-4 h-4" />
+                                  </Button>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        data-testid={`button-delete-${invitation.id}`}
+                                      >
+                                        <Trash2 className="w-4 h-4 text-destructive" />
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                          Eliminar Invitación
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          ¿Estás seguro de que deseas eliminar la
+                                          invitación de{" "}
+                                          <strong>{invitation.guestName}</strong>? Esta
+                                          acción no se puede deshacer.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel
+                                          data-testid="button-cancel-delete"
+                                        >
+                                          Cancelar
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() =>
+                                            deleteMutation.mutate(invitation.id)
+                                          }
+                                          data-testid="button-confirm-delete"
+                                        >
+                                          Eliminar
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </>
+            )}
+          </TabsContent>
+        </Tabs>
+
+        {/* Wedding Create/Edit Dialog */}
+        <Dialog open={weddingDialogOpen} onOpenChange={setWeddingDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingWedding ? "Editar Boda" : "Nueva Boda"}</DialogTitle>
+            </DialogHeader>
+            <Form {...weddingForm}>
+              <form
+                onSubmit={weddingForm.handleSubmit((data) =>
+                  editingWedding 
+                    ? updateWeddingMutation.mutate({ ...data, id: editingWedding.id })
+                    : createWeddingMutation.mutate(data)
+                )}
+                className="space-y-6"
+                data-testid="form-wedding"
+              >
+                <Tabs defaultValue="pareja">
+                  <TabsList className="grid w-full grid-cols-5">
+                    <TabsTrigger value="pareja">Pareja</TabsTrigger>
+                    <TabsTrigger value="evento">Evento</TabsTrigger>
+                    <TabsTrigger value="regalos">Regalos</TabsTrigger>
+                    <TabsTrigger value="plantilla">Plantilla</TabsTrigger>
+                    <TabsTrigger value="video">Video</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="pareja" className="space-y-4 pt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={weddingForm.control}
+                        name="coupleName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Nombre de la Pareja</FormLabel>
+                            <FormControl>
+                              <Input {...field} value={field.value || ""} data-testid="input-wedding-couple" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={weddingForm.control}
+                        name="weddingDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Fecha de la Boda</FormLabel>
+                            <FormControl>
+                              <Input {...field} value={field.value || ""} placeholder="15 de marzo de 2026" data-testid="input-wedding-date" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      control={weddingForm.control}
+                      name="message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Mensaje Personalizado</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} value={field.value || ""} className="h-24" data-testid="textarea-wedding-message" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={weddingForm.control}
+                      name="couplePhotoUrl"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Foto de la Pareja</FormLabel>
+                          <FormControl>
+                            <div className="flex items-center gap-4">
+                              <div className="w-20 h-20 rounded-md overflow-hidden border">
+                                <img src={field.value || "/images/couple.png"} alt="Preview" className="w-full h-full object-cover" />
+                              </div>
+                              <div className="flex-1">
+                                <Input 
+                                  type="file" 
+                                  accept="image/*" 
+                                  onChange={(e) => handleFileUpload(e, "couplePhotoUrl")} 
+                                  className="cursor-pointer"
+                                />
+                                <p className="text-xs text-muted-foreground mt-1">Cargar nueva foto</p>
+                              </div>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="evento" className="space-y-4 pt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border p-4 rounded-md">
+                      <div className="space-y-4">
+                        <h4 className="font-medium flex items-center"><Plus className="w-4 h-4 mr-2" /> Ceremonia (Iglesia)</h4>
+                        <FormField
+                          control={weddingForm.control}
+                          name="churchName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Nombre</FormLabel>
+                              <FormControl><Input {...field} value={field.value || ""} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={weddingForm.control}
+                          name="churchAddress"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Dirección</FormLabel>
+                              <FormControl><Input {...field} value={field.value || ""} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={weddingForm.control}
+                          name="churchTime"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Hora</FormLabel>
+                              <FormControl><Input {...field} value={field.value || ""} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="space-y-4">
+                        <h4 className="font-medium flex items-center"><Music className="w-4 h-4 mr-2" /> Recepción (Salón)</h4>
+                        <FormField
+                          control={weddingForm.control}
+                          name="venueName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Nombre</FormLabel>
+                              <FormControl><Input {...field} value={field.value || ""} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={weddingForm.control}
+                          name="venueAddress"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Dirección</FormLabel>
+                              <FormControl><Input {...field} value={field.value || ""} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={weddingForm.control}
+                          name="venueTime"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Hora</FormLabel>
+                              <FormControl><Input {...field} value={field.value || ""} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                    <FormField
+                      control={weddingForm.control}
+                      name="dressCode"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Código de Vestimenta</FormLabel>
+                          <FormControl><Input {...field} value={field.value || ""} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="regalos" className="space-y-4 pt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-4 border p-4 rounded-md">
+                        <h4 className="font-medium flex items-center"><Gift className="w-4 h-4 mr-2" /> Mesa 1</h4>
+                        <FormField
+                          control={weddingForm.control}
+                          name="giftLabel1"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Etiqueta</FormLabel>
+                              <FormControl><Input {...field} value={field.value || ""} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={weddingForm.control}
+                          name="giftUrl1"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>URL</FormLabel>
+                              <FormControl><Input {...field} value={field.value || ""} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="space-y-4 border p-4 rounded-md">
+                        <h4 className="font-medium flex items-center"><Gift className="w-4 h-4 mr-2" /> Mesa 2</h4>
+                        <FormField
+                          control={weddingForm.control}
+                          name="giftLabel2"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Etiqueta</FormLabel>
+                              <FormControl><Input {...field} value={field.value || ""} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={weddingForm.control}
+                          name="giftUrl2"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>URL</FormLabel>
+                              <FormControl><Input {...field} value={field.value || ""} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="plantilla" className="space-y-6 pt-4">
+                    <FormField
+                      control={weddingForm.control}
+                      name="template"
+                      render={({ field }) => (
+                        <FormItem className="space-y-4">
+                          <FormLabel>Seleccionar Plantilla</FormLabel>
+                          <FormControl>
+                            <div className="grid grid-cols-3 gap-4">
+                              {TEMPLATES.map((t) => (
+                                <Card
+                                  key={t.id}
+                                  className={`p-4 cursor-pointer hover:border-primary transition-colors ${field.value === t.id ? 'border-2 border-primary ring-2 ring-primary/20' : ''}`}
+                                  onClick={() => field.onChange(t.id)}
+                                  data-testid={`card-template-${t.id}`}
+                                >
+                                  <div className="text-4xl mb-2 text-center">{t.thumbnail}</div>
+                                  <div className="font-semibold text-center">{t.name}</div>
+                                  <div className="text-xs text-muted-foreground text-center mt-1">{t.description}</div>
+                                </Card>
+                              ))}
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {weddingForm.watch("template") === "clasico" && (
+                      <FormField
+                        control={weddingForm.control}
+                        name="colorStyleId"
+                        render={({ field }) => (
+                          <FormItem className="space-y-4">
+                            <FormLabel>Estilo de Color (Solo Clásico)</FormLabel>
+                            <FormControl>
+                              <div className="flex gap-4 flex-wrap justify-center">
+                                {INVITATION_STYLES.map((style) => (
+                                  <div
+                                    key={style.id}
+                                    className={`w-12 h-12 rounded-full border-2 cursor-pointer hover:scale-110 transition-transform ${field.value === style.id ? 'border-primary ring-2 ring-primary/20' : 'border-transparent'}`}
+                                    style={{ backgroundColor: style.preview.accent }}
+                                    onClick={() => field.onChange(style.id)}
+                                    title={style.name}
+                                    data-testid={`swatch-color-${style.id}`}
+                                  />
+                                ))}
+                              </div>
+                            </FormControl>
+                            <div className="text-center text-sm font-medium mt-2">
+                              {INVITATION_STYLES.find(s => s.id === field.value)?.name}
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="video" className="space-y-6 pt-4">
+                    <FormField
+                      control={weddingForm.control}
+                      name="videoType"
+                      render={({ field }) => (
+                        <FormItem className="space-y-4">
+                          <FormLabel>Tipo de Video Intro</FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              className="flex gap-4"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="none" id="none" />
+                                <Label htmlFor="none">Sin video</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="youtube" id="youtube" />
+                                <Label htmlFor="youtube">YouTube</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="mp4" id="mp4" />
+                                <Label htmlFor="mp4">MP4 Upload</Label>
+                              </div>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {weddingForm.watch("videoType") === "mp4" && (
+                      <FormField
+                        control={weddingForm.control}
+                        name="videoUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Cargar Archivo MP4</FormLabel>
+                            <FormControl>
+                              <div className="flex items-center gap-4">
+                                {field.value && (
+                                  <div className="w-12 h-12 rounded border flex items-center justify-center bg-muted">
+                                    <Video className="w-6 h-6" />
+                                  </div>
+                                )}
+                                <div className="flex-1">
+                                  <Input 
+                                    type="file" 
+                                    accept="video/mp4" 
+                                    onChange={(e) => handleFileUpload(e, "videoUrl")} 
+                                  />
+                                </div>
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    {weddingForm.watch("videoType") === "youtube" && (
+                      <FormField
+                        control={weddingForm.control}
+                        name="videoUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>YouTube URL</FormLabel>
+                            <FormControl>
+                              <Input {...field} value={field.value || ""} placeholder="https://youtube.com/..." />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    <FormField
+                      control={weddingForm.control}
+                      name="introDuration"
+                      render={({ field }) => (
+                        <FormItem className="space-y-4">
+                          <div className="flex justify-between items-center">
+                            <FormLabel>Duración de la Intro</FormLabel>
+                            <span className="text-sm font-medium">{(field.value / 1000).toFixed(1)} segundos</span>
+                          </div>
+                          <FormControl>
+                            <Slider
+                              min={1000}
+                              max={10000}
+                              step={500}
+                              value={[field.value]}
+                              onValueChange={(vals) => field.onChange(vals[0])}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TabsContent>
+                </Tabs>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={createWeddingMutation.isPending || updateWeddingMutation.isPending}
+                  data-testid="button-submit-wedding"
+                >
+                  {(createWeddingMutation.isPending || updateWeddingMutation.isPending)
+                    ? "Guardando..."
+                    : editingWedding ? "Guardar Cambios" : "Crear Boda"}
+                </Button>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Invitation Edit Dialog */}
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
           <DialogContent>
             <DialogHeader>
@@ -739,6 +1488,30 @@ export default function AdminPage() {
                 className="space-y-4"
                 data-testid="form-edit-invitation"
               >
+                <FormField
+                  control={editForm.control}
+                  name="weddingId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Boda</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger data-testid="select-edit-wedding">
+                            <SelectValue placeholder="Seleccionar boda" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {weddings.map((wedding) => (
+                            <SelectItem key={wedding.id} value={wedding.id}>
+                              {wedding.coupleName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={editForm.control}
                   name="guestName"
@@ -818,7 +1591,7 @@ export default function AdminPage() {
                   }
                   data-testid="button-copy-link-qr-dialog"
                 >
-                  <Copy />
+                  <Copy className="w-4 h-4 mr-2" />
                   Copiar Enlace
                 </Button>
               </div>

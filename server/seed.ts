@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { invitations } from "@shared/schema";
+import { invitations, weddings } from "@shared/schema";
 import { eq, isNull } from "drizzle-orm";
 import QRCode from "qrcode";
 
@@ -12,15 +12,47 @@ const SEED_GUESTS = [
 ];
 
 export async function seedDatabase() {
+  const existingWeddings = await db.select().from(weddings);
+  let defaultWeddingId: string;
+
+  if (existingWeddings.length === 0) {
+    console.log("Seeding default wedding...");
+    const [defaultWedding] = await db.insert(weddings).values({
+      coupleName: "Ana María & Carlos Eduardo",
+      weddingDate: "15 de marzo de 2026",
+      venueName: "Salón Gran Fiesta",
+      venueAddress: "Av. Insurgentes Sur 1234, CDMX",
+      venueTime: "20:00 hrs",
+      churchName: "Parroquia de Santa María",
+      churchAddress: "Calle Iglesia 45, CDMX",
+      churchTime: "18:00 hrs",
+      dressCode: "Formal / Etiqueta",
+      message: "",
+      giftUrl1: "https://www.liverpool.com.mx",
+      giftLabel1: "Liverpool",
+      giftUrl2: "https://www.amazon.com.mx",
+      giftLabel2: "Amazon",
+      couplePhotoUrl: "/images/couple.png",
+      template: "clasico",
+      colorStyleId: "clasico",
+      videoUrl: "",
+      videoType: "none",
+      introDuration: 4000,
+    }).returning();
+    defaultWeddingId = defaultWedding.id;
+    console.log("Default wedding created.");
+  } else {
+    defaultWeddingId = existingWeddings[0].id;
+  }
+
   const existing = await db.select().from(invitations);
-  
+
   if (existing.length === 0) {
     console.log("Seeding database with sample invitations...");
     for (const guest of SEED_GUESTS) {
-      const [inv] = await db.insert(invitations).values(guest).returning();
+      const [inv] = await db.insert(invitations).values({ ...guest, weddingId: defaultWeddingId }).returning();
       const qrCode = await QRCode.toDataURL(`https://localhost:5000/confirm?id=${inv.id}`, {
-        width: 300,
-        margin: 2,
+        width: 300, margin: 2,
         color: { dark: "#1B2A4A", light: "#FFFFFF" },
       });
       await db.update(invitations).set({ qrCode }).where(eq(invitations.id, inv.id));
@@ -28,17 +60,16 @@ export async function seedDatabase() {
     console.log(`Seeded ${SEED_GUESTS.length} invitations.`);
   }
 
+  await db.update(invitations).set({ weddingId: defaultWeddingId }).where(isNull(invitations.weddingId));
+
   const withoutQR = await db.select().from(invitations).where(isNull(invitations.qrCode));
   if (withoutQR.length > 0) {
-    console.log(`Regenerating QR codes for ${withoutQR.length} invitations...`);
     for (const inv of withoutQR) {
       const qrCode = await QRCode.toDataURL(`https://localhost:5000/confirm?id=${inv.id}`, {
-        width: 300,
-        margin: 2,
+        width: 300, margin: 2,
         color: { dark: "#1B2A4A", light: "#FFFFFF" },
       });
       await db.update(invitations).set({ qrCode }).where(eq(invitations.id, inv.id));
     }
-    console.log("QR codes regenerated.");
   }
 }
