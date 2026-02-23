@@ -212,7 +212,10 @@ export default function NetflixInvitationPage() {
       ? async () => { const r = await fetch(`/api/demo/${previewTemplate}`); return r.json(); }
       : undefined,
     enabled: previewTemplate ? true : !!invitationId,
-    retry: 2,
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 
   useEffect(() => {
@@ -243,7 +246,7 @@ export default function NetflixInvitationPage() {
   }, [invitation?.seats]);
 
   if (isLoading) return <div className="min-h-screen bg-black flex items-center justify-center"><div className="w-10 h-10 border-4 border-[#E50914] border-t-transparent rounded-full animate-spin" /></div>;
-  if (isError || !invitation) return <div className="min-h-screen bg-black flex flex-col items-center justify-center gap-4"><p className="text-white/60 font-sans">No se pudo cargar la invitación.</p><button onClick={() => window.location.reload()} className="px-6 py-2 rounded text-white text-sm" style={{ background: "#E50914" }}>Reintentar</button></div>;
+  if (isError || !invitation) return <div className="min-h-screen bg-black flex flex-col items-center justify-center gap-4"><p className="text-white/60 font-sans">No se pudo cargar la invitación.</p><button onClick={() => queryClient.resetQueries({ queryKey: ["/api/invitations", invitationId] })} className="px-6 py-2 rounded text-white text-sm" style={{ background: "#E50914" }}>Reintentar</button></div>;
 
   const { wedding } = invitation;
 

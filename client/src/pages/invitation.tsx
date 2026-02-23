@@ -494,7 +494,10 @@ export default function InvitationPage() {
         }
       : undefined,
     enabled: previewTemplate ? true : !!invitationId,
-    retry: 2,
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 
   const template = invData?.wedding?.template ?? previewTemplate ?? "clasico";
@@ -512,7 +515,9 @@ export default function InvitationPage() {
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#FDF8F0] gap-4 px-4 text-center">
         <p className="text-[#6B5435] font-serif text-lg">No se pudo cargar la invitación.</p>
         <button
-          onClick={() => window.location.reload()}
+          onClick={() => {
+            queryClient.resetQueries({ queryKey: ["/api/invitations", invitationId] });
+          }}
           className="px-6 py-2 rounded-full text-white text-sm font-medium"
           style={{ background: "#C9A96E" }}
         >
