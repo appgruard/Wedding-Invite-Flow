@@ -13,23 +13,39 @@ const templates = [
     description: "Cortinas doradas con apertura cinematográfica, tipografía serif refinada y paletas de color personalizables.",
     icon: <Crown className="w-7 h-7" />,
     previewPath: "/invitation?preview=clasico",
-    bg: "from-[#0A0600] to-[#1A1000]",
-    accent: GOLD,
-    badgeColor: "bg-[#C9A84C] text-black",
+    bg: "from-[#EDE5D8] to-[#FDF8F0]",
+    accent: "#800020",
+    badgeColor: "bg-[#800020] text-white",
     badge: "Más popular",
     mockup: (
-      <div className="relative w-full aspect-[9/16] max-w-[120px] mx-auto rounded-xl overflow-hidden shadow-2xl border border-[#C9A84C]/30">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0A0600] to-[#000000] flex flex-col items-center justify-center p-2 gap-1">
-          <div className="w-8 h-8 rounded-full bg-[#C9A84C]/15 border border-[#C9A84C]/40 flex items-center justify-center">
-            <Heart className="w-4 h-4" style={{ color: GOLD }} />
+      <div className="relative w-full aspect-[9/16] max-w-[120px] mx-auto rounded-xl overflow-hidden shadow-2xl border border-[#C9A96E]/40">
+        {/* Cream/parchment bg — matches the real classic invitation */}
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-3 px-2 pb-2 gap-1" style={{ background: "#FDF8F0" }}>
+          {/* Circular couple photo placeholder */}
+          <div className="w-10 h-10 rounded-full border-2 flex items-center justify-center mb-0.5 overflow-hidden" style={{ borderColor: "#C9A96E80", background: "#F5EDE0" }}>
+            <Heart className="w-4 h-4" style={{ color: "#800020", fill: "#80002040" }} />
           </div>
-          <div className="h-1 w-10 rounded mt-1" style={{ background: `${GOLD}99` }} />
-          <div className="h-0.5 w-8 rounded" style={{ background: `${GOLD}60` }} />
-          <div className="h-0.5 w-6 rounded" style={{ background: `${GOLD}40` }} />
-          <div className="h-px w-12 mt-2" style={{ background: `${GOLD}25` }} />
-          <div className="h-0.5 w-10 rounded mt-1" style={{ background: `${GOLD}20` }} />
-          <div className="h-0.5 w-8 rounded" style={{ background: `${GOLD}20` }} />
-          <div className="h-5 w-14 rounded mt-2" style={{ background: `${GOLD}CC` }} />
+          {/* Couple name lines */}
+          <div className="h-1.5 w-14 rounded" style={{ background: "#80002090" }} />
+          {/* & symbol */}
+          <div className="text-[8px] font-serif" style={{ color: "#C9A96E" }}>&</div>
+          <div className="h-1.5 w-12 rounded" style={{ background: "#80002070" }} />
+          {/* Gold divider */}
+          <div className="flex items-center gap-1 w-full mt-1">
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, transparent, #C9A96E)" }} />
+            <div className="w-1 h-1 rounded-full" style={{ background: "#C9A96E" }} />
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to left, transparent, #C9A96E)" }} />
+          </div>
+          {/* Date */}
+          <div className="h-1 w-16 rounded mt-0.5" style={{ background: "#5C403360" }} />
+          {/* Detail lines */}
+          <div className="h-0.5 w-12 rounded" style={{ background: "#5C403330" }} />
+          <div className="h-0.5 w-14 rounded" style={{ background: "#5C403330" }} />
+          <div className="h-0.5 w-10 rounded" style={{ background: "#5C403325" }} />
+          {/* RSVP button */}
+          <div className="h-4 w-16 rounded mt-1 flex items-center justify-center" style={{ background: "#800020", boxShadow: "0 1px 4px #80002040" }}>
+            <span className="text-[5px] tracking-wider text-white font-medium">CONFIRMAR</span>
+          </div>
         </div>
       </div>
     ),

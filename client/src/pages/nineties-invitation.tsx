@@ -128,10 +128,10 @@ function TV90Intro({ wedding }: { wedding: Wedding }) {
 /* ─── Ornamental divider ─────────────────────────────────────────────────── */
 function OrnamentDivider({ symbol = "❧" }: { symbol?: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 0, margin: "28px auto", maxWidth: 480, color: "#C9A84C" }}>
-      <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, #C9A84C90)" }} />
+    <div style={{ display: "flex", alignItems: "center", gap: 0, margin: "28px auto", maxWidth: 480, color: "#C4730A" }}>
+      <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, #C4730A90)" }} />
       <span style={{ padding: "0 16px", fontSize: 20, opacity: 0.8 }}>{symbol}</span>
-      <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, #C9A84C90)" }} />
+      <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, #C4730A90)" }} />
     </div>
   );
 }
@@ -144,26 +144,25 @@ function VCard({ label, children }: { label: string; children: React.ReactNode }
       marginBottom: 24,
       padding: "0 2px 2px",
     }}>
-      {/* Double border frame */}
       <div style={{
-        border: "1px solid #C9A84C50",
-        boxShadow: "0 0 0 3px #050300, 0 0 0 4px #C9A84C25, 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 #C9A84C20",
-        background: "linear-gradient(180deg, #130900 0%, #0A0500 100%)",
+        border: "1px solid #C4730A50",
+        boxShadow: "0 0 0 3px #1A1005, 0 0 0 4px #C4730A25, 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 #C4730A20",
+        background: "linear-gradient(180deg, #261508 0%, #1A1005 100%)",
         overflow: "hidden",
       }}>
         {/* Header */}
         <div style={{
-          borderBottom: "1px solid #C9A84C30",
-          background: "linear-gradient(90deg, #050300 0%, #1E1000 40%, #1E1000 60%, #050300 100%)",
+          borderBottom: "1px solid #C4730A30",
+          background: "linear-gradient(90deg, #1A1005 0%, #30190A 40%, #30190A 60%, #1A1005 100%)",
           padding: "9px 20px",
           display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
         }}>
-          <span style={{ color: "#C9A84C60", fontSize: 9, letterSpacing: "0.1em" }}>⋄</span>
-          <span style={{ color: "#C9A84C", fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", fontFamily: "'Playfair Display', serif", fontWeight: "bold" }}>{label}</span>
-          <span style={{ color: "#C9A84C60", fontSize: 9, letterSpacing: "0.1em" }}>⋄</span>
+          <span style={{ color: "#C4730A60", fontSize: 9, letterSpacing: "0.1em" }}>⋄</span>
+          <span style={{ color: "#C4730A", fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", fontFamily: "'Playfair Display', serif", fontWeight: "bold" }}>{label}</span>
+          <span style={{ color: "#C4730A60", fontSize: 9, letterSpacing: "0.1em" }}>⋄</span>
         </div>
         {/* Content */}
-        <div style={{ padding: "20px 24px", color: "#DFC898" }}>
+        <div style={{ padding: "20px 24px", color: "#E8C8A0" }}>
           {children}
         </div>
       </div>
@@ -173,17 +172,17 @@ function VCard({ label, children }: { label: string; children: React.ReactNode }
 
 /* ─── Corner-framed hero box ─────────────────────────────────────────────── */
 function HeroFrame({ children }: { children: React.ReactNode }) {
-  const corner = { position: "absolute" as const, color: "#C9A84C", fontSize: 18, lineHeight: 1 };
+  const corner = { position: "absolute" as const, color: "#C4730A", fontSize: 18, lineHeight: 1 };
   return (
     <div style={{ position: "relative", padding: "48px 32px", textAlign: "center", marginBottom: 32 }}>
       <span style={{ ...corner, top: 8, left: 8 }}>┌</span>
       <span style={{ ...corner, top: 8, right: 8 }}>┐</span>
       <span style={{ ...corner, bottom: 8, left: 8 }}>└</span>
       <span style={{ ...corner, bottom: 8, right: 8 }}>┘</span>
-      <div style={{ position: "absolute", top: 16, left: 16, right: 16, height: 1, background: "linear-gradient(90deg, transparent, #C9A84C50, transparent)" }} />
-      <div style={{ position: "absolute", bottom: 16, left: 16, right: 16, height: 1, background: "linear-gradient(90deg, transparent, #C9A84C50, transparent)" }} />
-      <div style={{ position: "absolute", top: 16, left: 16, bottom: 16, width: 1, background: "linear-gradient(180deg, transparent, #C9A84C50, transparent)" }} />
-      <div style={{ position: "absolute", top: 16, right: 16, bottom: 16, width: 1, background: "linear-gradient(180deg, transparent, #C9A84C50, transparent)" }} />
+      <div style={{ position: "absolute", top: 16, left: 16, right: 16, height: 1, background: "linear-gradient(90deg, transparent, #C4730A50, transparent)" }} />
+      <div style={{ position: "absolute", bottom: 16, left: 16, right: 16, height: 1, background: "linear-gradient(90deg, transparent, #C4730A50, transparent)" }} />
+      <div style={{ position: "absolute", top: 16, left: 16, bottom: 16, width: 1, background: "linear-gradient(180deg, transparent, #C4730A50, transparent)" }} />
+      <div style={{ position: "absolute", top: 16, right: 16, bottom: 16, width: 1, background: "linear-gradient(180deg, transparent, #C4730A50, transparent)" }} />
       {children}
     </div>
   );
@@ -196,14 +195,14 @@ function CountDigit({ val, label }: { val: number; label: string }) {
       <div style={{
         fontSize: "clamp(32px, 5vw, 48px)",
         fontWeight: "bold",
-        color: "#C9A84C",
+        color: "#C4730A",
         fontFamily: "'Playfair Display', serif",
         lineHeight: 1,
-        textShadow: "0 0 20px #C9A84C80, 0 0 40px #C9A84C40",
+        textShadow: "0 0 20px #C4730A80, 0 0 40px #C4730A40",
         minWidth: 56,
         display: "inline-block",
       }}>{String(val).padStart(2, "0")}</div>
-      <div style={{ fontSize: 9, letterSpacing: "0.3em", textTransform: "uppercase", color: "#C9A84C60", marginTop: 6 }}>{label}</div>
+      <div style={{ fontSize: 9, letterSpacing: "0.3em", textTransform: "uppercase", color: "#C4730A60", marginTop: 6 }}>{label}</div>
     </div>
   );
 }
@@ -259,11 +258,11 @@ export default function NinetiesInvitationPage() {
   const vhsStamp = `${clock.toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "2-digit" })} ${clock.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}`;
 
   if (isLoading || !data) {
-    return <div style={{ minHeight: "100vh", background: "#050300", display: "flex", alignItems: "center", justifyContent: "center", color: "#C9A84C", fontFamily: "'Playfair Display', serif", fontSize: 18, letterSpacing: "0.3em", fontStyle: "italic" }}>Transmitiendo...</div>;
+    return <div style={{ minHeight: "100vh", background: "#1A1005", display: "flex", alignItems: "center", justifyContent: "center", color: "#C4730A", fontFamily: "'Playfair Display', serif", fontSize: 18, letterSpacing: "0.3em", fontStyle: "italic" }}>Transmitiendo...</div>;
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#050300", color: "#DFC898", fontFamily: "'Playfair Display', 'Times New Roman', serif", position: "relative", overflowX: "hidden" }}>
+    <div style={{ minHeight: "100vh", background: "#1A1005", color: "#E8C8A0", fontFamily: "'Playfair Display', 'Times New Roman', serif", position: "relative", overflowX: "hidden" }}>
       <style>{`
         @keyframes v90-fly    { 0%{transform:translate(0,0)} 100%{transform:translate(-140vw,120vh)} }
         @keyframes v90-flapL  { 0%,100%{transform:rotate(-30deg)} 50%{transform:rotate(10deg)} }
@@ -271,23 +270,23 @@ export default function NinetiesInvitationPage() {
         @keyframes v90-glitch { 0%{transform:translateX(0)} 33%{transform:translateX(-5px)} 66%{transform:translateX(5px)} 100%{transform:translateX(0)} }
         @keyframes v90-scan   { 0%{top:0} 100%{top:100%} }
         @keyframes v90-flicker{ 0%,100%{opacity:1} 93%{opacity:0.88} 94%{opacity:1} 97%{opacity:0.93} 98%{opacity:1} }
-        @keyframes v90-glow   { 0%,100%{text-shadow:0 0 20px #C9A84C80,0 0 50px #C9A84C30} 50%{text-shadow:0 0 30px #C9A84CB0,0 0 70px #C9A84C50} }
+        @keyframes v90-glow   { 0%,100%{text-shadow:0 0 20px #C4730A80,0 0 50px #C4730A30} 50%{text-shadow:0 0 30px #C4730AB0,0 0 70px #C4730A50} }
         @keyframes v90-pulse  { 0%,100%{opacity:0.5} 50%{opacity:1} }
         @keyframes v90-fadein { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
         .v90-scanline {
           position:fixed; left:0; right:0; height:120px;
-          background:linear-gradient(to bottom, transparent, rgba(201,168,76,0.025) 50%, transparent);
+          background:linear-gradient(to bottom, transparent, rgba(196,115,10,0.03) 50%, transparent);
           pointer-events:none; z-index:500;
           animation:v90-scan 6s linear infinite;
         }
         .v90-crt {
           position:fixed; inset:0; pointer-events:none; z-index:499;
-          background:repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px);
+          background:repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px);
         }
         .v90-vignette {
           position:fixed; inset:0; pointer-events:none; z-index:498;
-          background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.75) 100%);
+          background:radial-gradient(ellipse at center, transparent 50%, rgba(10,6,0,0.85) 100%);
         }
         .v90-flicker { animation:v90-flicker 10s ease-in-out infinite; }
         .v90-title   { animation:v90-glow 3.5s ease-in-out infinite; }
@@ -297,8 +296,8 @@ export default function NinetiesInvitationPage() {
         .v90-btn {
           display:inline-block;
           background:transparent;
-          border:1px solid #C9A84C70;
-          color:#C9A84C;
+          border:1px solid #C4730A70;
+          color:#C4730A;
           padding:10px 28px;
           font-family:'Playfair Display',serif;
           font-size:12px;
@@ -308,26 +307,26 @@ export default function NinetiesInvitationPage() {
           transition:all 0.3s;
           position:relative;
         }
-        .v90-btn:hover { background:#C9A84C15; box-shadow:0 0 16px #C9A84C30; border-color:#C9A84C; }
+        .v90-btn:hover { background:#C4730A15; box-shadow:0 0 16px #C4730A30; border-color:#C4730A; }
         .v90-btn:disabled { opacity:0.35; cursor:not-allowed; }
         .v90-btn-gold {
-          background:linear-gradient(135deg,#C9A84C,#A07828);
-          border:none; color:#050300; font-weight:bold;
+          background:linear-gradient(135deg,#C4730A,#8B4D06);
+          border:none; color:#F5E6C8; font-weight:bold;
         }
-        .v90-btn-gold:hover { background:linear-gradient(135deg,#DDB85C,#B08838); box-shadow:0 0 24px #C9A84C60; }
+        .v90-btn-gold:hover { background:linear-gradient(135deg,#D4830A,#9B5D06); box-shadow:0 0 24px #C4730A60; }
         .v90-select {
-          background:#0A0500; border:1px solid #C9A84C50;
-          color:#DFC898; padding:8px 12px;
+          background:#261808; border:1px solid #C4730A50;
+          color:#E8C8A0; padding:8px 12px;
           font-family:'Playfair Display',serif; font-size:14px;
           cursor:pointer; outline:none;
         }
         .v90-label {
           font-size:9px; letter-spacing:0.35em; text-transform:uppercase;
-          color:#C9A84C70; display:block; margin-bottom:8px;
+          color:#C4730A70; display:block; margin-bottom:8px;
           font-family:'Roboto Mono',monospace;
         }
-        .v90-detail { font-size:14px; color:#DFC898; margin-bottom:12px; line-height:1.7; }
-        .v90-detail strong { color:#C9A84C; font-weight:normal; font-style:italic; }
+        .v90-detail { font-size:14px; color:#E8C8A0; margin-bottom:12px; line-height:1.7; }
+        .v90-detail strong { color:#C4730A; font-weight:normal; font-style:italic; }
       `}</style>
 
       {/* CRT effects */}
@@ -336,13 +335,13 @@ export default function NinetiesInvitationPage() {
       <div className="v90-vignette" />
 
       {/* VHS timestamp */}
-      <div style={{ position: "fixed", top: 12, right: 14, zIndex: 600, fontFamily: "monospace", fontSize: 10, color: "#C9A84C60", letterSpacing: "0.08em" }}>
+      <div style={{ position: "fixed", top: 12, right: 14, zIndex: 600, fontFamily: "monospace", fontSize: 10, color: "#C4730A60", letterSpacing: "0.08em" }}>
         {vhsStamp}
       </div>
       {/* On-air indicator */}
       <div style={{ position: "fixed", top: 12, left: 14, zIndex: 600, display: "flex", alignItems: "center", gap: 6 }}>
-        <span className="v90-pulse" style={{ width: 7, height: 7, borderRadius: "50%", background: "#C9A84C", display: "inline-block" }} />
-        <span style={{ fontFamily: "monospace", fontSize: 9, color: "#C9A84C70", letterSpacing: "0.2em" }}>EN VIVO</span>
+        <span className="v90-pulse" style={{ width: 7, height: 7, borderRadius: "50%", background: "#C4730A", display: "inline-block" }} />
+        <span style={{ fontFamily: "monospace", fontSize: 9, color: "#C4730A70", letterSpacing: "0.2em" }}>EN VIVO</span>
       </div>
 
       {/* TV Intro */}
@@ -365,7 +364,7 @@ export default function NinetiesInvitationPage() {
 
           {/* ── Hero ── */}
           <HeroFrame>
-            <p style={{ fontSize: 9, letterSpacing: "0.6em", color: "#C9A84C80", textTransform: "uppercase", marginBottom: 24, fontFamily: "monospace" }}>
+            <p style={{ fontSize: 9, letterSpacing: "0.6em", color: "#C4730A80", textTransform: "uppercase", marginBottom: 24, fontFamily: "monospace" }}>
               ✦ Con todo el amor ✦
             </p>
 
@@ -375,7 +374,7 @@ export default function NinetiesInvitationPage() {
                 fontSize: "clamp(30px, 6.5vw, 56px)",
                 fontStyle: "italic",
                 fontWeight: "bold",
-                color: "#C9A84C",
+                color: "#C4730A",
                 lineHeight: 1.15,
                 marginBottom: 20,
               }}
@@ -384,27 +383,27 @@ export default function NinetiesInvitationPage() {
               {wedding?.coupleName}
             </h1>
 
-            <div style={{ display: "flex", alignItems: "center", gap: 16, justifyContent: "center", color: "#C9A84C60", marginBottom: 20 }}>
-              <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, #C9A84C80)" }} />
+            <div style={{ display: "flex", alignItems: "center", gap: 16, justifyContent: "center", color: "#C4730A60", marginBottom: 20 }}>
+              <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, #C4730A80)" }} />
               <span style={{ fontSize: 14 }}>✦</span>
-              <span style={{ fontSize: 13, letterSpacing: "0.12em", color: "#DFC898", fontStyle: "italic" }} data-testid="text-wedding-date">{wedding?.weddingDate}</span>
+              <span style={{ fontSize: 13, letterSpacing: "0.12em", color: "#E8C8A0", fontStyle: "italic" }} data-testid="text-wedding-date">{wedding?.weddingDate}</span>
               <span style={{ fontSize: 14 }}>✦</span>
-              <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, #C9A84C80)" }} />
+              <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, #C4730A80)" }} />
             </div>
 
             {wedding?.message && (
-              <p style={{ fontSize: 14, color: "#C9A84C80", fontStyle: "italic", lineHeight: 1.8, maxWidth: 440, margin: "0 auto" }}>
+              <p style={{ fontSize: 14, color: "#C4730A80", fontStyle: "italic", lineHeight: 1.8, maxWidth: 440, margin: "0 auto" }}>
                 &ldquo;{wedding.message}&rdquo;
               </p>
             )}
 
             {wedding?.couplePhotoUrl && (
               <div style={{ marginTop: 24, display: "inline-block" }}>
-                <div style={{ border: "1px solid #C9A84C40", padding: 6, boxShadow: "0 0 0 4px #050300, 0 0 0 5px #C9A84C20, 0 8px 32px rgba(0,0,0,0.8)" }}>
+                <div style={{ border: "1px solid #C4730A40", padding: 6, boxShadow: "0 0 0 4px #1A1005, 0 0 0 5px #C4730A20, 0 8px 32px rgba(0,0,0,0.8)" }}>
                   <img
                     src={wedding.couplePhotoUrl}
                     alt="Pareja"
-                    style={{ maxWidth: 200, display: "block", filter: "sepia(0.3) contrast(1.05)" }}
+                    style={{ maxWidth: 200, display: "block", filter: "sepia(0.5) contrast(1.05)" }}
                     data-testid="img-couple"
                   />
                 </div>
@@ -450,11 +449,11 @@ export default function NinetiesInvitationPage() {
           <VCard label="Cuenta regresiva">
             <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", gap: 4, flexWrap: "wrap" }}>
               <CountDigit val={countdown.days}  label="Días" />
-              <div style={{ color: "#C9A84C40", fontSize: 36, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 8 }}>:</div>
+              <div style={{ color: "#C4730A40", fontSize: 36, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 8 }}>:</div>
               <CountDigit val={countdown.hours} label="Horas" />
-              <div style={{ color: "#C9A84C40", fontSize: 36, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 8 }}>:</div>
+              <div style={{ color: "#C4730A40", fontSize: 36, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 8 }}>:</div>
               <CountDigit val={countdown.mins}  label="Min" />
-              <div style={{ color: "#C9A84C40", fontSize: 36, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 8 }}>:</div>
+              <div style={{ color: "#C4730A40", fontSize: 36, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 8 }}>:</div>
               <CountDigit val={countdown.secs}  label="Seg" />
             </div>
           </VCard>
@@ -530,17 +529,17 @@ export default function NinetiesInvitationPage() {
               <OrnamentDivider symbol="✦" />
               <div style={{ textAlign: "center" }} data-testid="window-qr">
                 <label className="v90-label" style={{ display: "block", textAlign: "center", marginBottom: 16 }}>Tu pase de entrada</label>
-                <div style={{ display: "inline-block", border: "1px solid #C9A84C40", padding: 8, boxShadow: "0 0 0 4px #050300, 0 0 0 5px #C9A84C20", background: "white" }}>
+                <div style={{ display: "inline-block", border: "1px solid #C4730A40", padding: 8, boxShadow: "0 0 0 4px #1A1005, 0 0 0 5px #C4730A20", background: "white" }}>
                   <img src={invitation.qrCode} alt="QR" style={{ width: 148, height: 148, display: "block" }} data-testid="img-qr-code" />
                 </div>
-                <p style={{ fontSize: 9, marginTop: 12, color: "#C9A84C50", letterSpacing: "0.3em", textTransform: "uppercase" }}>Presenta en la entrada</p>
+                <p style={{ fontSize: 9, marginTop: 12, color: "#C4730A50", letterSpacing: "0.3em", textTransform: "uppercase" }}>Presenta en la entrada</p>
               </div>
             </>
           )}
 
           {/* ── Footer ── */}
           <OrnamentDivider symbol="❧" />
-          <div style={{ textAlign: "center", color: "#C9A84C50", fontSize: 9, letterSpacing: "0.4em", textTransform: "uppercase", fontFamily: "monospace", lineHeight: 2 }}>
+          <div style={{ textAlign: "center", color: "#C4730A50", fontSize: 9, letterSpacing: "0.4em", textTransform: "uppercase", fontFamily: "monospace", lineHeight: 2 }}>
             <div>{wedding?.coupleName}</div>
             <div>{wedding?.weddingDate}</div>
           </div>
