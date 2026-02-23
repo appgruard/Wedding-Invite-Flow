@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { SiTiktok, SiWhatsapp } from "react-icons/si";
 import { Play, Sparkles, Heart, Crown, Monitor, Palette, Pencil, ImageIcon, Music } from "lucide-react";
 
+const GOLD = "#C9A84C";
 const WHATSAPP_NUMBER = "8293519324";
 const TIKTOK_HANDLE = "cartas.eventos";
 
@@ -12,26 +13,23 @@ const templates = [
     description: "Cortinas doradas con apertura cinematográfica, tipografía serif refinada y paletas de color personalizables.",
     icon: <Crown className="w-7 h-7" />,
     previewPath: "/invitation?preview=clasico",
-    bg: "from-[#1B2A4A] to-[#2D3F6B]",
-    accent: "#C9A96E",
-    accentBg: "bg-[#C9A96E]",
-    textAccent: "text-[#C9A96E]",
-    borderAccent: "border-[#C9A96E]",
+    bg: "from-[#0A0600] to-[#1A1000]",
+    accent: GOLD,
+    badgeColor: "bg-[#C9A84C] text-black",
     badge: "Más popular",
-    badgeColor: "bg-[#C9A96E] text-[#1B2A4A]",
     mockup: (
-      <div className="relative w-full aspect-[9/16] max-w-[120px] mx-auto rounded-xl overflow-hidden shadow-2xl border border-[#C9A96E]/30">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1B2A4A] to-[#0D1B38] flex flex-col items-center justify-center p-2 gap-1">
-          <div className="w-8 h-8 rounded-full bg-[#C9A96E]/20 border border-[#C9A96E]/50 flex items-center justify-center">
-            <Heart className="w-4 h-4 text-[#C9A96E]" />
+      <div className="relative w-full aspect-[9/16] max-w-[120px] mx-auto rounded-xl overflow-hidden shadow-2xl border border-[#C9A84C]/30">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0A0600] to-[#000000] flex flex-col items-center justify-center p-2 gap-1">
+          <div className="w-8 h-8 rounded-full bg-[#C9A84C]/15 border border-[#C9A84C]/40 flex items-center justify-center">
+            <Heart className="w-4 h-4" style={{ color: GOLD }} />
           </div>
-          <div className="h-1 w-10 bg-[#C9A96E]/60 rounded mt-1" />
-          <div className="h-0.5 w-8 bg-[#C9A96E]/40 rounded" />
-          <div className="h-0.5 w-6 bg-[#C9A96E]/30 rounded" />
-          <div className="h-px w-12 bg-[#C9A96E]/20 mt-2" />
-          <div className="h-0.5 w-10 bg-[#C9A96E]/20 rounded mt-1" />
-          <div className="h-0.5 w-8 bg-[#C9A96E]/20 rounded" />
-          <div className="h-5 w-14 rounded bg-[#C9A96E] mt-2 opacity-80" />
+          <div className="h-1 w-10 rounded mt-1" style={{ background: `${GOLD}99` }} />
+          <div className="h-0.5 w-8 rounded" style={{ background: `${GOLD}60` }} />
+          <div className="h-0.5 w-6 rounded" style={{ background: `${GOLD}40` }} />
+          <div className="h-px w-12 mt-2" style={{ background: `${GOLD}25` }} />
+          <div className="h-0.5 w-10 rounded mt-1" style={{ background: `${GOLD}20` }} />
+          <div className="h-0.5 w-8 rounded" style={{ background: `${GOLD}20` }} />
+          <div className="h-5 w-14 rounded mt-2" style={{ background: `${GOLD}CC` }} />
         </div>
       </div>
     ),
@@ -42,28 +40,22 @@ const templates = [
     description: "Intro cinematográfica con la animación de la letra N, estética de serie premium y confirmación de asistencia en pantalla.",
     icon: <Play className="w-7 h-7" />,
     previewPath: "/invitation?preview=netflix",
-    bg: "from-[#1a0000] to-[#141414]",
+    bg: "from-[#1a0000] to-[#0a0000]",
     accent: "#E50914",
-    accentBg: "bg-[#E50914]",
-    textAccent: "text-[#E50914]",
-    borderAccent: "border-[#E50914]",
-    badge: "Cinematográfico",
     badgeColor: "bg-[#E50914] text-white",
+    badge: "Cinematográfico",
     mockup: (
       <div className="relative w-full aspect-[9/16] max-w-[120px] mx-auto rounded-xl overflow-hidden shadow-2xl border border-[#E50914]/30">
-        <div className="absolute inset-0 bg-[#141414] flex flex-col items-center justify-center p-2 gap-2">
+        <div className="absolute inset-0 bg-[#0a0000] flex flex-col items-center justify-center p-2 gap-2">
           <div className="font-black text-[#E50914] text-3xl leading-none tracking-tighter">N</div>
           <div className="h-0.5 w-14 bg-[#E50914] rounded mt-1" />
           <div className="h-1 w-10 bg-white/20 rounded" />
           <div className="h-0.5 w-8 bg-white/15 rounded" />
           <div className="h-0.5 w-12 bg-white/10 rounded" />
           <div className="grid grid-cols-2 gap-1 mt-2 w-full px-2">
-            <div className="h-4 bg-white/10 rounded" />
-            <div className="h-4 bg-white/10 rounded" />
-            <div className="h-4 bg-white/10 rounded" />
-            <div className="h-4 bg-white/10 rounded" />
+            <div className="h-8 rounded bg-white/10" />
+            <div className="h-8 rounded bg-white/10" />
           </div>
-          <div className="h-5 w-14 rounded bg-[#E50914] mt-1 opacity-90" />
         </div>
       </div>
     ),
@@ -75,25 +67,21 @@ const templates = [
     icon: <Monitor className="w-7 h-7" />,
     previewPath: "/invitation?preview=nineties",
     bg: "from-[#1A0E00] to-[#080500]",
-    accent: "#C9A84C",
-    accentBg: "bg-[#C9A84C]",
-    textAccent: "text-[#C9A84C]",
-    borderAccent: "border-[#C9A84C]",
-    badge: "Vintage",
+    accent: GOLD,
     badgeColor: "bg-[#C9A84C] text-black",
+    badge: "Vintage",
     mockup: (
       <div className="relative w-full aspect-[9/16] max-w-[120px] mx-auto rounded-xl overflow-hidden shadow-2xl border border-[#C9A84C]/30">
         <div className="absolute inset-0 bg-[#080500] flex flex-col items-center justify-center p-2 gap-2">
           <div className="h-px w-16 bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent" />
           <div className="text-[#C9A84C] text-[7px] font-serif italic font-bold text-center leading-tight">Sofía &amp; Daniel</div>
-          <div className="text-[#C9A84C80] text-[5px] tracking-widest">✦ su boda ✦</div>
+          <div className="text-[7px] tracking-widest" style={{ color: `${GOLD}80` }}>✦ su boda ✦</div>
           <div className="h-px w-12 bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent" />
-          <div className="h-1 w-10 bg-[#C9A84C20] rounded mt-1" />
-          <div className="h-0.5 w-8 bg-[#C9A84C20] rounded" />
-          <div className="h-0.5 w-10 bg-[#C9A84C20] rounded" />
+          <div className="h-1 w-10 rounded mt-1" style={{ background: `${GOLD}20` }} />
+          <div className="h-0.5 w-8 rounded" style={{ background: `${GOLD}20` }} />
           <div className="h-px w-12 bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent mt-1" />
-          <div className="h-4 w-14 rounded border border-[#C9A84C80] flex items-center justify-center mt-1">
-            <span className="text-[#C9A84C] text-[5px] tracking-wider">CONFIRMAR</span>
+          <div className="h-4 w-14 rounded mt-1 flex items-center justify-center" style={{ border: `1px solid ${GOLD}80` }}>
+            <span className="text-[5px] tracking-wider" style={{ color: GOLD }}>CONFIRMAR</span>
           </div>
         </div>
       </div>
@@ -112,21 +100,41 @@ export default function LandingPage() {
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola!%20Quiero%20una%20invitaci%C3%B3n%20digital%20personalizada%20para%20mi%20boda`;
 
   return (
-    <div className="min-h-screen bg-[#080D1A] text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#080D1A]/90 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="Cartas y Eventos" className="w-9 h-9 rounded-lg object-cover" />
-            <span className="font-semibold text-white text-sm">Cartas y Eventos</span>
+    <div className="min-h-screen text-white" style={{ background: "#000000" }}>
+
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-50 backdrop-blur-md border-b" style={{ background: "rgba(0,0,0,0.92)", borderColor: `${GOLD}18` }}>
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src="/logo.png"
+              alt="Cartas y Eventos"
+              className="w-10 h-10 object-contain"
+            />
+            <div className="leading-tight">
+              <div className="font-bold text-sm tracking-wide text-white">Cartas y Eventos</div>
+              <div className="text-[10px] tracking-widest uppercase" style={{ color: `${GOLD}80` }}>Invitaciones Digitales</div>
+            </div>
           </div>
           <nav className="flex items-center gap-3">
+            <a
+              href={`https://tiktok.com/@${TIKTOK_HANDLE}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="link-tiktok-header"
+              className="hidden sm:flex items-center gap-1.5 text-sm transition-colors"
+              style={{ color: `${GOLD}80` }}
+            >
+              <SiTiktok className="w-3.5 h-3.5" />
+              @{TIKTOK_HANDLE}
+            </a>
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               data-testid="link-whatsapp-header"
-              className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#1db955] text-white text-sm font-medium px-3 py-1.5 rounded-full transition-colors"
+              className="flex items-center gap-1.5 text-white text-sm font-medium px-3 py-1.5 rounded-full transition-colors"
+              style={{ background: "#25D366" }}
             >
               <SiWhatsapp className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Solicitar</span>
@@ -135,39 +143,57 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero */}
+      {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden pt-20 pb-24 px-4">
+        {/* Glow blobs */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#C9A96E]/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[#C9A96E]/3 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-1/3 w-80 h-80 rounded-full blur-[120px]" style={{ background: `${GOLD}08` }} />
+          <div className="absolute bottom-0 right-1/3 w-64 h-64 rounded-full blur-[100px]" style={{ background: `${GOLD}06` }} />
         </div>
+
         <div className="max-w-4xl mx-auto text-center relative">
-          <div className="inline-flex items-center gap-2 bg-[#C9A96E]/10 border border-[#C9A96E]/20 rounded-full px-4 py-1.5 text-[#C9A96E] text-sm mb-6">
+          {/* Logo destacado */}
+          <div className="flex justify-center mb-8">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-full blur-2xl" style={{ background: `${GOLD}15` }} />
+              <img
+                src="/logo.png"
+                alt="Cartas y Eventos"
+                className="relative w-28 h-28 sm:w-36 sm:h-36 object-contain"
+              />
+            </div>
+          </div>
+
+          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm mb-6 border" style={{ background: `${GOLD}10`, borderColor: `${GOLD}25`, color: GOLD }}>
             <Sparkles className="w-3.5 h-3.5" />
             100% personalizadas al gusto de cada pareja
           </div>
+
           <h1
             className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-5"
             data-testid="text-hero-title"
           >
             Tu boda,{" "}
-            <span className="text-[#C9A96E]">una experiencia</span>
+            <span style={{ color: GOLD }}>una experiencia</span>
             <br />que nunca olvidarán
           </h1>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto mb-3 leading-relaxed">
+
+          <p className="text-lg max-w-2xl mx-auto mb-3 leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
             Invitaciones digitales únicas con animaciones exclusivas, seguimiento de confirmaciones en tiempo real
             y personalización completa — desde los colores hasta el video introductorio.
           </p>
-          <p className="text-[#C9A96E]/80 text-base max-w-xl mx-auto mb-8 font-medium">
+          <p className="text-base max-w-xl mx-auto mb-8 font-medium" style={{ color: `${GOLD}B0` }}>
             Cada invitación es diseñada a medida para reflejar el estilo único de su pareja.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               data-testid="link-whatsapp-hero"
-              className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1db955] text-white font-semibold px-6 py-3 rounded-full transition-all hover:scale-105 shadow-lg shadow-[#25D366]/20"
+              className="flex items-center justify-center gap-2 text-white font-semibold px-6 py-3 rounded-full transition-all hover:scale-105 shadow-lg"
+              style={{ background: "#25D366", boxShadow: "0 8px 24px rgba(37,211,102,0.2)" }}
             >
               <SiWhatsapp className="w-5 h-5" />
               Solicitar por WhatsApp
@@ -177,7 +203,8 @@ export default function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
               data-testid="link-tiktok-hero"
-              className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold px-6 py-3 rounded-full transition-all hover:scale-105"
+              className="flex items-center justify-center gap-2 text-white font-semibold px-6 py-3 rounded-full transition-all hover:scale-105 border"
+              style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(255,255,255,0.10)" }}
             >
               <SiTiktok className="w-4 h-4" />
               @{TIKTOK_HANDLE}
@@ -186,14 +213,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Personalization highlight */}
-      <section className="py-14 px-4 border-y border-white/5 bg-white/[0.02]">
+      {/* ── Personalization ─────────────────────────────────────────────────── */}
+      <section className="py-14 px-4 border-y" style={{ background: "rgba(255,255,255,0.015)", borderColor: `${GOLD}10` }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">
-              Hecha <span className="text-[#C9A96E]">exactamente</span> como la sueñas
+              Hecha <span style={{ color: GOLD }}>exactamente</span> como la sueñas
             </h2>
-            <p className="text-white/50 text-base max-w-xl mx-auto">
+            <p className="text-base max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.45)" }}>
               No usamos plantillas genéricas. Cada invitación se configura y diseña especialmente para ti.
             </p>
           </div>
@@ -201,28 +228,29 @@ export default function LandingPage() {
             {personalizations.map((item, i) => (
               <div
                 key={i}
-                className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-[#C9A96E]/30 transition-colors"
+                className="p-5 rounded-2xl border transition-colors"
+                style={{ background: "rgba(255,255,255,0.025)", borderColor: "rgba(255,255,255,0.08)" }}
                 data-testid={`card-personalization-${i}`}
               >
-                <div className="w-10 h-10 rounded-xl bg-[#C9A96E]/10 border border-[#C9A96E]/20 flex items-center justify-center text-[#C9A96E] mb-3">
+                <div className="w-10 h-10 rounded-xl border flex items-center justify-center mb-3" style={{ background: `${GOLD}12`, borderColor: `${GOLD}25`, color: GOLD }}>
                   {item.icon}
                 </div>
                 <h3 className="font-semibold text-white mb-1 text-sm">{item.title}</h3>
-                <p className="text-white/45 text-xs leading-relaxed">{item.desc}</p>
+                <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.40)" }}>{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Templates */}
+      {/* ── Templates ───────────────────────────────────────────────────────── */}
       <section className="py-16 px-4" id="plantillas">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3" data-testid="text-templates-title">
-              Elige tu <span className="text-[#C9A96E]">estilo base</span>
+              Elige tu <span style={{ color: GOLD }}>estilo base</span>
             </h2>
-            <p className="text-white/50 text-base max-w-xl mx-auto">
+            <p className="text-base max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.45)" }}>
               Tres experiencias distintas — todas 100% personalizables en colores, contenido, fotos y video.
             </p>
           </div>
@@ -230,7 +258,8 @@ export default function LandingPage() {
             {templates.map((t) => (
               <div
                 key={t.id}
-                className="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/[0.03] hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
+                className="group relative rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-1"
+                style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.025)" }}
                 data-testid={`card-template-${t.id}`}
               >
                 <div className={`bg-gradient-to-b ${t.bg} p-8 flex flex-col items-center`}>
@@ -243,11 +272,12 @@ export default function LandingPage() {
                       {t.badge}
                     </span>
                   </div>
-                  <p className="text-white/50 text-sm leading-relaxed mb-4">{t.description}</p>
+                  <p className="text-sm leading-relaxed mb-4" style={{ color: "rgba(255,255,255,0.45)" }}>{t.description}</p>
                   <Link
                     href={t.previewPath}
                     data-testid={`link-preview-${t.id}`}
-                    className={`w-full flex items-center justify-center gap-1.5 border ${t.borderAccent} ${t.textAccent} hover:bg-white/5 text-sm font-medium px-4 py-2 rounded-lg transition-colors`}
+                    className="w-full flex items-center justify-center gap-1.5 border text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-white/5"
+                    style={{ borderColor: `${t.accent}60`, color: t.accent }}
                   >
                     <Play className="w-3.5 h-3.5" />
                     Ver demo
@@ -256,58 +286,46 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          <p className="text-center text-white/30 text-sm mt-6">
+          <p className="text-center text-sm mt-6" style={{ color: "rgba(255,255,255,0.25)" }}>
             ¿Tienes otro estilo en mente? Escríbenos — trabajamos invitaciones completamente a medida.
           </p>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="py-16 px-4 border-t border-white/5">
+      {/* ── How it works ────────────────────────────────────────────────────── */}
+      <section className="py-16 px-4 border-t" style={{ borderColor: `${GOLD}10` }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold mb-3">¿Cómo <span className="text-[#C9A96E]">funciona</span>?</h2>
-            <p className="text-white/50 text-base max-w-xl mx-auto">Sencillo, rápido y totalmente a tu gusto.</p>
+            <h2 className="text-3xl font-bold mb-3">¿Cómo <span style={{ color: GOLD }}>funciona</span>?</h2>
+            <p className="text-base max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.45)" }}>Sencillo, rápido y totalmente a tu gusto.</p>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
             {[
-              {
-                step: "01",
-                title: "Cuéntanos tu idea",
-                desc: "Escríbenos por WhatsApp o TikTok con los datos de tu boda y cómo te imaginas la invitación.",
-              },
-              {
-                step: "02",
-                title: "Diseñamos juntos",
-                desc: "Elegimos el estilo, los colores, el video y todos los detalles hasta que quede perfecta para ti.",
-              },
-              {
-                step: "03",
-                title: "Comparte con tus invitados",
-                desc: "Cada invitado recibe un enlace único con su nombre y asientos. Tú ves las confirmaciones en tiempo real.",
-              },
+              { step: "01", title: "Cuéntanos tu idea", desc: "Escríbenos por WhatsApp o TikTok con los datos de tu boda y cómo te imaginas la invitación." },
+              { step: "02", title: "Diseñamos juntos", desc: "Elegimos el estilo, los colores, el video y todos los detalles hasta que quede perfecta para ti." },
+              { step: "03", title: "Comparte con tus invitados", desc: "Cada invitado recibe un enlace único con su nombre y asientos. Tú ves las confirmaciones en tiempo real." },
             ].map((item) => (
-              <div key={item.step} className="relative p-6 rounded-2xl bg-white/[0.03] border border-white/10" data-testid={`card-step-${item.step}`}>
-                <div className="text-5xl font-black text-[#C9A96E]/15 mb-3">{item.step}</div>
+              <div key={item.step} className="relative p-6 rounded-2xl border" style={{ background: "rgba(255,255,255,0.025)", borderColor: "rgba(255,255,255,0.08)" }} data-testid={`card-step-${item.step}`}>
+                <div className="text-5xl font-black mb-3" style={{ color: `${GOLD}18` }}>{item.step}</div>
                 <h3 className="font-semibold text-white mb-1.5">{item.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed">{item.desc}</p>
+                <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
+      {/* ── CTA ─────────────────────────────────────────────────────────────── */}
       <section className="py-16 px-4">
         <div className="max-w-3xl mx-auto">
-          <div className="rounded-3xl bg-gradient-to-br from-[#1B2A4A] to-[#0D1B38] border border-[#C9A96E]/20 p-8 md:p-12 text-center">
-            <Heart className="w-10 h-10 text-[#C9A96E] mx-auto mb-4" />
+          <div className="rounded-3xl border p-8 md:p-12 text-center" style={{ background: `linear-gradient(135deg, #0D0800 0%, #1A1000 50%, #0D0800 100%)`, borderColor: `${GOLD}30` }}>
+            <img src="/logo.png" alt="" className="w-16 h-16 object-contain mx-auto mb-4 opacity-90" />
             <h2 className="text-3xl font-bold mb-3">¿Lista tu invitación soñada?</h2>
-            <p className="text-white/60 mb-3 max-w-lg mx-auto">
+            <p className="mb-3 max-w-lg mx-auto" style={{ color: "rgba(255,255,255,0.55)" }}>
               Cuéntanos cómo la imaginas y la hacemos realidad.
               Sin plantillas genéricas — solo tu historia, a tu manera.
             </p>
-            <p className="text-[#C9A96E]/70 text-sm mb-7">
+            <p className="text-sm mb-7" style={{ color: `${GOLD}80` }}>
               Disponible 7 días a la semana · Respuesta en menos de 24 horas
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -316,7 +334,8 @@ export default function LandingPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-testid="link-whatsapp-cta"
-                className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1db955] text-white font-semibold px-6 py-3 rounded-full transition-all hover:scale-105 shadow-lg shadow-[#25D366]/25"
+                className="flex items-center justify-center gap-2 text-white font-semibold px-6 py-3 rounded-full transition-all hover:scale-105 shadow-lg"
+                style={{ background: "#25D366", boxShadow: "0 8px 24px rgba(37,211,102,0.25)" }}
               >
                 <SiWhatsapp className="w-5 h-5" />
                 WhatsApp: {WHATSAPP_NUMBER}
@@ -326,7 +345,8 @@ export default function LandingPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-testid="link-tiktok-cta"
-                className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold px-6 py-3 rounded-full transition-all hover:scale-105"
+                className="flex items-center justify-center gap-2 text-white font-semibold px-6 py-3 rounded-full transition-all hover:scale-105 border"
+                style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(255,255,255,0.10)" }}
               >
                 <SiTiktok className="w-4 h-4" />
                 @{TIKTOK_HANDLE}
@@ -336,13 +356,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-8 px-4">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-white/30 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded bg-[#1B2A4A] border border-[#C9A96E]/30 flex items-center justify-center">
-              <Heart className="w-2.5 h-2.5 text-[#C9A96E]" />
-            </div>
+      {/* ── Footer ──────────────────────────────────────────────────────────── */}
+      <footer className="border-t py-8 px-4" style={{ borderColor: `${GOLD}10` }}>
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm" style={{ color: "rgba(255,255,255,0.25)" }}>
+          <div className="flex items-center gap-2.5">
+            <img src="/logo.png" alt="" className="w-6 h-6 object-contain opacity-60" />
             <span>Cartas y Eventos — Invitaciones 100% personalizadas</span>
           </div>
           <div className="flex items-center gap-4">
