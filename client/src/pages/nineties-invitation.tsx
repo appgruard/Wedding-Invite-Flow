@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { MusicPlayer } from "@/components/music-player";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -545,6 +546,11 @@ export default function NinetiesInvitationPage() {
           </div>
         </div>
       </motion.div>
+      <MusicPlayer
+        musicUrl={wedding?.musicUrl}
+        musicType={wedding?.musicType ?? "none"}
+        started={!showIntro}
+      />
     </div>
   );
 }

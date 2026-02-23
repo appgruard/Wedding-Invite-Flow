@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Play, Info, MapPin, Gift, Tv, QrCode, Check } from "lucide-react";
+import { MusicPlayer } from "@/components/music-player";
 import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -113,6 +114,12 @@ function EffectLumieres() {
 const NetflixIntro = ({}: {
   duration: number;
 }) => {
+  useEffect(() => {
+    const audio = new Audio("/sounds/netflix-intro.mp3");
+    audio.volume = 0.85;
+    audio.play().catch(() => {});
+    return () => { audio.pause(); audio.src = ""; };
+  }, []);
   /* ── CodePen mdryxPv exact recreation ── */
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black overflow-hidden">
@@ -444,6 +451,11 @@ export default function NetflixInvitationPage() {
           <p className="mt-2">© {new Date().getFullYear()} {wedding.coupleName}</p>
         </footer>
       </motion.div>
+      <MusicPlayer
+        musicUrl={wedding.musicUrl}
+        musicType={wedding.musicType ?? "none"}
+        started={!showIntro}
+      />
     </div>
   );
 }

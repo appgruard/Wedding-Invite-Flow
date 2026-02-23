@@ -57,6 +57,15 @@ export async function runMigrations() {
     INSERT OR IGNORE INTO "settings" ("id", "active_style") VALUES ('main', 'clasico');
   `);
 
+  const weddingCols = sqlite.pragma("table_info(weddings)") as { name: string }[];
+  const weddingColNames = weddingCols.map((c) => c.name);
+  if (!weddingColNames.includes("music_url")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "music_url" TEXT DEFAULT ''`);
+  }
+  if (!weddingColNames.includes("music_type")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "music_type" TEXT NOT NULL DEFAULT 'none'`);
+  }
+
   sqlite.pragma("foreign_keys = ON");
   sqlite.close();
 

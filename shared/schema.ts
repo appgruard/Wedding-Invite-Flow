@@ -24,6 +24,8 @@ export const weddings = sqliteTable("weddings", {
   videoUrl: text("video_url").default(""),
   videoType: text("video_type").notNull().default("none"),
   introDuration: integer("intro_duration").notNull().default(4000),
+  musicUrl: text("music_url").default(""),
+  musicType: text("music_type").notNull().default("none"),
   createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
 });
 

@@ -199,6 +199,8 @@ export default function AdminPage() {
       videoUrl: "",
       videoType: "none",
       introDuration: 4000,
+      musicUrl: "",
+      musicType: "none",
     },
   });
 
@@ -514,6 +516,8 @@ export default function AdminPage() {
       videoUrl: wedding.videoUrl || "",
       videoType: wedding.videoType,
       introDuration: wedding.introDuration,
+      musicUrl: wedding.musicUrl || "",
+      musicType: wedding.musicType || "none",
     });
     setWeddingDialogOpen(true);
   }
@@ -1139,11 +1143,12 @@ export default function AdminPage() {
                 data-testid="form-wedding"
               >
                 <Tabs defaultValue="pareja">
-                  <TabsList className={`grid w-full ${weddingForm.watch("template") === "nineties" ? "grid-cols-5" : "grid-cols-4"}`}>
+                  <TabsList className={`grid w-full ${weddingForm.watch("template") === "nineties" ? "grid-cols-6" : "grid-cols-5"}`}>
                     <TabsTrigger value="pareja">Pareja</TabsTrigger>
                     <TabsTrigger value="evento">Evento</TabsTrigger>
                     <TabsTrigger value="regalos">Regalos</TabsTrigger>
                     <TabsTrigger value="plantilla">Plantilla</TabsTrigger>
+                    <TabsTrigger value="musica">Música</TabsTrigger>
                     {weddingForm.watch("template") === "nineties" && (
                       <TabsTrigger value="video">Video</TabsTrigger>
                     )}
@@ -1414,6 +1419,89 @@ export default function AdminPage() {
                             <div className="text-center text-sm font-medium mt-2">
                               {INVITATION_STYLES.find(s => s.id === field.value)?.name}
                             </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="musica" className="space-y-6 pt-4">
+                    <FormField
+                      control={weddingForm.control}
+                      name="musicType"
+                      render={({ field }) => (
+                        <FormItem className="space-y-4">
+                          <FormLabel>Música de fondo</FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              className="flex flex-col space-y-2"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="none" id="music-none" />
+                                <Label htmlFor="music-none">Sin música</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="mp3" id="music-mp3" />
+                                <Label htmlFor="music-mp3">Archivo MP3</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="youtube" id="music-youtube" />
+                                <Label htmlFor="music-youtube">YouTube (URL del video)</Label>
+                              </div>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    {weddingForm.watch("musicType") === "mp3" && (
+                      <FormField
+                        control={weddingForm.control}
+                        name="musicUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Archivo MP3</FormLabel>
+                            <FormControl>
+                              <div className="space-y-2">
+                                {field.value && (
+                                  <p className="text-xs text-muted-foreground truncate">
+                                    Actual: {field.value}
+                                  </p>
+                                )}
+                                <Input
+                                  type="file"
+                                  accept="audio/mpeg,audio/mp3,.mp3"
+                                  onChange={(e) => handleFileUpload(e, "musicUrl")}
+                                  className="cursor-pointer"
+                                  data-testid="input-music-file"
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                    {weddingForm.watch("musicType") === "youtube" && (
+                      <FormField
+                        control={weddingForm.control}
+                        name="musicUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>URL de YouTube</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="https://www.youtube.com/watch?v=..."
+                                {...field}
+                                data-testid="input-music-youtube"
+                              />
+                            </FormControl>
+                            <p className="text-xs text-muted-foreground">
+                              La música sonará en bucle. Los invitados podrán silenciarla con el botón flotante.
+                            </p>
                             <FormMessage />
                           </FormItem>
                         )}

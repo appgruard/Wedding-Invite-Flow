@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, lazy, Suspense } from "react";
+import { MusicPlayer } from "@/components/music-player";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -469,6 +470,11 @@ function ClassicTemplate({ invData, invitationId }: { invData: InvitationWithWed
           <p className="font-serif mt-4 italic text-sm" style={{ color: colors.accent }}>Con amor, los esperamos</p>
         </motion.footer>
       </div>
+      <MusicPlayer
+        musicUrl={wedding?.musicUrl}
+        musicType={wedding?.musicType ?? "none"}
+        started={contentVisible}
+      />
     </div>
   );
 }
