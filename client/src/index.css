@@ -308,6 +308,7 @@
   top: -10%;
   height: 120vh;
   display: flex;
+  background: var(--rn-dark);
   transition: transform 2s cubic-bezier(0.77, 0, 0.18, 1);
 }
 
