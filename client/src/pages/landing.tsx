@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { SiTiktok, SiWhatsapp } from "react-icons/si";
-import { Play, Sparkles, Heart, Crown, Monitor } from "lucide-react";
+import { Play, Sparkles, Heart, Crown, Monitor, Palette, Pencil, ImageIcon, Music } from "lucide-react";
 
 const WHATSAPP_NUMBER = "8293519324";
 const TIKTOK_HANDLE = "cartas.eventos";
@@ -8,8 +8,8 @@ const TIKTOK_HANDLE = "cartas.eventos";
 const templates = [
   {
     id: "clasico",
-    name: "Clásico",
-    description: "Elegancia atemporal con cortinas doradas y tipografía serif refinada.",
+    name: "Clásico Elegante",
+    description: "Cortinas doradas con apertura cinematográfica, tipografía serif refinada y paletas de color personalizables.",
     icon: <Crown className="w-7 h-7" />,
     previewPath: "/invitation?preview=clasico",
     bg: "from-[#1B2A4A] to-[#2D3F6B]",
@@ -39,7 +39,7 @@ const templates = [
   {
     id: "netflix",
     name: "Netflix",
-    description: "Intro cinematográfico estilo Netflix con la icónica animación de la N.",
+    description: "Intro cinematográfica con la animación de la letra N, estética de serie premium y confirmación de asistencia en pantalla.",
     icon: <Play className="w-7 h-7" />,
     previewPath: "/invitation?preview=netflix",
     bg: "from-[#1a0000] to-[#141414]",
@@ -70,8 +70,8 @@ const templates = [
   },
   {
     id: "nineties",
-    name: "90s",
-    description: "Intro de salvapantallas retro con tostadoras voladoras estilo Windows 95.",
+    name: "Años 90",
+    description: "Salvapantallas retro con tostadoras voladoras estilo Windows 95, soporte de video con efecto glitch de TV antigua.",
     icon: <Monitor className="w-7 h-7" />,
     previewPath: "/invitation?preview=nineties",
     bg: "from-[#000060] to-[#008080]",
@@ -103,11 +103,19 @@ const templates = [
   },
 ];
 
+const personalizations = [
+  { icon: <Pencil className="w-5 h-5" />, title: "Nombres y mensajes", desc: "Tu historia, tus palabras. Personaliza cada texto de la invitación." },
+  { icon: <ImageIcon className="w-5 h-5" />, title: "Foto de pareja", desc: "Sube su foto favorita y aparecerá en la invitación de forma destacada." },
+  { icon: <Palette className="w-5 h-5" />, title: "Colores y estilos", desc: "Elige entre múltiples paletas de colores o solicita una totalmente a tu gusto." },
+  { icon: <Music className="w-5 h-5" />, title: "Video introductorio", desc: "Agrega un video de YouTube o sube tu propio MP4 como intro antes de la invitación." },
+];
+
 export default function LandingPage() {
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola!%20Quiero%20una%20invitaci%C3%B3n%20digital%20para%20mi%20boda`;
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola!%20Quiero%20una%20invitaci%C3%B3n%20digital%20personalizada%20para%20mi%20boda`;
 
   return (
     <div className="min-h-screen bg-[#080D1A] text-white">
+      {/* Header */}
       <header className="sticky top-0 z-50 bg-[#080D1A]/90 backdrop-blur-md border-b border-white/5">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -119,9 +127,7 @@ export default function LandingPage() {
                 <path d="M32 26L23 19" stroke="#C9A96E" strokeWidth="1.2" strokeLinecap="round" opacity="0.6"/>
               </svg>
             </div>
-            <div>
-              <span className="font-semibold text-white text-sm">Cartas y Eventos</span>
-            </div>
+            <span className="font-semibold text-white text-sm">Cartas y Eventos</span>
           </div>
           <nav className="flex items-center gap-3">
             <a
@@ -138,6 +144,7 @@ export default function LandingPage() {
         </div>
       </header>
 
+      {/* Hero */}
       <section className="relative overflow-hidden pt-20 pb-24 px-4">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#C9A96E]/5 rounded-full blur-3xl" />
@@ -146,7 +153,7 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto text-center relative">
           <div className="inline-flex items-center gap-2 bg-[#C9A96E]/10 border border-[#C9A96E]/20 rounded-full px-4 py-1.5 text-[#C9A96E] text-sm mb-6">
             <Sparkles className="w-3.5 h-3.5" />
-            Invitaciones digitales únicas
+            100% personalizadas al gusto de cada pareja
           </div>
           <h1
             className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-5"
@@ -156,9 +163,12 @@ export default function LandingPage() {
             <span className="text-[#C9A96E]">una experiencia</span>
             <br />que nunca olvidarán
           </h1>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
-            Invitaciones digitales con animaciones únicas, seguimiento de confirmaciones y tres estilos
-            exclusivos para el día más especial de tu vida.
+          <p className="text-white/60 text-lg max-w-2xl mx-auto mb-3 leading-relaxed">
+            Invitaciones digitales únicas con animaciones exclusivas, seguimiento de confirmaciones en tiempo real
+            y personalización completa — desde los colores hasta el video introductorio.
+          </p>
+          <p className="text-[#C9A96E]/80 text-base max-w-xl mx-auto mb-8 font-medium">
+            Cada invitación es diseñada a medida para reflejar el estilo único de su pareja.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
@@ -185,14 +195,44 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Personalization highlight */}
+      <section className="py-14 px-4 border-y border-white/5 bg-white/[0.02]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+              Hecha <span className="text-[#C9A96E]">exactamente</span> como la sueñas
+            </h2>
+            <p className="text-white/50 text-base max-w-xl mx-auto">
+              No usamos plantillas genéricas. Cada invitación se configura y diseña especialmente para ti.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {personalizations.map((item, i) => (
+              <div
+                key={i}
+                className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-[#C9A96E]/30 transition-colors"
+                data-testid={`card-personalization-${i}`}
+              >
+                <div className="w-10 h-10 rounded-xl bg-[#C9A96E]/10 border border-[#C9A96E]/20 flex items-center justify-center text-[#C9A96E] mb-3">
+                  {item.icon}
+                </div>
+                <h3 className="font-semibold text-white mb-1 text-sm">{item.title}</h3>
+                <p className="text-white/45 text-xs leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Templates */}
       <section className="py-16 px-4" id="plantillas">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3" data-testid="text-templates-title">
-              Elige tu <span className="text-[#C9A96E]">estilo</span>
+              Elige tu <span className="text-[#C9A96E]">estilo base</span>
             </h2>
             <p className="text-white/50 text-base max-w-xl mx-auto">
-              Tres experiencias distintas para sorprender a tus invitados desde el primer momento.
+              Tres experiencias distintas — todas 100% personalizables en colores, contenido, fotos y video.
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
@@ -225,20 +265,36 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+          <p className="text-center text-white/30 text-sm mt-6">
+            ¿Tienes otro estilo en mente? Escríbenos — trabajamos invitaciones completamente a medida.
+          </p>
         </div>
       </section>
 
-      <section className="py-16 px-4">
+      {/* How it works */}
+      <section className="py-16 px-4 border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold mb-3">¿Cómo <span className="text-[#C9A96E]">funciona</span>?</h2>
-            <p className="text-white/50 text-base max-w-xl mx-auto">Sencillo, rápido y totalmente personalizado.</p>
+            <p className="text-white/50 text-base max-w-xl mx-auto">Sencillo, rápido y totalmente a tu gusto.</p>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
             {[
-              { step: "01", title: "Escríbenos", desc: "Contáctanos por WhatsApp o TikTok con los datos de tu boda." },
-              { step: "02", title: "Personalizamos", desc: "Elegimos el estilo juntos y configuramos tu invitación con toda la información." },
-              { step: "03", title: "Comparte", desc: "Recibes un enlace único por invitado para compartir por cualquier red social." },
+              {
+                step: "01",
+                title: "Cuéntanos tu idea",
+                desc: "Escríbenos por WhatsApp o TikTok con los datos de tu boda y cómo te imaginas la invitación.",
+              },
+              {
+                step: "02",
+                title: "Diseñamos juntos",
+                desc: "Elegimos el estilo, los colores, el video y todos los detalles hasta que quede perfecta para ti.",
+              },
+              {
+                step: "03",
+                title: "Comparte con tus invitados",
+                desc: "Cada invitado recibe un enlace único con su nombre y asientos. Tú ves las confirmaciones en tiempo real.",
+              },
             ].map((item) => (
               <div key={item.step} className="relative p-6 rounded-2xl bg-white/[0.03] border border-white/10" data-testid={`card-step-${item.step}`}>
                 <div className="text-5xl font-black text-[#C9A96E]/15 mb-3">{item.step}</div>
@@ -250,13 +306,18 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* CTA */}
       <section className="py-16 px-4">
         <div className="max-w-3xl mx-auto">
           <div className="rounded-3xl bg-gradient-to-br from-[#1B2A4A] to-[#0D1B38] border border-[#C9A96E]/20 p-8 md:p-12 text-center">
             <Heart className="w-10 h-10 text-[#C9A96E] mx-auto mb-4" />
-            <h2 className="text-3xl font-bold mb-3">¿Lista para tu invitación?</h2>
-            <p className="text-white/60 mb-7 max-w-lg mx-auto">
-              Contáctanos hoy y haremos que tus invitados vivan una experiencia única antes de llegar a tu boda.
+            <h2 className="text-3xl font-bold mb-3">¿Lista tu invitación soñada?</h2>
+            <p className="text-white/60 mb-3 max-w-lg mx-auto">
+              Cuéntanos cómo la imaginas y la hacemos realidad.
+              Sin plantillas genéricas — solo tu historia, a tu manera.
+            </p>
+            <p className="text-[#C9A96E]/70 text-sm mb-7">
+              Disponible 7 días a la semana · Respuesta en menos de 24 horas
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a
@@ -284,13 +345,14 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Footer */}
       <footer className="border-t border-white/5 py-8 px-4">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-white/30 text-sm">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 rounded bg-[#1B2A4A] border border-[#C9A96E]/30 flex items-center justify-center">
               <Heart className="w-2.5 h-2.5 text-[#C9A96E]" />
             </div>
-            <span>Cartas y Eventos</span>
+            <span>Cartas y Eventos — Invitaciones 100% personalizadas</span>
           </div>
           <div className="flex items-center gap-4">
             <a
