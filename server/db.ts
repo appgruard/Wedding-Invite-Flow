@@ -1,9 +1,19 @@
-import { Pool } from "pg";
-import { drizzle } from "drizzle-orm/node-postgres";
+import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/better-sqlite3";
 import * as schema from "@shared/schema";
+import path from "path";
+import fs from "fs";
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const dbPath = process.env.DB_PATH || path.resolve("data/db.sqlite");
 
-export const db = drizzle(pool, { schema });
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+
+const sqlite = new Database(dbPath);
+
+sqlite.pragma("journal_mode = WAL");
+sqlite.pragma("foreign_keys = ON");
+
+export const db = drizzle(sqlite, { schema });

@@ -180,11 +180,6 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm mb-6 border" style={{ background: `${GOLD}10`, borderColor: `${GOLD}25`, color: GOLD }}>
-            <Sparkles className="w-3.5 h-3.5" />
-            100% personalizadas al gusto de cada pareja
-          </div>
-
           <h1
             className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-5"
             data-testid="text-hero-title"

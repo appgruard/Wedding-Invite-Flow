@@ -44,8 +44,25 @@ A multi-wedding invitation management system with animated invitation pages (3 t
 
 ## Tech Stack
 - Frontend: React, TanStack Query, Framer Motion, Shadcn UI, Tailwind CSS, wouter
-- Backend: Express, Drizzle ORM, PostgreSQL, express-session, multer (file uploads)
+- Backend: Express, Drizzle ORM, **SQLite (better-sqlite3)**, express-session, multer (file uploads)
 - Extras: jspdf + jspdf-autotable (PDF), qrcode (QR generation)
+
+## Database (SQLite)
+- No external DB dependency — SQLite file at `data/db.sqlite` (development) or `/data/db.sqlite` (production)
+- WAL mode enabled for concurrent reads
+- Path controlled by `DB_PATH` env var
+- Uploads path controlled by `UPLOADS_DIR` env var (default: `public/uploads`)
+
+## CapRover Deployment
+- **`Dockerfile`** — multi-stage build: builds Vite frontend + bundles server, then installs production deps
+- **`captain-definition`** — `{ "schemaVersion": 2, "dockerfilePath": "./Dockerfile" }`
+- **Persistent volume**: Mount `/data` in CapRover to persist DB + uploads between deployments
+- **Environment variables to set in CapRover**:
+  - `ADMIN_PASSWORD` — admin panel password
+  - `SESSION_SECRET` — session secret (any random string)
+  - `DB_PATH=/data/db.sqlite` — SQLite file location
+  - `UPLOADS_DIR=/data/uploads` — uploaded files location
+  - `PORT=80` — already set in Dockerfile
 
 ## API Routes
 - `POST /api/auth/login` - Login (body: { password })

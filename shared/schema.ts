@@ -1,10 +1,9 @@
-import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, timestamp } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const weddings = pgTable("weddings", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+export const weddings = sqliteTable("weddings", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   coupleName: text("couple_name").notNull().default("Ana María & Carlos Eduardo"),
   weddingDate: text("wedding_date").notNull().default("15 de marzo de 2026"),
   venueName: text("venue_name").default("Salón Gran Fiesta"),
@@ -25,7 +24,7 @@ export const weddings = pgTable("weddings", {
   videoUrl: text("video_url").default(""),
   videoType: text("video_type").notNull().default("none"),
   introDuration: integer("intro_duration").notNull().default(4000),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
 });
 
 export const insertWeddingSchema = createInsertSchema(weddings).omit({
@@ -36,15 +35,15 @@ export const insertWeddingSchema = createInsertSchema(weddings).omit({
 export type InsertWedding = z.infer<typeof insertWeddingSchema>;
 export type Wedding = typeof weddings.$inferSelect;
 
-export const invitations = pgTable("invitations", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  weddingId: varchar("wedding_id").references(() => weddings.id, { onDelete: "cascade" }),
+export const invitations = sqliteTable("invitations", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  weddingId: text("wedding_id").references(() => weddings.id, { onDelete: "cascade" }),
   guestName: text("guest_name").notNull(),
   seats: integer("seats").notNull().default(2),
   confirmedSeats: integer("confirmed_seats").default(0),
   status: text("status").notNull().default("pending"),
   qrCode: text("qr_code"),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
 });
 
 export const insertInvitationSchema = createInsertSchema(invitations).omit({
@@ -56,8 +55,8 @@ export const insertInvitationSchema = createInsertSchema(invitations).omit({
 export type InsertInvitation = z.infer<typeof insertInvitationSchema>;
 export type Invitation = typeof invitations.$inferSelect;
 
-export const settings = pgTable("settings", {
-  id: varchar("id").primaryKey().default("main"),
+export const settings = sqliteTable("settings", {
+  id: text("id").primaryKey().default("main"),
   activeStyle: text("active_style").notNull().default("clasico"),
 });
 

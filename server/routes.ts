@@ -12,7 +12,7 @@ import MemoryStore from "memorystore";
 
 const SessionStore = MemoryStore(session);
 
-const uploadsDir = path.resolve("public/uploads");
+const uploadsDir = process.env.UPLOADS_DIR || path.resolve("public/uploads");
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
 const upload = multer({
