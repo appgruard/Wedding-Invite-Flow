@@ -299,7 +299,7 @@
   inset: 0;
   z-index: 50;
   overflow: hidden;
-  background: var(--rn-dark, #7a0000);
+  background: transparent;
 }
 
 .rn-inner {
@@ -310,13 +310,11 @@
   bottom: 0;
   left: 0;
   display: flex;
-  transform-style: preserve-3d;
-  transition: transform 1.2s ease;
-  transform-origin: -120% top;
+  transition: transform 2s cubic-bezier(0.77, 0, 0.18, 1);
 }
 
 .rn-inner.rn-open {
-  transform: rotate(-90deg);
+  transform: translateX(110%);
 }
 
 .rn-unit {
@@ -325,25 +323,25 @@
   flex-shrink: 0;
   background: repeating-linear-gradient(
     to left,
-    var(--rn-accent, #c00) 40%,
-    var(--rn-dark, #7a0000) 80%,
-    var(--rn-light, #e55) 100%
+    var(--rn-accent) 40%,
+    var(--rn-dark) 80%,
+    var(--rn-light) 100%
   );
   transform-origin: 0 0%;
   transform: rotate(3deg);
-  animation: rnUnit 2s ease infinite;
+  animation: rnUnit 3.5s ease infinite;
 }
 
 .rn-unit:nth-child(1)  { animation-delay: -0.1s; }
-.rn-unit:nth-child(2)  { animation-delay: -0.2s; }
-.rn-unit:nth-child(3)  { animation-delay: -0.3s; }
-.rn-unit:nth-child(4)  { animation-delay: -0.4s; }
-.rn-unit:nth-child(5)  { animation-delay: -0.5s; }
-.rn-unit:nth-child(6)  { animation-delay: -0.6s; }
-.rn-unit:nth-child(7)  { animation-delay: -0.7s; }
-.rn-unit:nth-child(8)  { animation-delay: -0.8s; }
-.rn-unit:nth-child(9)  { animation-delay: -0.9s; }
-.rn-unit:nth-child(10) { animation-delay: -1.0s; }
+.rn-unit:nth-child(2)  { animation-delay: -0.35s; }
+.rn-unit:nth-child(3)  { animation-delay: -0.7s; }
+.rn-unit:nth-child(4)  { animation-delay: -1.05s; }
+.rn-unit:nth-child(5)  { animation-delay: -1.4s; }
+.rn-unit:nth-child(6)  { animation-delay: -1.75s; }
+.rn-unit:nth-child(7)  { animation-delay: -2.1s; }
+.rn-unit:nth-child(8)  { animation-delay: -2.45s; }
+.rn-unit:nth-child(9)  { animation-delay: -2.8s; }
+.rn-unit:nth-child(10) { animation-delay: -3.15s; }
 
 @keyframes rnUnit {
   50% { transform: rotate(-3deg); }
@@ -356,7 +354,7 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.5s ease;
 }
 
 .rn-center-text.rn-text-hide {

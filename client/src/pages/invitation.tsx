@@ -305,8 +305,8 @@ export default function InvitationPage() {
 
   useEffect(() => {
     const timer1 = setTimeout(() => setCurtainsOpen(true), 2000);
-    const timer2 = setTimeout(() => setContentVisible(true), 3200);
-    const timer3 = setTimeout(() => setCurtainsMounted(false), 3600);
+    const timer2 = setTimeout(() => setContentVisible(true), 4200);
+    const timer3 = setTimeout(() => setCurtainsMounted(false), 4600);
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
