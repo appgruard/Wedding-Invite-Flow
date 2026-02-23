@@ -220,10 +220,11 @@ export default function NinetiesInvitationPage() {
   const invitationId = params.get("id");
   const previewTemplate = params.get("preview");
 
-  const { data, isLoading } = useQuery<InvitationWithWedding>({
+  const { data, isLoading, isError } = useQuery<InvitationWithWedding>({
     queryKey: previewTemplate ? ["/api/demo", previewTemplate] : ["/api/invitations", invitationId],
     queryFn: previewTemplate ? async () => { const r = await fetch(`/api/demo/${previewTemplate}`); return r.json(); } : undefined,
     enabled: previewTemplate ? true : !!invitationId,
+    retry: 2,
   });
 
   const wedding = data?.wedding;
@@ -258,8 +259,11 @@ export default function NinetiesInvitationPage() {
 
   const vhsStamp = `${clock.toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "2-digit" })} ${clock.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}`;
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return <div style={{ minHeight: "100vh", background: "#1A1005", display: "flex", alignItems: "center", justifyContent: "center", color: "#C4730A", fontFamily: "'Playfair Display', serif", fontSize: 18, letterSpacing: "0.3em", fontStyle: "italic" }}>Transmitiendo...</div>;
+  }
+  if (isError || !data) {
+    return <div style={{ minHeight: "100vh", background: "#1A1005", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}><p style={{ color: "#C4730A80", fontFamily: "monospace", letterSpacing: "0.2em", fontSize: 14 }}>Error al cargar la invitación.</p><button onClick={() => window.location.reload()} style={{ padding: "8px 20px", background: "#C4730A", color: "#1A1005", border: "none", cursor: "pointer", fontFamily: "monospace", letterSpacing: "0.2em", fontSize: 12 }}>REINTENTAR</button></div>;
   }
 
   return (

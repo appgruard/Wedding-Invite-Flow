@@ -483,7 +483,7 @@ export default function InvitationPage() {
   const invitationId = getInvitationId();
   const previewTemplate = getPreviewTemplate();
 
-  const { data: invData, isLoading } = useQuery<InvitationWithWedding>({
+  const { data: invData, isLoading, isError } = useQuery<InvitationWithWedding>({
     queryKey: previewTemplate
       ? ["/api/demo", previewTemplate]
       : ["/api/invitations", invitationId],
@@ -494,14 +494,30 @@ export default function InvitationPage() {
         }
       : undefined,
     enabled: previewTemplate ? true : !!invitationId,
+    retry: 2,
   });
 
   const template = invData?.wedding?.template ?? previewTemplate ?? "clasico";
 
-  if (isLoading || (invitationId && !invData)) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#FDF8F0]">
         <div className="w-10 h-10 border-4 border-[#C9A96E] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (isError && invitationId) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#FDF8F0] gap-4 px-4 text-center">
+        <p className="text-[#6B5435] font-serif text-lg">No se pudo cargar la invitación.</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-6 py-2 rounded-full text-white text-sm font-medium"
+          style={{ background: "#C9A96E" }}
+        >
+          Reintentar
+        </button>
       </div>
     );
   }

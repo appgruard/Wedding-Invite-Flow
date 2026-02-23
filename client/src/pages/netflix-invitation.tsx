@@ -206,17 +206,18 @@ export default function NetflixInvitationPage() {
   const previewTemplate = getPreviewTemplate();
   const { toast } = useToast();
 
-  const { data: invitation, isLoading } = useQuery<InvitationWithWedding>({
+  const { data: invitation, isLoading, isError } = useQuery<InvitationWithWedding>({
     queryKey: previewTemplate ? ["/api/demo", previewTemplate] : ["/api/invitations", invitationId],
     queryFn: previewTemplate
       ? async () => { const r = await fetch(`/api/demo/${previewTemplate}`); return r.json(); }
       : undefined,
     enabled: previewTemplate ? true : !!invitationId,
+    retry: 2,
   });
 
   useEffect(() => {
     if (invitation) {
-      const t = setTimeout(() => setShowIntro(false), invitation.wedding.introDuration || 4000);
+      const t = setTimeout(() => setShowIntro(false), invitation.wedding?.introDuration || 4000);
       return () => clearTimeout(t);
     }
   }, [invitation]);
@@ -241,7 +242,8 @@ export default function NetflixInvitationPage() {
     return Array.from({ length: invitation.seats }, (_, i) => i + 1);
   }, [invitation?.seats]);
 
-  if (isLoading || !invitation) return <div className="min-h-screen bg-black" />;
+  if (isLoading) return <div className="min-h-screen bg-black flex items-center justify-center"><div className="w-10 h-10 border-4 border-[#E50914] border-t-transparent rounded-full animate-spin" /></div>;
+  if (isError || !invitation) return <div className="min-h-screen bg-black flex flex-col items-center justify-center gap-4"><p className="text-white/60 font-sans">No se pudo cargar la invitación.</p><button onClick={() => window.location.reload()} className="px-6 py-2 rounded text-white text-sm" style={{ background: "#E50914" }}>Reintentar</button></div>;
 
   const { wedding } = invitation;
 
