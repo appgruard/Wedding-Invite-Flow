@@ -57,45 +57,24 @@ function VCRCanvas() {
     draw();
     return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
   }, []);
-  return (
-    <canvas ref={ref} style={{
-      mixBlendMode: "screen", position: "absolute",
-      left: 0, top: 0, zIndex: 9,
-      width: "100%", height: "100%", pointerEvents: "none",
-    }} />
-  );
+  return <canvas ref={ref} style={{ mixBlendMode: "screen", position: "absolute", left: 0, top: 0, zIndex: 9, width: "100%", height: "100%", pointerEvents: "none" }} />;
 }
 
-/* ─── Flying Toasters (dentro de la TV) ─────────────────────────────────── */
-const TOASTERS_DATA = Array.from({ length: 9 }, (_, i) => ({
-  id: i, top: 5 + (i * 11) % 90, right: -5 - (i * 17) % 40,
-  dur: 5 + (i * 0.7), delay: i * 0.6,
-}));
-const TOASTS_DATA = Array.from({ length: 4 }, (_, i) => ({
-  id: i + 100, top: 15 + (i * 23) % 65, right: -15 - (i * 13) % 30,
-  dur: 4 + (i * 0.9), delay: i * 1.2 + 0.3,
-}));
+/* ─── Flying Toasters ────────────────────────────────────────────────────── */
+const T_DATA = Array.from({ length: 9 }, (_, i) => ({ id: i, top: 5 + (i * 11) % 90, right: -5 - (i * 17) % 40, dur: 5 + i * 0.7, delay: i * 0.6 }));
+const TOAST_DATA = Array.from({ length: 4 }, (_, i) => ({ id: i + 100, top: 15 + (i * 23) % 65, right: -15 - (i * 13) % 30, dur: 4 + i * 0.9, delay: i * 1.2 + 0.3 }));
+
 function FlyingToasters({ coupleName }: { coupleName: string }) {
   return (
     <div style={{ position: "relative", width: "100%", height: "100%", background: "#000", overflow: "hidden" }}>
-      {TOASTERS_DATA.map((t) => (
-        <div key={t.id} style={{
-          position: "absolute", top: `${t.top}%`, right: `${t.right}%`,
-          animation: `tv90-fly ${t.dur}s ${t.delay}s linear infinite`,
-          display: "flex", alignItems: "center",
-        }}>
-          <div style={{ marginRight: -8, zIndex: 1, animation: "tv90-flapL 0.25s ease-in-out infinite", transformOrigin: "right center" }}>
-            <svg viewBox="0 0 40 28" width="36" height="25">
-              <ellipse cx="20" cy="14" rx="20" ry="10" fill="#C8C8C8" stroke="#999" strokeWidth="1"/>
-              <ellipse cx="20" cy="14" rx="14" ry="7" fill="#E0E0E0"/>
-            </svg>
+      {T_DATA.map((t) => (
+        <div key={t.id} style={{ position: "absolute", top: `${t.top}%`, right: `${t.right}%`, animation: `v90-fly ${t.dur}s ${t.delay}s linear infinite`, display: "flex", alignItems: "center" }}>
+          <div style={{ marginRight: -8, zIndex: 1, animation: "v90-flapL 0.25s ease-in-out infinite", transformOrigin: "right center" }}>
+            <svg viewBox="0 0 40 28" width="36" height="25"><ellipse cx="20" cy="14" rx="20" ry="10" fill="#B8B8B8" stroke="#888" strokeWidth="1"/><ellipse cx="20" cy="14" rx="14" ry="7" fill="#D0D0D0"/></svg>
           </div>
           <svg viewBox="0 0 64 50" width="56" height="44">
             <rect x="2" y="8" width="60" height="40" rx="6" fill="#BEBEBE" stroke="#707070" strokeWidth="2"/>
-            <defs><linearGradient id={`tg${t.id}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#FFF" stopOpacity="0.4"/>
-              <stop offset="100%" stopColor="#000" stopOpacity="0.1"/>
-            </linearGradient></defs>
+            <defs><linearGradient id={`tg${t.id}`} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#FFF" stopOpacity="0.4"/><stop offset="100%" stopColor="#000" stopOpacity="0.1"/></linearGradient></defs>
             <rect x="2" y="8" width="60" height="40" rx="6" fill={`url(#tg${t.id})`}/>
             <rect x="14" y="2" width="12" height="14" rx="2" fill="#707070" stroke="#505050" strokeWidth="1"/>
             <rect x="38" y="2" width="12" height="14" rx="2" fill="#707070" stroke="#505050" strokeWidth="1"/>
@@ -103,105 +82,128 @@ function FlyingToasters({ coupleName }: { coupleName: string }) {
             <circle cx="10" cy="38" r="4" fill="#C8A800" stroke="#907800" strokeWidth="1"/>
             <circle cx="10" cy="38" r="2" fill="#FFD700"/>
           </svg>
-          <div style={{ marginLeft: -8, zIndex: 1, animation: "tv90-flapR 0.25s ease-in-out infinite", transformOrigin: "left center" }}>
-            <svg viewBox="0 0 40 28" width="36" height="25">
-              <ellipse cx="20" cy="14" rx="20" ry="10" fill="#C8C8C8" stroke="#999" strokeWidth="1"/>
-              <ellipse cx="20" cy="14" rx="14" ry="7" fill="#E0E0E0"/>
-            </svg>
+          <div style={{ marginLeft: -8, zIndex: 1, animation: "v90-flapR 0.25s ease-in-out infinite", transformOrigin: "left center" }}>
+            <svg viewBox="0 0 40 28" width="36" height="25"><ellipse cx="20" cy="14" rx="20" ry="10" fill="#B8B8B8" stroke="#888" strokeWidth="1"/><ellipse cx="20" cy="14" rx="14" ry="7" fill="#D0D0D0"/></svg>
           </div>
         </div>
       ))}
-      {TOASTS_DATA.map((t) => (
-        <div key={t.id} style={{
-          position: "absolute", top: `${t.top}%`, right: `${t.right}%`,
-          animation: `tv90-fly ${t.dur}s ${t.delay}s linear infinite`,
-        }}>
-          <svg viewBox="0 0 30 30" width="24" height="24">
-            <rect x="2" y="2" width="26" height="26" rx="2" fill="#D4A843" stroke="#8B5A1A" strokeWidth="1.5"/>
-            <rect x="5" y="5" width="20" height="3" rx="1" fill="#B8863A" opacity="0.7"/>
-            <rect x="5" y="10" width="14" height="3" rx="1" fill="#B8863A" opacity="0.4"/>
-          </svg>
+      {TOAST_DATA.map((t) => (
+        <div key={t.id} style={{ position: "absolute", top: `${t.top}%`, right: `${t.right}%`, animation: `v90-fly ${t.dur}s ${t.delay}s linear infinite` }}>
+          <svg viewBox="0 0 30 30" width="24" height="24"><rect x="2" y="2" width="26" height="26" rx="2" fill="#D4A843" stroke="#8B5A1A" strokeWidth="1.5"/><rect x="5" y="5" width="20" height="3" rx="1" fill="#B8863A" opacity="0.7"/><rect x="5" y="10" width="14" height="3" rx="1" fill="#B8863A" opacity="0.4"/></svg>
         </div>
       ))}
-      <div style={{
-        position: "absolute", inset: 0, display: "flex", flexDirection: "column",
-        alignItems: "center", justifyContent: "center",
-        color: "white", textAlign: "center", pointerEvents: "none", fontFamily: "serif",
-      }}>
-        <p style={{ fontSize: "clamp(13px,2vw,20px)", fontWeight: "bold", textShadow: "0 0 20px #D4A843, 0 0 40px #D4A843", marginBottom: 8, fontStyle: "italic" }}>
-          {coupleName}
-        </p>
-        <p style={{ fontSize: "clamp(9px,1.2vw,13px)", opacity: 0.6, letterSpacing: "0.15em" }}>CARGANDO TRANSMISIÓN...</p>
+      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "white", textAlign: "center", pointerEvents: "none" }}>
+        <p style={{ fontSize: "clamp(14px,2vw,20px)", fontStyle: "italic", textShadow: "0 0 20px #D4A843, 0 0 40px #D4A843", marginBottom: 8, fontFamily: "'Playfair Display', serif" }}>{coupleName}</p>
+        <p style={{ fontSize: "clamp(9px,1.2vw,13px)", opacity: 0.55, letterSpacing: "0.2em", fontFamily: "monospace" }}>CARGANDO TRANSMISIÓN...</p>
       </div>
     </div>
   );
 }
 
-/* ─── TV Intro wrapper ───────────────────────────────────────────────────── */
+/* ─── TV Intro ───────────────────────────────────────────────────────────── */
 function TV90Intro({ wedding }: { wedding: Wedding }) {
   const videoId = wedding.videoType === "youtube" && wedding.videoUrl
-    ? (wedding.videoUrl.includes("youtu.be/")
-      ? wedding.videoUrl.split("youtu.be/")[1]?.split("?")[0]
-      : wedding.videoUrl.split("v=")[1]?.split("&")[0])
+    ? (wedding.videoUrl.includes("youtu.be/") ? wedding.videoUrl.split("youtu.be/")[1]?.split("?")[0] : wedding.videoUrl.split("v=")[1]?.split("&")[0])
     : null;
-
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-      <div style={{ position: "absolute", width: "90vw", height: "50vw", maxWidth: "100%", maxHeight: "100vh", backgroundImage: "url(https://alexandrevacassin.fr/codepen/old-tv/base.webp)", zIndex: 10, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", width: "90vw", height: "50vw", maxWidth: "100%", maxHeight: "100vh", backgroundImage: "url(https://alexandrevacassin.fr/codepen/old-tv/base.webp)", zIndex: 10, backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
       <div style={{ position: "absolute", marginBottom: "3vw", width: "60vw", marginRight: "10vw", height: "45vw", maxWidth: "100%", maxHeight: "70vh", zIndex: 1, display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
         <VCRCanvas />
         {videoId ? (
-          <iframe title="wedding-video" style={{ width: "100%", height: "100%", border: "none", filter: "contrast(1.2) brightness(1.1)" }}
-            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&loop=1&mute=1`}
-            allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
+          <iframe title="tv" style={{ width: "100%", height: "100%", border: "none", filter: "contrast(1.2) brightness(1.1)" }}
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&loop=1&mute=1`} allow="autoplay; encrypted-media" allowFullScreen />
         ) : wedding.videoType === "mp4" && wedding.videoUrl ? (
           <video style={{ width: "100%", height: "100%", filter: "contrast(1.2) brightness(1.1)" }} autoPlay muted playsInline loop>
             <source src={wedding.videoUrl} type="video/mp4" />
           </video>
-        ) : (
-          <FlyingToasters coupleName={wedding.coupleName} />
-        )}
-        <div style={{ pointerEvents: "none", position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "url('https://upload.wikimedia.org/wikipedia/commons/0/02/Television_static.gif')", mixBlendMode: "multiply" as const, opacity: 0.3, animation: "tv90-glitch 0.2s infinite linear", zIndex: 2 }} />
-        <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0.2) 1px, rgba(0,0,0,0) 2px)", pointerEvents: "none", zIndex: 2 }} />
+        ) : <FlyingToasters coupleName={wedding.coupleName} />}
+        <div style={{ pointerEvents: "none", position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "url('https://upload.wikimedia.org/wikipedia/commons/0/02/Television_static.gif')", mixBlendMode: "multiply" as const, opacity: 0.3, animation: "v90-glitch 0.2s infinite linear", zIndex: 2 }} />
+        <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "repeating-linear-gradient(to bottom, transparent 0px, rgba(0,0,0,0.2) 1px, transparent 2px)", pointerEvents: "none", zIndex: 2 }} />
       </div>
     </div>
   );
 }
 
-/* ─── Decorative components ──────────────────────────────────────────────── */
-function GoldDivider() {
+/* ─── Ornamental divider ─────────────────────────────────────────────────── */
+function OrnamentDivider({ symbol = "❧" }: { symbol?: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "24px 0", color: "#C9A84C" }}>
-      <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, #C9A84C)" }} />
-      <span style={{ fontSize: 18, letterSpacing: 4 }}>✦ ✦ ✦</span>
-      <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, #C9A84C)" }} />
+    <div style={{ display: "flex", alignItems: "center", gap: 0, margin: "28px auto", maxWidth: 480, color: "#C9A84C" }}>
+      <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, #C9A84C90)" }} />
+      <span style={{ padding: "0 16px", fontSize: 20, opacity: 0.8 }}>{symbol}</span>
+      <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, #C9A84C90)" }} />
     </div>
   );
 }
-function VintageCard({ title, icon, children }: { title: string; icon: string; children: React.ReactNode }) {
+
+/* ─── Ornate vintage card ────────────────────────────────────────────────── */
+function VCard({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{
-      border: "1px solid #C9A84C40",
-      background: "linear-gradient(135deg, #1A1000 0%, #0D0800 100%)",
-      borderRadius: 2,
-      overflow: "hidden",
-      marginBottom: 20,
-      boxShadow: "0 0 20px #C9A84C10, inset 0 0 40px rgba(0,0,0,0.5)",
+      position: "relative",
+      marginBottom: 24,
+      padding: "0 2px 2px",
     }}>
+      {/* Double border frame */}
       <div style={{
-        background: "linear-gradient(90deg, #1A0E00, #2D1A00, #1A0E00)",
-        borderBottom: "1px solid #C9A84C50",
-        padding: "10px 16px",
-        display: "flex", alignItems: "center", gap: 10,
+        border: "1px solid #C9A84C50",
+        boxShadow: "0 0 0 3px #050300, 0 0 0 4px #C9A84C25, 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 #C9A84C20",
+        background: "linear-gradient(180deg, #130900 0%, #0A0500 100%)",
+        overflow: "hidden",
       }}>
-        <span style={{ fontSize: 16 }}>{icon}</span>
-        <span style={{ color: "#C9A84C", fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", fontFamily: "serif", fontWeight: "bold" }}>{title}</span>
-        <div style={{ flex: 1 }} />
-        <span style={{ color: "#C9A84C50", fontSize: 10, fontFamily: "monospace" }}>◈</span>
+        {/* Header */}
+        <div style={{
+          borderBottom: "1px solid #C9A84C30",
+          background: "linear-gradient(90deg, #050300 0%, #1E1000 40%, #1E1000 60%, #050300 100%)",
+          padding: "9px 20px",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+        }}>
+          <span style={{ color: "#C9A84C60", fontSize: 9, letterSpacing: "0.1em" }}>⋄</span>
+          <span style={{ color: "#C9A84C", fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", fontFamily: "'Playfair Display', serif", fontWeight: "bold" }}>{label}</span>
+          <span style={{ color: "#C9A84C60", fontSize: 9, letterSpacing: "0.1em" }}>⋄</span>
+        </div>
+        {/* Content */}
+        <div style={{ padding: "20px 24px", color: "#DFC898" }}>
+          {children}
+        </div>
       </div>
-      <div style={{ padding: "16px 20px", color: "#E8D5A0" }}>
-        {children}
-      </div>
+    </div>
+  );
+}
+
+/* ─── Corner-framed hero box ─────────────────────────────────────────────── */
+function HeroFrame({ children }: { children: React.ReactNode }) {
+  const corner = { position: "absolute" as const, color: "#C9A84C", fontSize: 18, lineHeight: 1 };
+  return (
+    <div style={{ position: "relative", padding: "48px 32px", textAlign: "center", marginBottom: 32 }}>
+      <span style={{ ...corner, top: 8, left: 8 }}>┌</span>
+      <span style={{ ...corner, top: 8, right: 8 }}>┐</span>
+      <span style={{ ...corner, bottom: 8, left: 8 }}>└</span>
+      <span style={{ ...corner, bottom: 8, right: 8 }}>┘</span>
+      <div style={{ position: "absolute", top: 16, left: 16, right: 16, height: 1, background: "linear-gradient(90deg, transparent, #C9A84C50, transparent)" }} />
+      <div style={{ position: "absolute", bottom: 16, left: 16, right: 16, height: 1, background: "linear-gradient(90deg, transparent, #C9A84C50, transparent)" }} />
+      <div style={{ position: "absolute", top: 16, left: 16, bottom: 16, width: 1, background: "linear-gradient(180deg, transparent, #C9A84C50, transparent)" }} />
+      <div style={{ position: "absolute", top: 16, right: 16, bottom: 16, width: 1, background: "linear-gradient(180deg, transparent, #C9A84C50, transparent)" }} />
+      {children}
+    </div>
+  );
+}
+
+/* ─── Countdown digit ────────────────────────────────────────────────────── */
+function CountDigit({ val, label }: { val: number; label: string }) {
+  return (
+    <div style={{ textAlign: "center", padding: "0 8px" }}>
+      <div style={{
+        fontSize: "clamp(32px, 5vw, 48px)",
+        fontWeight: "bold",
+        color: "#C9A84C",
+        fontFamily: "'Playfair Display', serif",
+        lineHeight: 1,
+        textShadow: "0 0 20px #C9A84C80, 0 0 40px #C9A84C40",
+        minWidth: 56,
+        display: "inline-block",
+      }}>{String(val).padStart(2, "0")}</div>
+      <div style={{ fontSize: 9, letterSpacing: "0.3em", textTransform: "uppercase", color: "#C9A84C60", marginTop: 6 }}>{label}</div>
     </div>
   );
 }
@@ -227,17 +229,8 @@ export default function NinetiesInvitationPage() {
   const wedding = data?.wedding;
   const invitation = data;
 
-  useEffect(() => {
-    const t = setInterval(() => setClock(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
-
-  useEffect(() => {
-    if (wedding) {
-      const t = setTimeout(() => setShowIntro(false), wedding.introDuration || 6000);
-      return () => clearTimeout(t);
-    }
-  }, [wedding]);
+  useEffect(() => { const t = setInterval(() => setClock(new Date()), 1000); return () => clearInterval(t); }, []);
+  useEffect(() => { if (wedding) { const t = setTimeout(() => setShowIntro(false), wedding.introDuration || 6000); return () => clearTimeout(t); } }, [wedding]);
 
   const respondMutation = useMutation({
     mutationFn: async ({ status, confirmedSeats }: { status: string; confirmedSeats: number }) => {
@@ -249,15 +242,12 @@ export default function NinetiesInvitationPage() {
       setResponded(true);
       toast({ title: "Respuesta enviada", description: "¡Gracias por confirmar!" });
     },
-    onError: () => {
-      toast({ title: "Error", description: "No se pudo enviar tu respuesta.", variant: "destructive" });
-    },
+    onError: () => toast({ title: "Error", description: "No se pudo enviar tu respuesta.", variant: "destructive" }),
   });
 
   const countdown = useMemo(() => {
-    const now = Date.now();
     const target = wedding?.weddingDate ? new Date(wedding.weddingDate).getTime() : NaN;
-    const diff = isNaN(target) ? 0 : Math.max(0, target - now);
+    const diff = isNaN(target) ? 0 : Math.max(0, target - Date.now());
     return {
       days: isNaN(target) ? 12 : Math.floor(diff / 86400000),
       hours: isNaN(target) ? 5 : Math.floor((diff % 86400000) / 3600000),
@@ -266,304 +256,293 @@ export default function NinetiesInvitationPage() {
     };
   }, [wedding, clock]);
 
-  const vhsTime = clock.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
-  const vhsDate = clock.toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "2-digit" });
+  const vhsStamp = `${clock.toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "2-digit" })} ${clock.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}`;
 
   if (isLoading || !data) {
-    return <div style={{ minHeight: "100vh", background: "#080500", display: "flex", alignItems: "center", justifyContent: "center", color: "#C9A84C", fontFamily: "serif", fontSize: 18, letterSpacing: "0.2em" }}>TRANSMITIENDO...</div>;
+    return <div style={{ minHeight: "100vh", background: "#050300", display: "flex", alignItems: "center", justifyContent: "center", color: "#C9A84C", fontFamily: "'Playfair Display', serif", fontSize: 18, letterSpacing: "0.3em", fontStyle: "italic" }}>Transmitiendo...</div>;
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080500", color: "#E8D5A0", fontFamily: "'Playfair Display', 'Times New Roman', serif", position: "relative", overflowX: "hidden" }}>
+    <div style={{ minHeight: "100vh", background: "#050300", color: "#DFC898", fontFamily: "'Playfair Display', 'Times New Roman', serif", position: "relative", overflowX: "hidden" }}>
       <style>{`
-        @keyframes tv90-fly    { 0%{transform:translate(0,0);opacity:1}   100%{transform:translate(-140vw,120vh);opacity:.8} }
-        @keyframes tv90-flapL  { 0%,100%{transform:rotate(-30deg)} 50%{transform:rotate(10deg)} }
-        @keyframes tv90-flapR  { 0%,100%{transform:rotate(30deg)}  50%{transform:rotate(-10deg)} }
-        @keyframes tv90-glitch { 0%{transform:translateX(0)} 33%{transform:translateX(-5px)} 66%{transform:translateX(5px)} 100%{transform:translateX(0)} }
-        @keyframes tv90-scan   { 0%{top:-2px} 100%{top:100%} }
-        @keyframes tv90-flicker{ 0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:0.85} 94%{opacity:1} 97%{opacity:0.9} 98%{opacity:1} }
-        @keyframes tv90-glow   { 0%,100%{text-shadow:0 0 20px #C9A84C80,0 0 40px #C9A84C40} 50%{text-shadow:0 0 30px #C9A84Caa,0 0 60px #C9A84C60} }
-        @keyframes tv90-pulse  { 0%,100%{opacity:0.6} 50%{opacity:1} }
+        @keyframes v90-fly    { 0%{transform:translate(0,0)} 100%{transform:translate(-140vw,120vh)} }
+        @keyframes v90-flapL  { 0%,100%{transform:rotate(-30deg)} 50%{transform:rotate(10deg)} }
+        @keyframes v90-flapR  { 0%,100%{transform:rotate(30deg)}  50%{transform:rotate(-10deg)} }
+        @keyframes v90-glitch { 0%{transform:translateX(0)} 33%{transform:translateX(-5px)} 66%{transform:translateX(5px)} 100%{transform:translateX(0)} }
+        @keyframes v90-scan   { 0%{top:0} 100%{top:100%} }
+        @keyframes v90-flicker{ 0%,100%{opacity:1} 93%{opacity:0.88} 94%{opacity:1} 97%{opacity:0.93} 98%{opacity:1} }
+        @keyframes v90-glow   { 0%,100%{text-shadow:0 0 20px #C9A84C80,0 0 50px #C9A84C30} 50%{text-shadow:0 0 30px #C9A84CB0,0 0 70px #C9A84C50} }
+        @keyframes v90-pulse  { 0%,100%{opacity:0.5} 50%{opacity:1} }
+        @keyframes v90-fadein { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
-        .tv90-scanline {
-          position: fixed; left: 0; right: 0; height: 2px;
-          background: rgba(201,168,76,0.06);
-          pointer-events: none; z-index: 500;
-          animation: tv90-scan 5s linear infinite;
+        .v90-scanline {
+          position:fixed; left:0; right:0; height:120px;
+          background:linear-gradient(to bottom, transparent, rgba(201,168,76,0.025) 50%, transparent);
+          pointer-events:none; z-index:500;
+          animation:v90-scan 6s linear infinite;
         }
-        .tv90-overlay {
-          position: fixed; inset: 0; pointer-events: none; z-index: 499;
-          background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
+        .v90-crt {
+          position:fixed; inset:0; pointer-events:none; z-index:499;
+          background:repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px);
         }
-        .tv90-flicker { animation: tv90-flicker 8s ease-in-out infinite; }
-        .tv90-title-glow { animation: tv90-glow 3s ease-in-out infinite; }
-        .tv90-pulse { animation: tv90-pulse 2s ease-in-out infinite; }
+        .v90-vignette {
+          position:fixed; inset:0; pointer-events:none; z-index:498;
+          background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.75) 100%);
+        }
+        .v90-flicker { animation:v90-flicker 10s ease-in-out infinite; }
+        .v90-title   { animation:v90-glow 3.5s ease-in-out infinite; }
+        .v90-pulse   { animation:v90-pulse 2s ease-in-out infinite; }
+        .v90-fadein  { animation:v90-fadein 0.8s ease-out both; }
 
-        .tv90-input {
-          background: #1A0E00;
-          border: 1px solid #C9A84C60;
-          color: #E8D5A0;
-          padding: 8px 12px;
-          font-family: inherit;
-          font-size: 14px;
-          outline: none;
-          width: 100%;
+        .v90-btn {
+          display:inline-block;
+          background:transparent;
+          border:1px solid #C9A84C70;
+          color:#C9A84C;
+          padding:10px 28px;
+          font-family:'Playfair Display',serif;
+          font-size:12px;
+          letter-spacing:0.25em;
+          text-transform:uppercase;
+          cursor:pointer;
+          transition:all 0.3s;
+          position:relative;
         }
-        .tv90-input:focus { border-color: #C9A84C; box-shadow: 0 0 8px #C9A84C40; }
-        .tv90-select {
-          background: #1A0E00;
-          border: 1px solid #C9A84C60;
-          color: #E8D5A0;
-          padding: 8px 12px;
-          font-family: inherit;
-          font-size: 14px;
-          cursor: pointer;
+        .v90-btn:hover { background:#C9A84C15; box-shadow:0 0 16px #C9A84C30; border-color:#C9A84C; }
+        .v90-btn:disabled { opacity:0.35; cursor:not-allowed; }
+        .v90-btn-gold {
+          background:linear-gradient(135deg,#C9A84C,#A07828);
+          border:none; color:#050300; font-weight:bold;
         }
-        .tv90-btn {
-          background: linear-gradient(135deg, #2D1A00, #1A0E00);
-          border: 1px solid #C9A84C80;
-          color: #C9A84C;
-          padding: 10px 24px;
-          font-family: inherit;
-          font-size: 13px;
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          cursor: pointer;
-          transition: all 0.2s;
+        .v90-btn-gold:hover { background:linear-gradient(135deg,#DDB85C,#B08838); box-shadow:0 0 24px #C9A84C60; }
+        .v90-select {
+          background:#0A0500; border:1px solid #C9A84C50;
+          color:#DFC898; padding:8px 12px;
+          font-family:'Playfair Display',serif; font-size:14px;
+          cursor:pointer; outline:none;
         }
-        .tv90-btn:hover { background: linear-gradient(135deg, #3D2800, #2D1A00); box-shadow: 0 0 12px #C9A84C40; }
-        .tv90-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .tv90-btn-primary {
-          background: linear-gradient(135deg, #C9A84C, #A07828);
-          border: none; color: #0D0800;
-          font-weight: bold;
+        .v90-label {
+          font-size:9px; letter-spacing:0.35em; text-transform:uppercase;
+          color:#C9A84C70; display:block; margin-bottom:8px;
+          font-family:'Roboto Mono',monospace;
         }
-        .tv90-btn-primary:hover { background: linear-gradient(135deg, #DDB85C, #B08838); box-shadow: 0 0 16px #C9A84C60; }
+        .v90-detail { font-size:14px; color:#DFC898; margin-bottom:12px; line-height:1.7; }
+        .v90-detail strong { color:#C9A84C; font-weight:normal; font-style:italic; }
       `}</style>
 
-      {/* Scanline overlay */}
-      <div className="tv90-overlay" />
-      <div className="tv90-scanline" />
+      {/* CRT effects */}
+      <div className="v90-crt" />
+      <div className="v90-scanline" />
+      <div className="v90-vignette" />
 
       {/* VHS timestamp */}
-      <div style={{ position: "fixed", top: 16, right: 16, zIndex: 498, fontFamily: "monospace", fontSize: 11, color: "#C9A84C90", letterSpacing: "0.1em", lineHeight: 1.4 }}>
-        <div>{vhsDate}</div>
-        <div>{vhsTime}</div>
+      <div style={{ position: "fixed", top: 12, right: 14, zIndex: 600, fontFamily: "monospace", fontSize: 10, color: "#C9A84C60", letterSpacing: "0.08em" }}>
+        {vhsStamp}
+      </div>
+      {/* On-air indicator */}
+      <div style={{ position: "fixed", top: 12, left: 14, zIndex: 600, display: "flex", alignItems: "center", gap: 6 }}>
+        <span className="v90-pulse" style={{ width: 7, height: 7, borderRadius: "50%", background: "#C9A84C", display: "inline-block" }} />
+        <span style={{ fontFamily: "monospace", fontSize: 9, color: "#C9A84C70", letterSpacing: "0.2em" }}>EN VIVO</span>
       </div>
 
       {/* TV Intro */}
       <AnimatePresence>
         {showIntro && wedding && (
-          <motion.div key="intro" exit={{ opacity: 0 }} transition={{ duration: 1.2 }}>
+          <motion.div key="intro" exit={{ opacity: 0 }} transition={{ duration: 1.4 }}>
             <TV90Intro wedding={wedding} />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
+      {/* ── Main Content ── */}
       <motion.div
-        className="tv90-flicker"
+        className="v90-flicker"
         initial={{ opacity: 0 }}
         animate={{ opacity: showIntro ? 0 : 1 }}
-        transition={{ duration: 1 }}
+        transition={{ duration: 1.2 }}
       >
-        <div style={{ maxWidth: 680, margin: "0 auto", padding: "48px 20px 80px" }}>
+        <div style={{ maxWidth: 640, margin: "0 auto", padding: "56px 20px 80px" }}>
 
-          {/* Channel header */}
-          <div style={{ textAlign: "center", marginBottom: 8 }}>
-            <span className="tv90-pulse" style={{ color: "#C9A84C80", fontSize: 10, letterSpacing: "0.4em", textTransform: "uppercase", fontFamily: "monospace" }}>
-              ◉ EN VIVO
-            </span>
-          </div>
-
-          {/* Hero title card */}
-          <div style={{
-            textAlign: "center",
-            padding: "40px 24px",
-            border: "1px solid #C9A84C30",
-            background: "linear-gradient(180deg, #150C00 0%, #0D0600 60%, #150C00 100%)",
-            marginBottom: 32,
-            position: "relative",
-          }} data-testid="window-main">
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #C9A84C, transparent)" }} />
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #C9A84C, transparent)" }} />
-
-            <p style={{ color: "#C9A84C80", fontSize: 10, letterSpacing: "0.5em", textTransform: "uppercase", marginBottom: 20, fontFamily: "monospace" }}>
-              ✦ Con todo el amor del mundo los invitamos a ✦
+          {/* ── Hero ── */}
+          <HeroFrame>
+            <p style={{ fontSize: 9, letterSpacing: "0.6em", color: "#C9A84C80", textTransform: "uppercase", marginBottom: 24, fontFamily: "monospace" }}>
+              ✦ Con todo el amor ✦
             </p>
+
             <h1
-              className="tv90-title-glow"
-              style={{ fontSize: "clamp(28px, 6vw, 52px)", fontWeight: "bold", color: "#C9A84C", lineHeight: 1.2, marginBottom: 16, fontStyle: "italic" }}
+              className="v90-title"
+              style={{
+                fontSize: "clamp(30px, 6.5vw, 56px)",
+                fontStyle: "italic",
+                fontWeight: "bold",
+                color: "#C9A84C",
+                lineHeight: 1.15,
+                marginBottom: 20,
+              }}
               data-testid="text-couple-names"
             >
               {wedding?.coupleName}
             </h1>
-            <p style={{ color: "#C9A84C80", fontSize: 10, letterSpacing: "0.5em", textTransform: "uppercase", marginBottom: 12, fontFamily: "monospace" }}>
-              ✦ su boda ✦
-            </p>
-            <p style={{ fontSize: 18, color: "#E8D5A0", letterSpacing: "0.1em" }} data-testid="text-wedding-date">
-              {wedding?.weddingDate}
-            </p>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 16, justifyContent: "center", color: "#C9A84C60", marginBottom: 20 }}>
+              <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, #C9A84C80)" }} />
+              <span style={{ fontSize: 14 }}>✦</span>
+              <span style={{ fontSize: 13, letterSpacing: "0.12em", color: "#DFC898", fontStyle: "italic" }} data-testid="text-wedding-date">{wedding?.weddingDate}</span>
+              <span style={{ fontSize: 14 }}>✦</span>
+              <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, #C9A84C80)" }} />
+            </div>
 
             {wedding?.message && (
-              <>
-                <GoldDivider />
-                <p style={{ fontSize: 15, color: "#C4A87080", fontStyle: "italic", lineHeight: 1.7 }}>
-                  "{wedding.message}"
-                </p>
-              </>
+              <p style={{ fontSize: 14, color: "#C9A84C80", fontStyle: "italic", lineHeight: 1.8, maxWidth: 440, margin: "0 auto" }}>
+                &ldquo;{wedding.message}&rdquo;
+              </p>
             )}
 
             {wedding?.couplePhotoUrl && (
-              <div style={{ marginTop: 24, display: "inline-block", border: "1px solid #C9A84C40", padding: 4 }}>
-                <img src={wedding.couplePhotoUrl} alt="Pareja" style={{ maxWidth: 220, display: "block" }} data-testid="img-couple" />
+              <div style={{ marginTop: 24, display: "inline-block" }}>
+                <div style={{ border: "1px solid #C9A84C40", padding: 6, boxShadow: "0 0 0 4px #050300, 0 0 0 5px #C9A84C20, 0 8px 32px rgba(0,0,0,0.8)" }}>
+                  <img
+                    src={wedding.couplePhotoUrl}
+                    alt="Pareja"
+                    style={{ maxWidth: 200, display: "block", filter: "sepia(0.3) contrast(1.05)" }}
+                    data-testid="img-couple"
+                  />
+                </div>
               </div>
             )}
-          </div>
+          </HeroFrame>
 
-          {/* Ceremony */}
-          <VintageCard title="Ceremonia Religiosa" icon="⛪">
-            <div style={{ display: "grid", gap: 8, fontSize: 14 }}>
-              <p><span style={{ color: "#C9A84C80", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase" }}>Lugar </span><br />{wedding?.churchName}</p>
-              <p><span style={{ color: "#C9A84C80", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase" }}>Dirección </span><br />{wedding?.churchAddress}</p>
-              <p><span style={{ color: "#C9A84C80", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase" }}>Hora </span><br />{wedding?.churchTime}</p>
-              <button className="tv90-btn" style={{ marginTop: 8, width: "100%" }}
-                onClick={() => window.open(`https://maps.google.com/?q=${wedding?.churchAddress}`, "_blank")}
-                data-testid="button-map-church">
-                Ver en Mapa
-              </button>
-            </div>
-          </VintageCard>
+          <OrnamentDivider symbol="❧" />
 
-          {/* Reception */}
-          <VintageCard title="Recepción" icon="🌹">
-            <div style={{ display: "grid", gap: 8, fontSize: 14 }}>
-              <p><span style={{ color: "#C9A84C80", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase" }}>Lugar </span><br />{wedding?.venueName}</p>
-              <p><span style={{ color: "#C9A84C80", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase" }}>Dirección </span><br />{wedding?.venueAddress}</p>
-              <p><span style={{ color: "#C9A84C80", fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase" }}>Hora </span><br />{wedding?.venueTime}</p>
-              <button className="tv90-btn" style={{ marginTop: 8, width: "100%" }}
-                onClick={() => window.open(`https://maps.google.com/?q=${wedding?.venueAddress}`, "_blank")}
-                data-testid="button-map-venue">
-                Ver en Mapa
-              </button>
-            </div>
-          </VintageCard>
+          {/* ── Ceremony ── */}
+          <VCard label="Ceremonia Religiosa">
+            <div className="v90-detail"><strong>Lugar</strong><br />{wedding?.churchName}</div>
+            <div className="v90-detail"><strong>Dirección</strong><br />{wedding?.churchAddress}</div>
+            <div className="v90-detail" style={{ marginBottom: 16 }}><strong>Hora</strong><br />{wedding?.churchTime}</div>
+            <button className="v90-btn" style={{ width: "100%" }}
+              onClick={() => window.open(`https://maps.google.com/?q=${wedding?.churchAddress}`, "_blank")}
+              data-testid="button-map-church">
+              Ver en mapa
+            </button>
+          </VCard>
 
-          <GoldDivider />
+          {/* ── Venue ── */}
+          <VCard label="Recepción">
+            <div className="v90-detail"><strong>Lugar</strong><br />{wedding?.venueName}</div>
+            <div className="v90-detail"><strong>Dirección</strong><br />{wedding?.venueAddress}</div>
+            <div className="v90-detail" style={{ marginBottom: 16 }}><strong>Hora</strong><br />{wedding?.venueTime}</div>
+            <button className="v90-btn" style={{ width: "100%" }}
+              onClick={() => window.open(`https://maps.google.com/?q=${wedding?.venueAddress}`, "_blank")}
+              data-testid="button-map-venue">
+              Ver en mapa
+            </button>
+          </VCard>
 
-          {/* Dress code */}
           {wedding?.dressCode && (
-            <VintageCard title="Código de Vestimenta" icon="✨">
-              <p style={{ fontSize: 15, color: "#E8D5A0" }} data-testid="text-dress-code">{wedding.dressCode}</p>
-            </VintageCard>
+            <VCard label="Vestimenta">
+              <p className="v90-detail" data-testid="text-dress-code">{wedding.dressCode}</p>
+            </VCard>
           )}
 
-          {/* Countdown */}
-          <VintageCard title="Cuenta Regresiva" icon="⏳">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, textAlign: "center" }}>
-              {[
-                { label: "Días", val: countdown.days },
-                { label: "Horas", val: countdown.hours },
-                { label: "Min", val: countdown.mins },
-                { label: "Seg", val: countdown.secs },
-              ].map(({ label, val }) => (
-                <div key={label} style={{ border: "1px solid #C9A84C30", padding: "12px 4px", background: "#0D0800" }}>
-                  <div style={{ fontSize: 28, fontWeight: "bold", color: "#C9A84C", lineHeight: 1 }}>{val}</div>
-                  <div style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#C9A84C80", marginTop: 4 }}>{label}</div>
-                </div>
-              ))}
+          <OrnamentDivider symbol="✦" />
+
+          {/* ── Countdown ── */}
+          <VCard label="Cuenta regresiva">
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", gap: 4, flexWrap: "wrap" }}>
+              <CountDigit val={countdown.days}  label="Días" />
+              <div style={{ color: "#C9A84C40", fontSize: 36, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 8 }}>:</div>
+              <CountDigit val={countdown.hours} label="Horas" />
+              <div style={{ color: "#C9A84C40", fontSize: 36, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 8 }}>:</div>
+              <CountDigit val={countdown.mins}  label="Min" />
+              <div style={{ color: "#C9A84C40", fontSize: 36, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 8 }}>:</div>
+              <CountDigit val={countdown.secs}  label="Seg" />
             </div>
-          </VintageCard>
+          </VCard>
 
-          <GoldDivider />
+          <OrnamentDivider symbol="❦" />
 
-          {/* RSVP */}
-          <VintageCard title="Confirmar Asistencia" icon="💌">
+          {/* ── RSVP ── */}
+          <VCard label="Confirmar asistencia">
             <div style={{ textAlign: "center" }}>
-              <p style={{ marginBottom: 8, fontSize: 14 }}>
+              <p style={{ fontSize: 14, marginBottom: 4, color: "#DFC898" }}>
                 Invitado: <span style={{ color: "#C9A84C", fontStyle: "italic" }} data-testid="text-guest-name">{invitation?.guestName}</span>
               </p>
-              <p style={{ marginBottom: 20, fontSize: 13, color: "#C4A87080" }}>
-                Tienes <strong style={{ color: "#C9A84C" }} data-testid="text-assigned-seats">{invitation?.seats}</strong> lugar(es) reservado(s)
+              <p style={{ fontSize: 12, marginBottom: 24, color: "#C9A84C60", letterSpacing: "0.05em" }}>
+                {invitation?.seats} lugar(es) reservado(s)
               </p>
 
               {responded || invitation?.status !== "pending" ? (
-                <div style={{ border: "1px solid #C9A84C40", padding: "20px", background: "#0D0800" }}>
+                <div style={{ border: "1px solid #C9A84C30", padding: "24px 20px", background: "#0A0500" }}>
                   <p style={{ color: "#C9A84C", fontSize: 16, fontStyle: "italic" }} data-testid="text-rsvp-status">
                     {invitation?.status === "accepted"
-                      ? `¡Nos vemos pronto, ${invitation.guestName}! 🌹`
+                      ? `¡Nos vemos pronto, ${invitation.guestName}!`
                       : `¡Te extrañaremos, ${invitation?.guestName}!`}
                   </p>
-                  <p style={{ fontSize: 12, marginTop: 8, color: "#C4A87070", letterSpacing: "0.1em" }}>Respuesta registrada</p>
+                  <p style={{ fontSize: 10, marginTop: 10, color: "#C9A84C50", letterSpacing: "0.2em", textTransform: "uppercase" }}>Respuesta registrada</p>
                 </div>
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                  <div>
-                    <label style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#C9A84C80", display: "block", marginBottom: 8 }}>
-                      Número de Asistentes
-                    </label>
-                    <select className="tv90-select" value={confirmedSeats}
-                      onChange={(e) => setConfirmedSeats(parseInt(e.target.value))}
-                      data-testid="select-seats">
+                <div style={{ display: "flex", flexDirection: "column", gap: 20, alignItems: "center" }}>
+                  <div style={{ width: "100%", maxWidth: 260 }}>
+                    <label className="v90-label">Número de asistentes</label>
+                    <select className="v90-select" style={{ width: "100%" }} value={confirmedSeats}
+                      onChange={(e) => setConfirmedSeats(parseInt(e.target.value))} data-testid="select-seats">
                       {Array.from({ length: invitation?.seats || 1 }).map((_, i) => (
                         <option key={i + 1} value={i + 1}>{i + 1} persona{i > 0 ? "s" : ""}</option>
                       ))}
                     </select>
                   </div>
-                  <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-                    <button className="tv90-btn tv90-btn-primary"
+                  <div style={{ display: "flex", gap: 16 }}>
+                    <button className="v90-btn v90-btn-gold"
                       onClick={() => respondMutation.mutate({ status: "accepted", confirmedSeats })}
-                      disabled={respondMutation.isPending}
-                      data-testid="button-accept">
-                      Sí, Asistiré
+                      disabled={respondMutation.isPending} data-testid="button-accept">
+                      Sí, asistiré
                     </button>
-                    <button className="tv90-btn"
+                    <button className="v90-btn"
                       onClick={() => respondMutation.mutate({ status: "declined", confirmedSeats: 0 })}
-                      disabled={respondMutation.isPending}
-                      data-testid="button-decline">
-                      No Podré Ir
+                      disabled={respondMutation.isPending} data-testid="button-decline">
+                      No podré ir
                     </button>
                   </div>
                 </div>
               )}
             </div>
-          </VintageCard>
+          </VCard>
 
-          {/* Gifts */}
+          {/* ── Gifts ── */}
           {(wedding?.giftLabel1 || wedding?.giftLabel2) && (
-            <VintageCard title="Mesa de Regalos" icon="🎁">
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <VCard label="Mesa de regalos">
+              <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
                 {[
                   { label: wedding?.giftLabel1, url: wedding?.giftUrl1 },
                   { label: wedding?.giftLabel2, url: wedding?.giftUrl2 },
-                ].filter(g => g.label && g.url).map((gift, idx) => (
-                  <button key={idx} className="tv90-btn" style={{ flex: 1 }}
-                    onClick={() => gift.url && window.open(gift.url, "_blank")}
-                    data-testid={`button-gift-${idx}`}>
-                    🎁 {gift.label}
+                ].filter(g => g.label && g.url).map((g, i) => (
+                  <button key={i} className="v90-btn" onClick={() => g.url && window.open(g.url, "_blank")} data-testid={`button-gift-${i}`}>
+                    {g.label}
                   </button>
                 ))}
               </div>
-            </VintageCard>
+            </VCard>
           )}
 
-          {/* QR Code */}
+          {/* ── QR Code ── */}
           {invitation?.qrCode && (
-            <div style={{ textAlign: "center", marginTop: 32 }} data-testid="window-qr">
-              <GoldDivider />
-              <p style={{ fontSize: 11, letterSpacing: "0.3em", textTransform: "uppercase", color: "#C9A84C80", marginBottom: 16 }}>Tu Pase de Entrada</p>
-              <div style={{ display: "inline-block", border: "1px solid #C9A84C40", padding: 8, background: "white" }}>
-                <img src={invitation.qrCode} alt="QR" style={{ width: 160, height: 160, display: "block" }} data-testid="img-qr-code" />
+            <>
+              <OrnamentDivider symbol="✦" />
+              <div style={{ textAlign: "center" }} data-testid="window-qr">
+                <label className="v90-label" style={{ display: "block", textAlign: "center", marginBottom: 16 }}>Tu pase de entrada</label>
+                <div style={{ display: "inline-block", border: "1px solid #C9A84C40", padding: 8, boxShadow: "0 0 0 4px #050300, 0 0 0 5px #C9A84C20", background: "white" }}>
+                  <img src={invitation.qrCode} alt="QR" style={{ width: 148, height: 148, display: "block" }} data-testid="img-qr-code" />
+                </div>
+                <p style={{ fontSize: 9, marginTop: 12, color: "#C9A84C50", letterSpacing: "0.3em", textTransform: "uppercase" }}>Presenta en la entrada</p>
               </div>
-              <p style={{ fontSize: 10, marginTop: 8, color: "#C9A84C60", letterSpacing: "0.2em" }}>PRESENTA EN LA ENTRADA</p>
-            </div>
+            </>
           )}
 
-          {/* Footer */}
-          <GoldDivider />
-          <div style={{ textAlign: "center", color: "#C9A84C50", fontSize: 10, letterSpacing: "0.3em" }}>
-            <p>CON AMOR · {wedding?.coupleName?.toUpperCase()}</p>
-            <p style={{ marginTop: 4 }}>{wedding?.weddingDate?.toUpperCase()}</p>
+          {/* ── Footer ── */}
+          <OrnamentDivider symbol="❧" />
+          <div style={{ textAlign: "center", color: "#C9A84C50", fontSize: 9, letterSpacing: "0.4em", textTransform: "uppercase", fontFamily: "monospace", lineHeight: 2 }}>
+            <div>{wedding?.coupleName}</div>
+            <div>{wedding?.weddingDate}</div>
           </div>
         </div>
       </motion.div>
