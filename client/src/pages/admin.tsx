@@ -92,6 +92,7 @@ import {
   Gift,
   Layout,
   Upload,
+  X,
 } from "lucide-react";
 
 const createInvitationSchema = z.object({
@@ -161,6 +162,8 @@ export default function AdminPage() {
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   const [selectedInvitation, setSelectedInvitation] =
     useState<Invitation | null>(null);
+  const [colorsList, setColorsList] = useState<string[]>([]);
+  const [newColor, setNewColor] = useState("#C9A96E");
 
   const { data: weddings = [], isLoading: weddingsLoading } = useQuery<Wedding[]>({
     queryKey: ["/api/weddings"],
@@ -205,6 +208,7 @@ export default function AdminPage() {
       musicType: "none",
       clientUsername: "",
       clientPassword: "",
+      allowedColors: "[]",
     },
   });
 
@@ -524,7 +528,9 @@ export default function AdminPage() {
       musicType: wedding.musicType || "none",
       clientUsername: wedding.clientUsername || "",
       clientPassword: wedding.clientPassword || "",
+      allowedColors: wedding.allowedColors || "[]",
     });
+    try { setColorsList(JSON.parse(wedding.allowedColors || "[]")); } catch { setColorsList([]); }
     setWeddingDialogOpen(true);
   }
 
@@ -614,7 +620,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen bg-background px-3 py-4 sm:px-6 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -669,6 +675,7 @@ export default function AdminPage() {
               <Button onClick={() => {
                 setEditingWedding(null);
                 weddingForm.reset();
+                setColorsList([]);
                 setWeddingDialogOpen(true);
               }} data-testid="button-new-wedding">
                 <Plus className="w-4 h-4 mr-2" />
@@ -862,7 +869,7 @@ export default function AdminPage() {
                         placeholder="Buscar por nombre..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 w-60"
+                        className="pl-9 w-full sm:w-60"
                       />
                     </div>
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -991,7 +998,7 @@ export default function AdminPage() {
                 </div>
 
                 <Card>
-                  <CardContent className="p-0">
+                  <CardContent className="p-0 overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -1134,7 +1141,7 @@ export default function AdminPage() {
 
         {/* Wedding Create/Edit Dialog */}
         <Dialog open={weddingDialogOpen} onOpenChange={setWeddingDialogOpen}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingWedding ? "Editar Boda" : "Nueva Boda"}</DialogTitle>
             </DialogHeader>
@@ -1149,14 +1156,14 @@ export default function AdminPage() {
                 data-testid="form-wedding"
               >
                 <Tabs defaultValue="pareja">
-                  <TabsList className="grid w-full grid-cols-7">
-                    <TabsTrigger value="pareja">Pareja</TabsTrigger>
-                    <TabsTrigger value="evento">Evento</TabsTrigger>
-                    <TabsTrigger value="regalos">Regalos</TabsTrigger>
-                    <TabsTrigger value="plantilla">Plantilla</TabsTrigger>
-                    <TabsTrigger value="musica">Música</TabsTrigger>
-                    <TabsTrigger value="video">Video</TabsTrigger>
-                    <TabsTrigger value="acceso">Acceso</TabsTrigger>
+                  <TabsList className="flex w-full overflow-x-auto">
+                    <TabsTrigger value="pareja" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">Pareja</TabsTrigger>
+                    <TabsTrigger value="evento" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">Evento</TabsTrigger>
+                    <TabsTrigger value="regalos" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">Regalos</TabsTrigger>
+                    <TabsTrigger value="plantilla" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">Plantilla</TabsTrigger>
+                    <TabsTrigger value="musica" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">Música</TabsTrigger>
+                    <TabsTrigger value="video" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">Video</TabsTrigger>
+                    <TabsTrigger value="acceso" className="flex-shrink-0 text-xs sm:text-sm px-2 sm:px-3">Acceso</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="pareja" className="space-y-4 pt-4">
@@ -1315,6 +1322,62 @@ export default function AdminPage() {
                         </FormItem>
                       )}
                     />
+                    <div className="space-y-3 mt-4">
+                      <Label>Colores Permitidos</Label>
+                      <div className="flex gap-2 items-center flex-wrap">
+                        <input
+                          type="color"
+                          value={newColor}
+                          onChange={(e) => setNewColor(e.target.value)}
+                          className="w-10 h-10 rounded cursor-pointer border border-border"
+                          data-testid="input-color-picker"
+                        />
+                        <Input
+                          value={newColor}
+                          onChange={(e) => setNewColor(e.target.value)}
+                          placeholder="#FFFFFF"
+                          className="w-28"
+                          data-testid="input-color-hex"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            if (newColor && /^#[0-9A-Fa-f]{6}$/.test(newColor) && !colorsList.includes(newColor)) {
+                              const updated = [...colorsList, newColor];
+                              setColorsList(updated);
+                              weddingForm.setValue("allowedColors", JSON.stringify(updated));
+                            }
+                          }}
+                          data-testid="button-add-color"
+                        >
+                          <Plus className="w-4 h-4 mr-1" /> Agregar
+                        </Button>
+                      </div>
+                      {colorsList.length > 0 && (
+                        <div className="flex gap-2 flex-wrap mt-2">
+                          {colorsList.map((color, idx) => (
+                            <div key={idx} className="flex items-center gap-1 border rounded-md px-2 py-1 bg-muted/30" data-testid={`swatch-admin-${idx}`}>
+                              <div className="w-6 h-6 rounded-full border border-border" style={{ backgroundColor: color }} />
+                              <span className="text-xs font-mono">{color}</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updated = colorsList.filter((_, i) => i !== idx);
+                                  setColorsList(updated);
+                                  weddingForm.setValue("allowedColors", JSON.stringify(updated));
+                                }}
+                                className="ml-1 text-muted-foreground hover:text-destructive"
+                                data-testid={`button-remove-color-${idx}`}
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </TabsContent>
 
                   <TabsContent value="regalos" className="space-y-4 pt-4">
@@ -1380,7 +1443,7 @@ export default function AdminPage() {
                         <FormItem className="space-y-4">
                           <FormLabel>Seleccionar Plantilla</FormLabel>
                           <FormControl>
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                               {TEMPLATES.map((t) => (
                                 <Card
                                   key={t.id}

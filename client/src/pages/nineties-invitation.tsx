@@ -285,6 +285,7 @@ export default function NinetiesInvitationPage() {
 
   const wedding = data?.wedding;
   const invitation = data;
+  const allowedColors: string[] = useMemo(() => { try { return JSON.parse(wedding?.allowedColors || "[]"); } catch { return []; } }, [wedding?.allowedColors]);
 
   useEffect(() => { const t = setInterval(() => setClock(new Date()), 1000); return () => clearInterval(t); }, []);
   useEffect(() => { if (wedding) { const t = setTimeout(() => setShowIntro(false), wedding.introDuration || 6000); return () => clearTimeout(t); } }, [wedding]);
@@ -538,6 +539,24 @@ export default function NinetiesInvitationPage() {
           {wedding?.dressCode && (
             <AlbumCard label="Vestimenta">
               <p className="album-detail" data-testid="text-dress-code">{wedding.dressCode}</p>
+            </AlbumCard>
+          )}
+
+          {allowedColors.length > 0 && (
+            <AlbumCard label="Colores Permitidos">
+              <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }} data-testid="section-allowed-colors">
+                {allowedColors.map((color: string, idx: number) => (
+                  <div key={idx} style={{ textAlign: "center" }} data-testid={`swatch-color-${idx}`}>
+                    <div style={{
+                      width: 40, height: 40,
+                      borderRadius: "50%",
+                      backgroundColor: color,
+                      border: "2px solid #A0784C",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                    }} />
+                  </div>
+                ))}
+              </div>
             </AlbumCard>
           )}
 

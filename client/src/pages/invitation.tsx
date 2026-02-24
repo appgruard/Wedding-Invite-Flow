@@ -299,6 +299,7 @@ function VideoIntroOverlay({ videoType, videoUrl, introDuration, onDone }: {
 
 function ClassicTemplate({ invData, invitationId }: { invData: InvitationWithWedding; invitationId: string }) {
   const wedding = invData.wedding;
+  const allowedColors: string[] = useMemo(() => { try { return JSON.parse(wedding?.allowedColors || "[]"); } catch { return []; } }, [wedding?.allowedColors]);
   const introDuration = wedding?.introDuration ?? 4000;
   const videoType = wedding?.videoType ?? "none";
   const videoUrl = wedding?.videoUrl ?? "";
@@ -472,6 +473,31 @@ function ClassicTemplate({ invData, invitationId }: { invData: InvitationWithWed
             <p className="text-2xl font-sans mb-4" style={{ color: colors.text }}>{dressCode}</p>
           </div>
         </SectionWrapper>
+
+        {allowedColors.length > 0 && (
+          <SectionWrapper>
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Shirt className="w-6 h-6" style={{ color: colors.accent }} />
+              <h2 className="text-3xl font-sans" style={{ color: colors.primary }}>Colores Permitidos</h2>
+            </div>
+            <GoldDivider colors={colors} />
+            <div className="rounded-md bg-white/50 dark:bg-black/20 p-8" style={{ borderWidth: 1, borderStyle: "solid", borderColor: colors.accent + "33" }} data-testid="section-allowed-colors">
+              <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+                {allowedColors.map((color: string, idx: number) => (
+                  <div key={idx} style={{ textAlign: "center" }} data-testid={`swatch-color-${idx}`}>
+                    <div style={{
+                      width: 40, height: 40,
+                      borderRadius: "50%",
+                      backgroundColor: color,
+                      border: `2px solid ${colors.accent}`,
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                    }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </SectionWrapper>
+        )}
 
         <SectionWrapper>
           <div className="flex items-center justify-center gap-2 mb-4">

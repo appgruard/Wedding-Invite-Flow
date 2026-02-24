@@ -286,6 +286,7 @@ export default function NetflixInvitationPage() {
   if (isError || !invitation) return <div className="min-h-screen bg-black flex flex-col items-center justify-center gap-4"><p className="text-white/60 font-sans">No se pudo cargar la invitación.</p><button onClick={() => queryClient.resetQueries({ queryKey: ["/api/invitations", invitationId] })} className="px-6 py-2 rounded text-white text-sm" style={{ background: "#E50914" }}>Reintentar</button></div>;
 
   const { wedding } = invitation;
+  const allowedColors: string[] = useMemo(() => { try { return JSON.parse(wedding?.allowedColors || "[]"); } catch { return []; } }, [wedding?.allowedColors]);
 
   return (
     <div className="min-h-screen bg-[#141414] text-white font-sans selection:bg-[#E50914] selection:text-white">
@@ -397,6 +398,26 @@ export default function NetflixInvitationPage() {
                 </div>
               </div>
             </section>
+            {allowedColors.length > 0 && (
+              <section>
+                <h2 className="text-2xl font-bold mb-6">Colores Permitidos</h2>
+                <div className="bg-[#181818] p-6 rounded-md" data-testid="section-allowed-colors">
+                  <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+                    {allowedColors.map((color: string, idx: number) => (
+                      <div key={idx} style={{ textAlign: "center" }} data-testid={`swatch-color-${idx}`}>
+                        <div style={{
+                          width: 40, height: 40,
+                          borderRadius: "50%",
+                          backgroundColor: color,
+                          border: "2px solid rgba(255,255,255,0.7)",
+                          boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                        }} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
             <section>
               <h2 className="text-2xl font-bold mb-6">Mesa de Regalos</h2>
               <div className="flex flex-wrap gap-4">
