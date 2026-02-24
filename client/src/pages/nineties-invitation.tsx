@@ -129,62 +129,110 @@ function TV90Intro({ wedding }: { wedding: Wedding }) {
 /* ─── Ornamental divider ─────────────────────────────────────────────────── */
 function OrnamentDivider({ symbol = "❧" }: { symbol?: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 0, margin: "28px auto", maxWidth: 480, color: "#C4730A" }}>
-      <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, #C4730A90)" }} />
-      <span style={{ padding: "0 16px", fontSize: 20, opacity: 0.8 }}>{symbol}</span>
-      <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, #C4730A90)" }} />
+    <div style={{ display: "flex", alignItems: "center", gap: 0, margin: "32px auto", maxWidth: 480, color: "#A0784C" }}>
+      <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, #A0784C60)" }} />
+      <span style={{ padding: "0 16px", fontSize: 18, opacity: 0.7, lineHeight: 1 }}>{symbol}</span>
+      <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, #A0784C60)" }} />
     </div>
   );
 }
 
-/* ─── Ornate vintage card ────────────────────────────────────────────────── */
-function VCard({ label, children }: { label: string; children: React.ReactNode }) {
+/* ─── Album-style card ──────────────────────────────────────────────────── */
+function AlbumCard({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div style={{
-      position: "relative",
-      marginBottom: 24,
-      padding: "0 2px 2px",
-    }}>
-      <div style={{
-        border: "1px solid #C4730A50",
-        boxShadow: "0 0 0 3px #1A1005, 0 0 0 4px #C4730A25, 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 #C4730A20",
-        background: "linear-gradient(180deg, #261508 0%, #1A1005 100%)",
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      style={{
+        marginBottom: 28,
+        background: "#FFFDF7",
+        border: "1px solid #D9C9A8",
+        borderRadius: 6,
+        boxShadow: "0 2px 12px rgba(74,55,40,0.08), 0 1px 3px rgba(74,55,40,0.06)",
         overflow: "hidden",
+      }}
+    >
+      <div style={{
+        borderBottom: "1px solid #E8D9BF",
+        background: "linear-gradient(90deg, #F8F0E0, #FBF5EB, #F8F0E0)",
+        padding: "10px 24px",
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
       }}>
-        {/* Header */}
-        <div style={{
-          borderBottom: "1px solid #C4730A30",
-          background: "linear-gradient(90deg, #1A1005 0%, #30190A 40%, #30190A 60%, #1A1005 100%)",
-          padding: "9px 20px",
-          display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
-        }}>
-          <span style={{ color: "#C4730A60", fontSize: 9, letterSpacing: "0.1em" }}>⋄</span>
-          <span style={{ color: "#C4730A", fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", fontFamily: "'Playfair Display', serif", fontWeight: "bold" }}>{label}</span>
-          <span style={{ color: "#C4730A60", fontSize: 9, letterSpacing: "0.1em" }}>⋄</span>
-        </div>
-        {/* Content */}
-        <div style={{ padding: "20px 24px", color: "#E8C8A0" }}>
-          {children}
-        </div>
+        <span style={{ color: "#A0784C", fontSize: 10, opacity: 0.5 }}>&#9674;</span>
+        <span style={{
+          color: "#A0784C",
+          fontSize: 11,
+          letterSpacing: "0.25em",
+          textTransform: "uppercase" as const,
+          fontFamily: "'Playfair Display', serif",
+          fontWeight: 700,
+        }}>{label}</span>
+        <span style={{ color: "#A0784C", fontSize: 10, opacity: 0.5 }}>&#9674;</span>
       </div>
-    </div>
+      <div style={{ padding: "24px 28px", color: "#4A3728" }}>
+        {children}
+      </div>
+    </motion.div>
   );
 }
 
 /* ─── Corner-framed hero box ─────────────────────────────────────────────── */
 function HeroFrame({ children }: { children: React.ReactNode }) {
-  const corner = { position: "absolute" as const, color: "#C4730A", fontSize: 18, lineHeight: 1 };
+  const cornerStyle = {
+    position: "absolute" as const,
+    width: 28,
+    height: 28,
+    borderColor: "#A0784C",
+    opacity: 0.5,
+  };
   return (
-    <div style={{ position: "relative", padding: "48px 32px", textAlign: "center", marginBottom: 32 }}>
-      <span style={{ ...corner, top: 8, left: 8 }}>┌</span>
-      <span style={{ ...corner, top: 8, right: 8 }}>┐</span>
-      <span style={{ ...corner, bottom: 8, left: 8 }}>└</span>
-      <span style={{ ...corner, bottom: 8, right: 8 }}>┘</span>
-      <div style={{ position: "absolute", top: 16, left: 16, right: 16, height: 1, background: "linear-gradient(90deg, transparent, #C4730A50, transparent)" }} />
-      <div style={{ position: "absolute", bottom: 16, left: 16, right: 16, height: 1, background: "linear-gradient(90deg, transparent, #C4730A50, transparent)" }} />
-      <div style={{ position: "absolute", top: 16, left: 16, bottom: 16, width: 1, background: "linear-gradient(180deg, transparent, #C4730A50, transparent)" }} />
-      <div style={{ position: "absolute", top: 16, right: 16, bottom: 16, width: 1, background: "linear-gradient(180deg, transparent, #C4730A50, transparent)" }} />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      style={{ position: "relative", padding: "52px 32px", textAlign: "center", marginBottom: 36 }}
+    >
+      <div style={{ ...cornerStyle, top: 0, left: 0, borderTop: "2px solid", borderLeft: "2px solid" }} />
+      <div style={{ ...cornerStyle, top: 0, right: 0, borderTop: "2px solid", borderRight: "2px solid" }} />
+      <div style={{ ...cornerStyle, bottom: 0, left: 0, borderBottom: "2px solid", borderLeft: "2px solid" }} />
+      <div style={{ ...cornerStyle, bottom: 0, right: 0, borderBottom: "2px solid", borderRight: "2px solid" }} />
       {children}
+    </motion.div>
+  );
+}
+
+/* ─── Photo mounting corners ─────────────────────────────────────────────── */
+function PhotoFrame({ src, alt, testId }: { src: string; alt: string; testId: string }) {
+  const mountCorner = {
+    position: "absolute" as const,
+    width: 20,
+    height: 20,
+    borderColor: "#A0784C50",
+  };
+  return (
+    <div style={{ display: "inline-block", position: "relative", marginTop: 28 }}>
+      <div style={{
+        padding: 8,
+        background: "#FFFDF7",
+        border: "1px solid #D9C9A8",
+        borderRadius: 3,
+        boxShadow: "0 3px 16px rgba(74,55,40,0.12)",
+        position: "relative",
+      }}>
+        <div style={{ ...mountCorner, top: -2, left: -2, borderTop: "3px solid", borderLeft: "3px solid" }} />
+        <div style={{ ...mountCorner, top: -2, right: -2, borderTop: "3px solid", borderRight: "3px solid" }} />
+        <div style={{ ...mountCorner, bottom: -2, left: -2, borderBottom: "3px solid", borderLeft: "3px solid" }} />
+        <div style={{ ...mountCorner, bottom: -2, right: -2, borderBottom: "3px solid", borderRight: "3px solid" }} />
+        <img
+          src={src}
+          alt={alt}
+          style={{ maxWidth: 220, display: "block", borderRadius: 2, filter: "sepia(0.15) contrast(1.02)" }}
+          data-testid={testId}
+        />
+      </div>
     </div>
   );
 }
@@ -192,18 +240,21 @@ function HeroFrame({ children }: { children: React.ReactNode }) {
 /* ─── Countdown digit ────────────────────────────────────────────────────── */
 function CountDigit({ val, label }: { val: number; label: string }) {
   return (
-    <div style={{ textAlign: "center", padding: "0 8px" }}>
+    <div style={{ textAlign: "center", padding: "0 6px" }}>
       <div style={{
-        fontSize: "clamp(32px, 5vw, 48px)",
-        fontWeight: "bold",
-        color: "#C4730A",
+        fontSize: "clamp(28px, 5vw, 44px)",
+        fontWeight: 700,
+        color: "#A0784C",
         fontFamily: "'Playfair Display', serif",
         lineHeight: 1,
-        textShadow: "0 0 20px #C4730A80, 0 0 40px #C4730A40",
-        minWidth: 56,
+        minWidth: 52,
         display: "inline-block",
+        background: "#F8F0E0",
+        border: "1px solid #D9C9A8",
+        borderRadius: 4,
+        padding: "8px 4px",
       }}>{String(val).padStart(2, "0")}</div>
-      <div style={{ fontSize: 9, letterSpacing: "0.3em", textTransform: "uppercase", color: "#C4730A60", marginTop: 6 }}>{label}</div>
+      <div style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "#7A6555", marginTop: 6, fontFamily: "Georgia, 'Times New Roman', serif" }}>{label}</div>
     </div>
   );
 }
@@ -262,97 +313,139 @@ export default function NinetiesInvitationPage() {
     };
   }, [wedding, clock]);
 
-  const vhsStamp = `${clock.toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "2-digit" })} ${clock.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}`;
-
   if (isLoading) {
-    return <div style={{ minHeight: "100vh", background: "#1A1005", display: "flex", alignItems: "center", justifyContent: "center", color: "#C4730A", fontFamily: "'Playfair Display', serif", fontSize: 18, letterSpacing: "0.3em", fontStyle: "italic" }}>Transmitiendo...</div>;
+    return (
+      <div style={{
+        minHeight: "100vh",
+        background: "#FBF5EB",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#A0784C",
+        fontFamily: "'Playfair Display', serif",
+        fontSize: 18,
+        letterSpacing: "0.15em",
+        fontStyle: "italic",
+      }}>
+        Cargando...
+      </div>
+    );
   }
   if (isError || !data) {
-    return <div style={{ minHeight: "100vh", background: "#1A1005", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}><p style={{ color: "#C4730A80", fontFamily: "monospace", letterSpacing: "0.2em", fontSize: 14 }}>Error al cargar la invitación.</p><button onClick={() => queryClient.resetQueries({ queryKey: ["/api/invitations", invitationId] })} style={{ padding: "8px 20px", background: "#C4730A", color: "#1A1005", border: "none", cursor: "pointer", fontFamily: "monospace", letterSpacing: "0.2em", fontSize: 12 }}>REINTENTAR</button></div>;
+    return (
+      <div style={{
+        minHeight: "100vh",
+        background: "#FBF5EB",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 16,
+      }}>
+        <p style={{ color: "#7A6555", fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 15 }}>
+          Error al cargar la invitación.
+        </p>
+        <button
+          onClick={() => queryClient.resetQueries({ queryKey: ["/api/invitations", invitationId] })}
+          style={{
+            padding: "10px 24px",
+            background: "#A0784C",
+            color: "#FFFDF7",
+            border: "none",
+            borderRadius: 6,
+            cursor: "pointer",
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: 14,
+          }}
+        >
+          Reintentar
+        </button>
+      </div>
+    );
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#1A1005", color: "#E8C8A0", fontFamily: "'Playfair Display', 'Times New Roman', serif", position: "relative", overflowX: "hidden" }}>
+    <div style={{
+      minHeight: "100vh",
+      background: "#FBF5EB",
+      color: "#4A3728",
+      fontFamily: "Georgia, 'Times New Roman', serif",
+      position: "relative",
+      overflowX: "hidden",
+    }}>
       <style>{`
         @keyframes v90-fly    { 0%{transform:translate(0,0)} 100%{transform:translate(-140vw,120vh)} }
         @keyframes v90-flapL  { 0%,100%{transform:rotate(-30deg)} 50%{transform:rotate(10deg)} }
         @keyframes v90-flapR  { 0%,100%{transform:rotate(30deg)}  50%{transform:rotate(-10deg)} }
         @keyframes v90-glitch { 0%{transform:translateX(0)} 33%{transform:translateX(-5px)} 66%{transform:translateX(5px)} 100%{transform:translateX(0)} }
-        @keyframes v90-scan   { 0%{top:0} 100%{top:100%} }
-        @keyframes v90-flicker{ 0%,100%{opacity:1} 93%{opacity:0.88} 94%{opacity:1} 97%{opacity:0.93} 98%{opacity:1} }
-        @keyframes v90-glow   { 0%,100%{text-shadow:0 0 20px #C4730A80,0 0 50px #C4730A30} 50%{text-shadow:0 0 30px #C4730AB0,0 0 70px #C4730A50} }
-        @keyframes v90-pulse  { 0%,100%{opacity:0.5} 50%{opacity:1} }
-        @keyframes v90-fadein { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
-        .v90-scanline {
-          position:fixed; left:0; right:0; height:120px;
-          background:linear-gradient(to bottom, transparent, rgba(196,115,10,0.03) 50%, transparent);
-          pointer-events:none; z-index:500;
-          animation:v90-scan 6s linear infinite;
+        .album-btn {
+          display: inline-block;
+          background: transparent;
+          border: 1px solid #A0784C;
+          color: #A0784C;
+          padding: 10px 28px;
+          font-family: Georgia, 'Times New Roman', serif;
+          font-size: 14px;
+          letter-spacing: 0.08em;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.25s ease;
         }
-        .v90-crt {
-          position:fixed; inset:0; pointer-events:none; z-index:499;
-          background:repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px);
+        .album-btn:hover {
+          background: #A0784C12;
+          border-color: #8B6540;
         }
-        .v90-vignette {
-          position:fixed; inset:0; pointer-events:none; z-index:498;
-          background:radial-gradient(ellipse at center, transparent 50%, rgba(10,6,0,0.85) 100%);
+        .album-btn:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
         }
-        .v90-flicker { animation:v90-flicker 10s ease-in-out infinite; }
-        .v90-title   { animation:v90-glow 3.5s ease-in-out infinite; }
-        .v90-pulse   { animation:v90-pulse 2s ease-in-out infinite; }
-        .v90-fadein  { animation:v90-fadein 0.8s ease-out both; }
-
-        .v90-btn {
-          display:inline-block;
-          background:transparent;
-          border:1px solid #C4730A70;
-          color:#C4730A;
-          padding:10px 28px;
-          font-family:'Playfair Display',serif;
-          font-size:12px;
-          letter-spacing:0.25em;
-          text-transform:uppercase;
-          cursor:pointer;
-          transition:all 0.3s;
-          position:relative;
+        .album-btn-primary {
+          background: linear-gradient(135deg, #A0784C, #8B6540);
+          border: none;
+          color: #FFFDF7;
+          font-weight: 600;
         }
-        .v90-btn:hover { background:#C4730A15; box-shadow:0 0 16px #C4730A30; border-color:#C4730A; }
-        .v90-btn:disabled { opacity:0.35; cursor:not-allowed; }
-        .v90-btn-gold {
-          background:linear-gradient(135deg,#C4730A,#8B4D06);
-          border:none; color:#F5E6C8; font-weight:bold;
+        .album-btn-primary:hover {
+          background: linear-gradient(135deg, #B08858, #996E48);
+          box-shadow: 0 2px 12px rgba(160,120,76,0.3);
         }
-        .v90-btn-gold:hover { background:linear-gradient(135deg,#D4830A,#9B5D06); box-shadow:0 0 24px #C4730A60; }
-        .v90-select {
-          background:#261808; border:1px solid #C4730A50;
-          color:#E8C8A0; padding:8px 12px;
-          font-family:'Playfair Display',serif; font-size:14px;
-          cursor:pointer; outline:none;
+        .album-select {
+          background: #FFFDF7;
+          border: 1px solid #D9C9A8;
+          color: #4A3728;
+          padding: 10px 14px;
+          font-family: Georgia, 'Times New Roman', serif;
+          font-size: 14px;
+          border-radius: 6px;
+          cursor: pointer;
+          outline: none;
+          width: 100%;
         }
-        .v90-label {
-          font-size:9px; letter-spacing:0.35em; text-transform:uppercase;
-          color:#C4730A70; display:block; margin-bottom:8px;
-          font-family:'Roboto Mono',monospace;
+        .album-select:focus {
+          border-color: #A0784C;
+          box-shadow: 0 0 0 2px rgba(160,120,76,0.15);
         }
-        .v90-detail { font-size:14px; color:#E8C8A0; margin-bottom:12px; line-height:1.7; }
-        .v90-detail strong { color:#C4730A; font-weight:normal; font-style:italic; }
+        .album-label {
+          font-size: 11px;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: #7A6555;
+          display: block;
+          margin-bottom: 8px;
+          font-family: Georgia, 'Times New Roman', serif;
+        }
+        .album-detail {
+          font-size: 15px;
+          color: #4A3728;
+          margin-bottom: 12px;
+          line-height: 1.7;
+        }
+        .album-detail strong {
+          color: #A0784C;
+          font-weight: 600;
+        }
       `}</style>
-
-      {/* CRT effects */}
-      <div className="v90-crt" />
-      <div className="v90-scanline" />
-      <div className="v90-vignette" />
-
-      {/* VHS timestamp */}
-      <div style={{ position: "fixed", top: 12, right: 14, zIndex: 600, fontFamily: "monospace", fontSize: 10, color: "#C4730A60", letterSpacing: "0.08em" }}>
-        {vhsStamp}
-      </div>
-      {/* On-air indicator */}
-      <div style={{ position: "fixed", top: 12, left: 14, zIndex: 600, display: "flex", alignItems: "center", gap: 6 }}>
-        <span className="v90-pulse" style={{ width: 7, height: 7, borderRadius: "50%", background: "#C4730A", display: "inline-block" }} />
-        <span style={{ fontFamily: "monospace", fontSize: 9, color: "#C4730A70", letterSpacing: "0.2em" }}>EN VIVO</span>
-      </div>
 
       {/* TV Intro */}
       <AnimatePresence>
@@ -365,194 +458,222 @@ export default function NinetiesInvitationPage() {
 
       {/* ── Main Content ── */}
       <motion.div
-        className="v90-flicker"
         initial={{ opacity: 0 }}
         animate={{ opacity: showIntro ? 0 : 1 }}
         transition={{ duration: 1.2 }}
       >
-        <div style={{ maxWidth: 640, margin: "0 auto", padding: "56px 20px 80px" }}>
+        <div style={{ maxWidth: 600, margin: "0 auto", padding: "56px 20px 80px" }}>
 
           {/* ── Hero ── */}
           <HeroFrame>
-            <p style={{ fontSize: 9, letterSpacing: "0.6em", color: "#C4730A80", textTransform: "uppercase", marginBottom: 24, fontFamily: "monospace" }}>
-              ✦ Con todo el amor ✦
+            <p style={{
+              fontSize: 11,
+              letterSpacing: "0.4em",
+              color: "#7A6555",
+              textTransform: "uppercase" as const,
+              marginBottom: 24,
+              fontFamily: "Georgia, 'Times New Roman', serif",
+            }}>
+              Con todo el amor
             </p>
 
             <h1
-              className="v90-title"
               style={{
-                fontSize: "clamp(30px, 6.5vw, 56px)",
+                fontSize: "clamp(28px, 6vw, 52px)",
                 fontStyle: "italic",
-                fontWeight: "bold",
-                color: "#C4730A",
-                lineHeight: 1.15,
+                fontWeight: 700,
+                color: "#A0784C",
+                lineHeight: 1.2,
                 marginBottom: 20,
+                fontFamily: "'Playfair Display', serif",
               }}
               data-testid="text-couple-names"
             >
               {wedding?.coupleName}
             </h1>
 
-            <div style={{ display: "flex", alignItems: "center", gap: 16, justifyContent: "center", color: "#C4730A60", marginBottom: 20 }}>
-              <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, #C4730A80)" }} />
-              <span style={{ fontSize: 14 }}>✦</span>
-              <span style={{ fontSize: 13, letterSpacing: "0.12em", color: "#E8C8A0", fontStyle: "italic" }} data-testid="text-wedding-date">{wedding?.weddingDate}</span>
-              <span style={{ fontSize: 14 }}>✦</span>
-              <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, #C4730A80)" }} />
+            <div style={{ display: "flex", alignItems: "center", gap: 14, justifyContent: "center", color: "#A0784C80", marginBottom: 20 }}>
+              <div style={{ flex: 1, height: 1, background: "linear-gradient(to right, transparent, #A0784C50)" }} />
+              <span style={{ fontSize: 15, color: "#4A3728", fontStyle: "italic", letterSpacing: "0.06em", fontFamily: "Georgia, 'Times New Roman', serif" }} data-testid="text-wedding-date">{wedding?.weddingDate}</span>
+              <div style={{ flex: 1, height: 1, background: "linear-gradient(to left, transparent, #A0784C50)" }} />
             </div>
 
             {wedding?.message && (
-              <p style={{ fontSize: 14, color: "#C4730A80", fontStyle: "italic", lineHeight: 1.8, maxWidth: 440, margin: "0 auto" }}>
+              <p style={{ fontSize: 15, color: "#7A6555", fontStyle: "italic", lineHeight: 1.8, maxWidth: 440, margin: "0 auto" }}>
                 &ldquo;{wedding.message}&rdquo;
               </p>
             )}
 
             {wedding?.couplePhotoUrl && (
-              <div style={{ marginTop: 24, display: "inline-block" }}>
-                <div style={{ border: "1px solid #C4730A40", padding: 6, boxShadow: "0 0 0 4px #1A1005, 0 0 0 5px #C4730A20, 0 8px 32px rgba(0,0,0,0.8)" }}>
-                  <img
-                    src={wedding.couplePhotoUrl}
-                    alt="Pareja"
-                    style={{ maxWidth: 200, display: "block", filter: "sepia(0.5) contrast(1.05)" }}
-                    data-testid="img-couple"
-                  />
-                </div>
-              </div>
+              <PhotoFrame src={wedding.couplePhotoUrl} alt="Pareja" testId="img-couple" />
             )}
           </HeroFrame>
 
-          <OrnamentDivider symbol="❧" />
+          <OrnamentDivider symbol="&#10087;" />
 
           {/* ── Ceremony ── */}
-          <VCard label="Ceremonia Religiosa">
-            <div className="v90-detail"><strong>Lugar</strong><br />{wedding?.churchName}</div>
-            <div className="v90-detail"><strong>Dirección</strong><br />{wedding?.churchAddress}</div>
-            <div className="v90-detail" style={{ marginBottom: 16 }}><strong>Hora</strong><br />{wedding?.churchTime}</div>
-            <button className="v90-btn" style={{ width: "100%" }}
+          <AlbumCard label="Ceremonia Religiosa">
+            <div className="album-detail"><strong>Lugar</strong><br />{wedding?.churchName}</div>
+            <div className="album-detail"><strong>Direcci&oacute;n</strong><br />{wedding?.churchAddress}</div>
+            <div className="album-detail" style={{ marginBottom: 20 }}><strong>Hora</strong><br />{wedding?.churchTime}</div>
+            <button className="album-btn" style={{ width: "100%" }}
               onClick={() => window.open(`https://maps.google.com/?q=${wedding?.churchAddress}`, "_blank")}
               data-testid="button-map-church">
               Ver en mapa
             </button>
-          </VCard>
+          </AlbumCard>
 
           {/* ── Venue ── */}
-          <VCard label="Recepción">
-            <div className="v90-detail"><strong>Lugar</strong><br />{wedding?.venueName}</div>
-            <div className="v90-detail"><strong>Dirección</strong><br />{wedding?.venueAddress}</div>
-            <div className="v90-detail" style={{ marginBottom: 16 }}><strong>Hora</strong><br />{wedding?.venueTime}</div>
-            <button className="v90-btn" style={{ width: "100%" }}
+          <AlbumCard label="Recepci&oacute;n">
+            <div className="album-detail"><strong>Lugar</strong><br />{wedding?.venueName}</div>
+            <div className="album-detail"><strong>Direcci&oacute;n</strong><br />{wedding?.venueAddress}</div>
+            <div className="album-detail" style={{ marginBottom: 20 }}><strong>Hora</strong><br />{wedding?.venueTime}</div>
+            <button className="album-btn" style={{ width: "100%" }}
               onClick={() => window.open(`https://maps.google.com/?q=${wedding?.venueAddress}`, "_blank")}
               data-testid="button-map-venue">
               Ver en mapa
             </button>
-          </VCard>
+          </AlbumCard>
 
           {wedding?.dressCode && (
-            <VCard label="Vestimenta">
-              <p className="v90-detail" data-testid="text-dress-code">{wedding.dressCode}</p>
-            </VCard>
+            <AlbumCard label="Vestimenta">
+              <p className="album-detail" data-testid="text-dress-code">{wedding.dressCode}</p>
+            </AlbumCard>
           )}
 
-          <OrnamentDivider symbol="✦" />
+          <OrnamentDivider symbol="&#10054;" />
 
           {/* ── Countdown ── */}
-          <VCard label="Cuenta regresiva">
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", gap: 4, flexWrap: "wrap" }}>
-              <CountDigit val={countdown.days}  label="Días" />
-              <div style={{ color: "#C4730A40", fontSize: 36, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 8 }}>:</div>
+          <AlbumCard label="Cuenta regresiva">
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", gap: 6, flexWrap: "wrap" }}>
+              <CountDigit val={countdown.days}  label="D&iacute;as" />
+              <div style={{ color: "#A0784C60", fontSize: 32, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 14 }}>:</div>
               <CountDigit val={countdown.hours} label="Horas" />
-              <div style={{ color: "#C4730A40", fontSize: 36, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 8 }}>:</div>
+              <div style={{ color: "#A0784C60", fontSize: 32, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 14 }}>:</div>
               <CountDigit val={countdown.mins}  label="Min" />
-              <div style={{ color: "#C4730A40", fontSize: 36, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 8 }}>:</div>
+              <div style={{ color: "#A0784C60", fontSize: 32, lineHeight: "1.1", alignSelf: "flex-start", paddingTop: 14 }}>:</div>
               <CountDigit val={countdown.secs}  label="Seg" />
             </div>
-          </VCard>
+          </AlbumCard>
 
-          <OrnamentDivider symbol="❦" />
+          <OrnamentDivider symbol="&#10086;" />
 
           {/* ── RSVP ── */}
-          <VCard label="Confirmar asistencia">
+          <AlbumCard label="Confirmar asistencia">
             <div style={{ textAlign: "center" }}>
-              <p style={{ fontSize: 14, marginBottom: 4, color: "#DFC898" }}>
-                Invitado: <span style={{ color: "#C9A84C", fontStyle: "italic" }} data-testid="text-guest-name">{invitation?.guestName}</span>
+              <p style={{ fontSize: 15, marginBottom: 4, color: "#4A3728" }}>
+                Invitado: <span style={{ color: "#A0784C", fontStyle: "italic", fontWeight: 600 }} data-testid="text-guest-name">{invitation?.guestName}</span>
               </p>
-              <p style={{ fontSize: 12, marginBottom: 24, color: "#C9A84C60", letterSpacing: "0.05em" }}>
+              <p style={{ fontSize: 13, marginBottom: 24, color: "#7A6555", letterSpacing: "0.04em" }}>
                 {invitation?.seats} lugar(es) reservado(s)
               </p>
 
               {responded || invitation?.status !== "pending" ? (
-                <div style={{ border: "1px solid #C9A84C30", padding: "24px 20px", background: "#0A0500" }}>
-                  <p style={{ color: "#C9A84C", fontSize: 16, fontStyle: "italic" }} data-testid="text-rsvp-status">
+                <div style={{
+                  border: "1px solid #D9C9A8",
+                  padding: "24px 20px",
+                  background: "#F8F0E0",
+                  borderRadius: 6,
+                }}>
+                  <p style={{ color: "#A0784C", fontSize: 16, fontStyle: "italic", fontFamily: "'Playfair Display', serif" }} data-testid="text-rsvp-status">
                     {invitation?.status === "accepted"
                       ? `¡Nos vemos pronto, ${invitation.guestName}!`
                       : `¡Te extrañaremos, ${invitation?.guestName}!`}
                   </p>
-                  <p style={{ fontSize: 10, marginTop: 10, color: "#C9A84C50", letterSpacing: "0.2em", textTransform: "uppercase" }}>Respuesta registrada</p>
+                  <p style={{ fontSize: 11, marginTop: 10, color: "#7A6555", letterSpacing: "0.15em", textTransform: "uppercase" as const }}>Respuesta registrada</p>
                 </div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 20, alignItems: "center" }}>
                   <div style={{ width: "100%", maxWidth: 260 }}>
-                    <label className="v90-label">Número de asistentes</label>
-                    <select className="v90-select" style={{ width: "100%" }} value={confirmedSeats}
+                    <label className="album-label">N&uacute;mero de asistentes</label>
+                    <select className="album-select" value={confirmedSeats}
                       onChange={(e) => setConfirmedSeats(parseInt(e.target.value))} data-testid="select-seats">
                       {Array.from({ length: invitation?.seats || 1 }).map((_, i) => (
                         <option key={i + 1} value={i + 1}>{i + 1} persona{i > 0 ? "s" : ""}</option>
                       ))}
                     </select>
                   </div>
-                  <div style={{ display: "flex", gap: 16 }}>
-                    <button className="v90-btn v90-btn-gold"
+                  <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
+                    <button className="album-btn album-btn-primary"
                       onClick={() => respondMutation.mutate({ status: "accepted", confirmedSeats })}
                       disabled={respondMutation.isPending} data-testid="button-accept">
-                      Sí, asistiré
+                      S&iacute;, asistir&eacute;
                     </button>
-                    <button className="v90-btn"
+                    <button className="album-btn"
                       onClick={() => respondMutation.mutate({ status: "declined", confirmedSeats: 0 })}
                       disabled={respondMutation.isPending} data-testid="button-decline">
-                      No podré ir
+                      No podr&eacute; ir
                     </button>
                   </div>
                 </div>
               )}
             </div>
-          </VCard>
+          </AlbumCard>
 
           {/* ── Gifts ── */}
           {(wedding?.giftLabel1 || wedding?.giftLabel2) && (
-            <VCard label="Mesa de regalos">
+            <AlbumCard label="Mesa de regalos">
               <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
                 {[
                   { label: wedding?.giftLabel1, url: wedding?.giftUrl1 },
                   { label: wedding?.giftLabel2, url: wedding?.giftUrl2 },
                 ].filter(g => g.label && g.url).map((g, i) => (
-                  <button key={i} className="v90-btn" onClick={() => g.url && window.open(g.url, "_blank")} data-testid={`button-gift-${i}`}>
+                  <button key={i} className="album-btn" onClick={() => g.url && window.open(g.url, "_blank")} data-testid={`button-gift-${i}`}>
                     {g.label}
                   </button>
                 ))}
               </div>
-            </VCard>
+            </AlbumCard>
           )}
 
           {/* ── QR Code ── */}
           {invitation?.qrCode && (
             <>
-              <OrnamentDivider symbol="✦" />
-              <div style={{ textAlign: "center" }} data-testid="window-qr">
-                <label className="v90-label" style={{ display: "block", textAlign: "center", marginBottom: 16 }}>Tu pase de entrada</label>
-                <div style={{ display: "inline-block", border: "1px solid #C4730A40", padding: 8, boxShadow: "0 0 0 4px #1A1005, 0 0 0 5px #C4730A20", background: "white" }}>
+              <OrnamentDivider symbol="&#10054;" />
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                style={{ textAlign: "center" }}
+                data-testid="window-qr"
+              >
+                <label className="album-label" style={{ display: "block", textAlign: "center", marginBottom: 16 }}>Tu pase de entrada</label>
+                <div style={{
+                  display: "inline-block",
+                  border: "1px solid #D9C9A8",
+                  padding: 10,
+                  borderRadius: 6,
+                  background: "white",
+                  boxShadow: "0 2px 12px rgba(74,55,40,0.08)",
+                }}>
                   <img src={invitation.qrCode} alt="QR" style={{ width: 148, height: 148, display: "block" }} data-testid="img-qr-code" />
                 </div>
-                <p style={{ fontSize: 9, marginTop: 12, color: "#C4730A50", letterSpacing: "0.3em", textTransform: "uppercase" }}>Presenta en la entrada</p>
-              </div>
+                <p style={{ fontSize: 11, marginTop: 14, color: "#7A6555", letterSpacing: "0.2em", textTransform: "uppercase" as const }}>Presenta en la entrada</p>
+              </motion.div>
             </>
           )}
 
           {/* ── Footer ── */}
-          <OrnamentDivider symbol="❧" />
-          <div style={{ textAlign: "center", color: "#C4730A50", fontSize: 9, letterSpacing: "0.4em", textTransform: "uppercase", fontFamily: "monospace", lineHeight: 2 }}>
-            <div>{wedding?.coupleName}</div>
+          <OrnamentDivider symbol="&#10087;" />
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            style={{
+              textAlign: "center",
+              color: "#7A6555",
+              fontSize: 12,
+              letterSpacing: "0.2em",
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              lineHeight: 2.2,
+              paddingBottom: 20,
+            }}
+          >
+            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontStyle: "italic", color: "#A0784C" }}>{wedding?.coupleName}</div>
             <div>{wedding?.weddingDate}</div>
-          </div>
+          </motion.div>
         </div>
       </motion.div>
       <MusicPlayer
