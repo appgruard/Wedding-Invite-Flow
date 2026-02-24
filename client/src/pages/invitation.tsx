@@ -568,12 +568,14 @@ export default function InvitationPage() {
     queryKey: previewTemplate
       ? ["/api/demo", previewTemplate]
       : ["/api/invitations", invitationId],
-    queryFn: previewTemplate
-      ? async () => {
-          const res = await fetch(`/api/demo/${previewTemplate}`);
-          return res.json();
+    ...(previewTemplate
+      ? {
+          queryFn: async () => {
+            const res = await fetch(`/api/demo/${previewTemplate}`);
+            return res.json();
+          },
         }
-      : undefined,
+      : {}),
     enabled: previewTemplate ? true : !!invitationId,
     retry: 3,
     retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),

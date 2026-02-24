@@ -222,7 +222,9 @@ export default function NinetiesInvitationPage() {
 
   const { data, isLoading, isError } = useQuery<InvitationWithWedding>({
     queryKey: previewTemplate ? ["/api/demo", previewTemplate] : ["/api/invitations", invitationId],
-    queryFn: previewTemplate ? async () => { const r = await fetch(`/api/demo/${previewTemplate}`); return r.json(); } : undefined,
+    ...(previewTemplate
+      ? { queryFn: async () => { const r = await fetch(`/api/demo/${previewTemplate}`); return r.json(); } }
+      : {}),
     enabled: previewTemplate ? true : !!invitationId,
     retry: 3,
     retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
