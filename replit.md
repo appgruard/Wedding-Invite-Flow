@@ -12,11 +12,11 @@ A multi-wedding invitation management system with animated invitation pages (3 t
 - `/estilos` - Invitation style selector panel (password protected)
 
 ## Features
-- **3 invitation templates**: Clásico (curtain reveal), Netflix (N logo animation), 90s (Flying Toasters / Windows 95)
+- **3 invitation templates**: Clásico (curtain reveal), Netflix (N logo animation), 90s (Flying Toasters / Vintage Album)
 - **Multi-wedding management**: Create/edit/delete multiple wedding events from the admin panel
 - **Per-wedding customization**: couple names, dates, venues, church, photos, messages, gift registries
 - **Video intro support**: YouTube link or MP4 upload, configurable duration
-- **Full wedding info**: ceremony, reception, dress code, gift registry, envelope rain, countdown
+- **Full wedding info**: ceremony, reception, dress code, allowed colors palette, gift registry, envelope rain, countdown
 - **RSVP system** with seat confirmation
 - **QR code generation** for each invitation (points to `/confirm` page)
 - **Admin panel**: Wedding CRUD + Invitation CRUD per wedding, track RSVPs, filter/search, PDF export
