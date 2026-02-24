@@ -92,18 +92,28 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json({ authenticated: !!(req.session && (req.session as any).authenticated) });
   });
 
-  app.post("/api/auth/client-login", (req, res) => {
-    const { password } = req.body;
-    const clientPassword = process.env.CLIENT_PASSWORD || "PScliente99";
-    if (password === clientPassword) {
-      (req.session as any).clientAuthenticated = true;
-      return res.json({ success: true });
+  app.post("/api/auth/client-login", async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ message: "Usuario y contraseña requeridos" });
     }
-    return res.status(401).json({ message: "Contraseña incorrecta" });
+    const allWeddings = await storage.getWeddings();
+    const match = allWeddings.find(
+      (w) => w.clientUsername && w.clientPassword &&
+             w.clientUsername === username && w.clientPassword === password
+    );
+    if (!match) {
+      return res.status(401).json({ message: "Usuario o contraseña incorrectos" });
+    }
+    (req.session as any).clientAuthenticated = true;
+    (req.session as any).clientWeddingId = match.id;
+    return res.json({ success: true, weddingId: match.id });
   });
 
   app.get("/api/auth/client-check", (req, res) => {
-    res.json({ authenticated: !!(req.session && (req.session as any).clientAuthenticated) });
+    const authenticated = !!(req.session && (req.session as any).clientAuthenticated);
+    const weddingId = (req.session as any)?.clientWeddingId ?? null;
+    res.json({ authenticated, weddingId });
   });
 
   // ── File Upload ──────────────────────────────────────────────────────────────
@@ -130,7 +140,12 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   // ── Weddings ────────────────────────────────────────────────────────────────
-  app.get("/api/weddings", requireAnyAuth, async (_req, res) => {
+  app.get("/api/weddings", requireAnyAuth, async (req, res) => {
+    const sess = req.session as any;
+    if (sess.clientAuthenticated && !sess.authenticated && sess.clientWeddingId) {
+      const wedding = await storage.getWedding(sess.clientWeddingId);
+      return res.json(wedding ? [wedding] : []);
+    }
     const all = await storage.getWeddings();
     res.json(all);
   });
@@ -168,6 +183,12 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   app.get("/api/invitations/wedding/:weddingId", requireAnyAuth, async (req, res) => {
+    const sess = req.session as any;
+    if (sess.clientAuthenticated && !sess.authenticated) {
+      if (sess.clientWeddingId !== req.params.weddingId) {
+        return res.status(403).json({ message: "No autorizado para esta boda" });
+      }
+    }
     res.json(await storage.getInvitationsByWedding(String(req.params.weddingId)));
   });
 
@@ -181,7 +202,12 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   app.post("/api/invitations", requireAnyAuth, async (req, res) => {
     try {
-      const { guestName, seats, confirmedSeats, status, weddingId } = req.body;
+      const sess = req.session as any;
+      const { guestName, seats, confirmedSeats, status } = req.body;
+      let { weddingId } = req.body;
+      if (sess.clientAuthenticated && !sess.authenticated) {
+        weddingId = sess.clientWeddingId;
+      }
       if (!guestName) return res.status(400).json({ message: "El nombre del invitado es requerido" });
       const invitation = await storage.createInvitation({
         guestName,

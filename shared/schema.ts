@@ -26,6 +26,8 @@ export const weddings = sqliteTable("weddings", {
   introDuration: integer("intro_duration").notNull().default(4000),
   musicUrl: text("music_url").default(""),
   musicType: text("music_type").notNull().default("none"),
+  clientUsername: text("client_username").default(""),
+  clientPassword: text("client_password").default(""),
   createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
 });
 

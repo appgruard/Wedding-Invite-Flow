@@ -13,12 +13,13 @@ export function useAuth() {
 }
 
 export function useClientAuth() {
-  const { data, isLoading } = useQuery<{ authenticated: boolean } | null>({
+  const { data, isLoading } = useQuery<{ authenticated: boolean; weddingId: string | null } | null>({
     queryKey: ["/api/auth/client-check"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
   return {
     authenticated: data?.authenticated ?? false,
+    weddingId: data?.weddingId ?? null,
     isLoading,
   };
 }

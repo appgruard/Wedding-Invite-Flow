@@ -108,6 +108,8 @@ const editInvitationSchema = z.object({
 
 const weddingFormSchema = insertWeddingSchema.extend({
   introDuration: z.coerce.number().min(1000).max(10000),
+  clientUsername: z.string().default(""),
+  clientPassword: z.string().default(""),
 });
 
 type CreateFormValues = z.infer<typeof createInvitationSchema>;
@@ -201,6 +203,8 @@ export default function AdminPage() {
       introDuration: 4000,
       musicUrl: "",
       musicType: "none",
+      clientUsername: "",
+      clientPassword: "",
     },
   });
 
@@ -518,6 +522,8 @@ export default function AdminPage() {
       introDuration: wedding.introDuration,
       musicUrl: wedding.musicUrl || "",
       musicType: wedding.musicType || "none",
+      clientUsername: wedding.clientUsername || "",
+      clientPassword: wedding.clientPassword || "",
     });
     setWeddingDialogOpen(true);
   }

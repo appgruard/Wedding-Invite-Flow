@@ -65,6 +65,12 @@ export async function runMigrations() {
   if (!weddingColNames.includes("music_type")) {
     sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "music_type" TEXT NOT NULL DEFAULT 'none'`);
   }
+  if (!weddingColNames.includes("client_username")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "client_username" TEXT DEFAULT ''`);
+  }
+  if (!weddingColNames.includes("client_password")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "client_password" TEXT DEFAULT ''`);
+  }
 
   sqlite.pragma("foreign_keys = ON");
   sqlite.close();

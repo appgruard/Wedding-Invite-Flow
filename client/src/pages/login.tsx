@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [, setLocation] = useLocation();
   const { authenticated, isLoading: authLoading } = useClientAuth();
   const { toast } = useToast();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,20 +24,21 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!password) {
-      toast({ title: "Error", description: "Por favor ingresa la contraseña", variant: "destructive" });
+    if (!username || !password) {
+      toast({ title: "Error", description: "Por favor ingresa usuario y contraseña", variant: "destructive" });
       return;
     }
     setIsLoading(true);
     try {
-      const response = await apiRequest("POST", "/api/auth/client-login", { password });
+      const response = await apiRequest("POST", "/api/auth/client-login", { username, password });
       if (response.ok) {
-        queryClient.setQueryData(["/api/auth/client-check"], { authenticated: true });
+        const data = await response.json();
+        queryClient.setQueryData(["/api/auth/client-check"], { authenticated: true, weddingId: data.weddingId });
         toast({ title: "Bienvenido", description: "Acceso concedido" });
         setLocation("/client");
       }
     } catch {
-      toast({ title: "Error", description: "Contraseña incorrecta. Por favor intenta nuevamente.", variant: "destructive" });
+      toast({ title: "Error", description: "Usuario o contraseña incorrectos.", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -69,18 +71,35 @@ export default function LoginPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
+              <label htmlFor="username" className="text-sm font-medium font-serif text-wedding-burgundy">
+                Usuario
+              </label>
+              <Input
+                id="username"
+                type="text"
+                placeholder="Tu usuario"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                disabled={isLoading}
+                data-testid="input-username"
+                className="font-serif border-wedding-gold"
+                autoComplete="username"
+              />
+            </div>
+            <div className="space-y-2">
               <label htmlFor="password" className="text-sm font-medium font-serif text-wedding-burgundy">
                 Contraseña
               </label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Ingresa la contraseña"
+                placeholder="Tu contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
                 data-testid="input-password"
                 className="font-serif border-wedding-gold"
+                autoComplete="current-password"
               />
             </div>
             <Button
