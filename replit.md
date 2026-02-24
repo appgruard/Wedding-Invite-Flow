@@ -28,13 +28,14 @@ A multi-wedding invitation management system with animated invitation pages (3 t
 - **Netflix** (`netflix`): Netflix "N" logo animation intro + dark themed invitation styled like Netflix UI.
 - **90s** (`nineties`): Flying Toasters screensaver intro + Windows 95/98 aesthetic invitation with dialog boxes.
 
-## Video Intro (90s template only)
-- Only the `nineties` template supports video; it plays **inside the TV screen** in the intro
-- `videoType = "none"`: Flying Toasters animation inside the TV (default for 90s)
-- `videoType = "youtube"`: YouTube embed plays inside the TV screen
-- `videoType = "mp4"`: Uploaded MP4 plays inside the TV screen
-- The Video tab in admin is only shown when the selected template is `nineties`
-- Clásico and Netflix templates always use their native CSS animation (curtains / N logo)
+## Video Intro (all templates)
+- All 3 templates support video intro; configured in the admin "Video" tab
+- `videoType = "none"`: Template's native CSS animation plays (curtains / Netflix N / Flying Toasters)
+- `videoType = "youtube"`: YouTube embed plays fullscreen before the invitation content
+- `videoType = "mp4"`: Uploaded MP4 plays fullscreen before the invitation content
+- `introDuration`: Controls how long the intro plays (1–10 seconds)
+- For the 90s template, video plays **inside the TV screen** in the intro
+- Countdown timer in Clásico template parses the Spanish wedding date string (e.g. "15 de marzo de 2026")
 
 ## Authentication
 - **Admin** (`/admin`): Uses `ADMIN_PASSWORD` env var. Inline login form directly in the admin page. Full CRUD on weddings + invitations.

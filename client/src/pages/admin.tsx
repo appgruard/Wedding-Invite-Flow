@@ -12,7 +12,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -1143,15 +1143,13 @@ export default function AdminPage() {
                 data-testid="form-wedding"
               >
                 <Tabs defaultValue="pareja">
-                  <TabsList className={`grid w-full ${weddingForm.watch("template") === "nineties" ? "grid-cols-6" : "grid-cols-5"}`}>
+                  <TabsList className="grid w-full grid-cols-6">
                     <TabsTrigger value="pareja">Pareja</TabsTrigger>
                     <TabsTrigger value="evento">Evento</TabsTrigger>
                     <TabsTrigger value="regalos">Regalos</TabsTrigger>
                     <TabsTrigger value="plantilla">Plantilla</TabsTrigger>
                     <TabsTrigger value="musica">Música</TabsTrigger>
-                    {weddingForm.watch("template") === "nineties" && (
-                      <TabsTrigger value="video">Video</TabsTrigger>
-                    )}
+                    <TabsTrigger value="video">Video</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="pareja" className="space-y-4 pt-4">
@@ -1496,6 +1494,7 @@ export default function AdminPage() {
                               <Input
                                 placeholder="https://www.youtube.com/watch?v=..."
                                 {...field}
+                                value={field.value ?? ""}
                                 data-testid="input-music-youtube"
                               />
                             </FormControl>
@@ -1509,7 +1508,14 @@ export default function AdminPage() {
                     )}
                   </TabsContent>
 
-                  {weddingForm.watch("template") === "nineties" && <TabsContent value="video" className="space-y-6 pt-4">
+                  <TabsContent value="video" className="space-y-6 pt-4">
+                    <p className="text-sm text-muted-foreground">
+                      {weddingForm.watch("template") === "nineties"
+                        ? "Configura el video que se muestra dentro del televisor retro. Sin video, se muestran las tostadoras voladoras."
+                        : weddingForm.watch("template") === "netflix"
+                        ? "Configura un video intro. Sin video, se muestra la animación del logo Netflix."
+                        : "Configura un video intro. Sin video, se muestran las cortinas de teatro."}
+                    </p>
                     <FormField
                       control={weddingForm.control}
                       name="videoType"
@@ -1523,16 +1529,16 @@ export default function AdminPage() {
                               className="flex gap-4"
                             >
                               <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="none" id="none" />
-                                <Label htmlFor="none">Sin video</Label>
+                                <RadioGroupItem value="none" id="video-none" />
+                                <Label htmlFor="video-none">Sin video (animación predeterminada)</Label>
                               </div>
                               <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="youtube" id="youtube" />
-                                <Label htmlFor="youtube">YouTube</Label>
+                                <RadioGroupItem value="youtube" id="video-youtube" />
+                                <Label htmlFor="video-youtube">YouTube</Label>
                               </div>
                               <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="mp4" id="mp4" />
-                                <Label htmlFor="mp4">MP4 Upload</Label>
+                                <RadioGroupItem value="mp4" id="video-mp4" />
+                                <Label htmlFor="video-mp4">MP4 Upload</Label>
                               </div>
                             </RadioGroup>
                           </FormControl>
@@ -1559,7 +1565,8 @@ export default function AdminPage() {
                                   <Input 
                                     type="file" 
                                     accept="video/mp4" 
-                                    onChange={(e) => handleFileUpload(e, "videoUrl")} 
+                                    onChange={(e) => handleFileUpload(e, "videoUrl")}
+                                    data-testid="input-video-mp4"
                                   />
                                 </div>
                               </div>
@@ -1578,7 +1585,7 @@ export default function AdminPage() {
                           <FormItem>
                             <FormLabel>YouTube URL</FormLabel>
                             <FormControl>
-                              <Input {...field} value={field.value || ""} placeholder="https://youtube.com/..." />
+                              <Input {...field} value={field.value || ""} placeholder="https://youtube.com/watch?v=..." data-testid="input-video-youtube" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -1602,13 +1609,17 @@ export default function AdminPage() {
                               step={500}
                               value={[field.value]}
                               onValueChange={(vals) => field.onChange(vals[0])}
+                              data-testid="slider-intro-duration"
                             />
                           </FormControl>
+                          <p className="text-xs text-muted-foreground">
+                            Tiempo que dura la animación o video de introducción antes de mostrar la invitación.
+                          </p>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </TabsContent>}
+                  </TabsContent>
                 </Tabs>
 
                 <Button

@@ -84,11 +84,29 @@ function SectionWrapper({ children, className = "" }: { children: React.ReactNod
   );
 }
 
+const MONTHS_ES: Record<string, number> = {
+  enero: 0, febrero: 1, marzo: 2, abril: 3, mayo: 4, junio: 5,
+  julio: 6, agosto: 7, septiembre: 8, octubre: 9, noviembre: 10, diciembre: 11,
+};
+
+function parseSpanishDate(dateStr: string): number | null {
+  if (!dateStr) return null;
+  const clean = dateStr.toLowerCase().replace(/\./g, "").trim();
+  const match = clean.match(/(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})/);
+  if (!match) return null;
+  const day = parseInt(match[1]);
+  const month = MONTHS_ES[match[2]];
+  const year = parseInt(match[3]);
+  if (month === undefined) return null;
+  return new Date(year, month, day, 18, 0, 0).getTime();
+}
+
 function CountdownTimer({ colors, weddingDate }: { colors: Colors; weddingDate?: string | null }) {
   const textMuted = colors.text + "BB";
   const targetDate = useMemo(() => {
-    return new Date("2026-03-15T16:00:00").getTime();
-  }, []);
+    const parsed = weddingDate ? parseSpanishDate(weddingDate) : null;
+    return parsed ?? new Date("2026-03-15T18:00:00").getTime();
+  }, [weddingDate]);
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -231,10 +249,62 @@ function QRCodeSection({ invitation, colors }: { invitation: Invitation; colors:
   );
 }
 
+function VideoIntroOverlay({ videoType, videoUrl, introDuration, onDone }: {
+  videoType: string;
+  videoUrl: string;
+  introDuration: number;
+  onDone: () => void;
+}) {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(false);
+      setTimeout(onDone, 800);
+    }, introDuration);
+    return () => clearTimeout(timer);
+  }, [introDuration, onDone]);
+
+  const youtubeId = videoType === "youtube" && videoUrl
+    ? (videoUrl.includes("youtu.be/") ? videoUrl.split("youtu.be/")[1]?.split("?")[0] : videoUrl.split("v=")[1]?.split("&")[0])
+    : null;
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-50 bg-black"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: visible ? 1 : 0 }}
+      transition={{ duration: 0.8 }}
+    >
+      {videoType === "youtube" && youtubeId ? (
+        <iframe
+          title="intro-video"
+          className="w-full h-full"
+          src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&controls=0&loop=1&mute=0`}
+          allow="autoplay; encrypted-media"
+          allowFullScreen
+        />
+      ) : videoType === "mp4" && videoUrl ? (
+        <video
+          className="w-full h-full object-cover"
+          autoPlay
+          playsInline
+          loop
+          src={videoUrl}
+        />
+      ) : null}
+    </motion.div>
+  );
+}
+
 function ClassicTemplate({ invData, invitationId }: { invData: InvitationWithWedding; invitationId: string }) {
   const wedding = invData.wedding;
   const introDuration = wedding?.introDuration ?? 4000;
+  const videoType = wedding?.videoType ?? "none";
+  const videoUrl = wedding?.videoUrl ?? "";
+  const hasVideo = (videoType === "youtube" || videoType === "mp4") && videoUrl;
 
+  const [videoIntroDone, setVideoIntroDone] = useState(!hasVideo);
   const [curtainsOpen, setCurtainsOpen] = useState(false);
   const [curtainsMounted, setCurtainsMounted] = useState(true);
   const [contentVisible, setContentVisible] = useState(false);
@@ -253,12 +323,14 @@ function ClassicTemplate({ invData, invitationId }: { invData: InvitationWithWed
   };
 
   useEffect(() => {
-    const openDelay = Math.max(500, introDuration - 2200);
+    if (!videoIntroDone) return;
+    const curtainDuration = hasVideo ? 4000 : introDuration;
+    const openDelay = Math.max(500, curtainDuration - 2200);
     const t1 = setTimeout(() => setCurtainsOpen(true), openDelay);
-    const t2 = setTimeout(() => setContentVisible(true), introDuration);
-    const t3 = setTimeout(() => setCurtainsMounted(false), introDuration + 400);
+    const t2 = setTimeout(() => setContentVisible(true), curtainDuration);
+    const t3 = setTimeout(() => setCurtainsMounted(false), curtainDuration + 400);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, [introDuration]);
+  }, [introDuration, videoIntroDone, hasVideo]);
 
   const coupleName = wedding?.coupleName ?? "Ana María & Carlos Eduardo";
   const [name1, name2] = coupleName.includes("&") ? coupleName.split("&").map(s => s.trim()) : [coupleName, ""];
@@ -281,6 +353,15 @@ function ClassicTemplate({ invData, invitationId }: { invData: InvitationWithWed
     <div className="relative min-h-screen overflow-x-hidden" style={{ backgroundImage: "url(/images/pattern-bg.png)", backgroundRepeat: "repeat", backgroundSize: "300px" }}>
       <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: colors.bg + "E6" }} />
       <div className="absolute inset-0 dark:bg-[#1a1512]/90 pointer-events-none" />
+
+      {hasVideo && !videoIntroDone && (
+        <VideoIntroOverlay
+          videoType={videoType}
+          videoUrl={videoUrl}
+          introDuration={introDuration}
+          onDone={() => setVideoIntroDone(true)}
+        />
+      )}
 
       <div className="relative z-10">
         {curtainsMounted && (
@@ -500,6 +581,14 @@ export default function InvitationPage() {
     staleTime: 0,
   });
 
+  useEffect(() => {
+    if (!isError || !invitationId) return;
+    const timer = setInterval(() => {
+      queryClient.resetQueries({ queryKey: ["/api/invitations", invitationId] });
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [isError, invitationId]);
+
   const template = invData?.wedding?.template ?? previewTemplate ?? "clasico";
 
   if (isLoading) {
@@ -513,15 +602,15 @@ export default function InvitationPage() {
   if (isError && invitationId) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#FDF8F0] gap-4 px-4 text-center">
+        <div className="w-6 h-6 border-3 border-[#C9A96E] border-t-transparent rounded-full animate-spin mb-1" style={{ borderWidth: 3 }} />
         <p className="text-[#6B5435] font-serif text-lg">No se pudo cargar la invitación.</p>
+        <p className="text-[#9B8060] text-sm">Reintentando automáticamente…</p>
         <button
-          onClick={() => {
-            queryClient.resetQueries({ queryKey: ["/api/invitations", invitationId] });
-          }}
+          onClick={() => window.location.reload()}
           className="px-6 py-2 rounded-full text-white text-sm font-medium"
           style={{ background: "#C9A96E" }}
         >
-          Reintentar
+          Reintentar ahora
         </button>
       </div>
     );

@@ -111,15 +111,52 @@ function EffectLumieres() {
 }
 
 /* ─── Intro wrapper ──────────────────────────────────────────────────────── */
-const NetflixIntro = ({}: {
+const NetflixIntro = ({ videoType, videoUrl }: {
   duration: number;
+  videoType?: string;
+  videoUrl?: string;
 }) => {
   useEffect(() => {
-    const audio = new Audio("/sounds/netflix-intro.mp3");
-    audio.volume = 0.85;
-    audio.play().catch(() => {});
-    return () => { audio.pause(); audio.src = ""; };
-  }, []);
+    if (!videoType || videoType === "none") {
+      const audio = new Audio("/sounds/netflix-intro.mp3");
+      audio.volume = 0.85;
+      audio.play().catch(() => {});
+      return () => { audio.pause(); audio.src = ""; };
+    }
+  }, [videoType]);
+
+  const youtubeId = videoType === "youtube" && videoUrl
+    ? (videoUrl.includes("youtu.be/") ? videoUrl.split("youtu.be/")[1]?.split("?")[0] : videoUrl.split("v=")[1]?.split("&")[0])
+    : null;
+
+  if (videoType === "youtube" && youtubeId) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
+        <iframe
+          title="intro-video"
+          className="w-full h-full"
+          src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&controls=0&loop=1&mute=0`}
+          allow="autoplay; encrypted-media"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+
+  if (videoType === "mp4" && videoUrl) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
+        <video
+          className="w-full h-full object-cover"
+          autoPlay
+          playsInline
+          loop
+          src={videoUrl}
+        />
+      </div>
+    );
+  }
+
   /* ── CodePen mdryxPv exact recreation ── */
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black overflow-hidden">
@@ -255,7 +292,11 @@ export default function NetflixInvitationPage() {
       <AnimatePresence>
         {showIntro && (
           <motion.div key="intro" exit={{ opacity: 0 }} transition={{ duration: 0.8 }}>
-            <NetflixIntro duration={wedding.introDuration} />
+            <NetflixIntro
+              duration={wedding.introDuration}
+              videoType={wedding.videoType}
+              videoUrl={wedding.videoUrl ?? undefined}
+            />
           </motion.div>
         )}
       </AnimatePresence>
