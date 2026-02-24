@@ -71,6 +71,9 @@ export async function runMigrations() {
   if (!weddingColNames.includes("client_password")) {
     sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "client_password" TEXT DEFAULT ''`);
   }
+  if (!weddingColNames.includes("allowed_colors")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "allowed_colors" TEXT DEFAULT '[]'`);
+  }
 
   sqlite.pragma("foreign_keys = ON");
   sqlite.close();

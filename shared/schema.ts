@@ -13,6 +13,7 @@ export const weddings = sqliteTable("weddings", {
   churchAddress: text("church_address").default("Calle Iglesia 45, CDMX"),
   churchTime: text("church_time").default("18:00 hrs"),
   dressCode: text("dress_code").default("Formal / Etiqueta"),
+  allowedColors: text("allowed_colors").default("[]"),
   message: text("message").default(""),
   giftUrl1: text("gift_url_1").default("https://www.liverpool.com.mx"),
   giftLabel1: text("gift_label_1").default("Liverpool"),
