@@ -1149,13 +1149,14 @@ export default function AdminPage() {
                 data-testid="form-wedding"
               >
                 <Tabs defaultValue="pareja">
-                  <TabsList className="grid w-full grid-cols-6">
+                  <TabsList className="grid w-full grid-cols-7">
                     <TabsTrigger value="pareja">Pareja</TabsTrigger>
                     <TabsTrigger value="evento">Evento</TabsTrigger>
                     <TabsTrigger value="regalos">Regalos</TabsTrigger>
                     <TabsTrigger value="plantilla">Plantilla</TabsTrigger>
                     <TabsTrigger value="musica">Música</TabsTrigger>
                     <TabsTrigger value="video">Video</TabsTrigger>
+                    <TabsTrigger value="acceso">Acceso</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="pareja" className="space-y-4 pt-4">
@@ -1625,6 +1626,54 @@ export default function AdminPage() {
                         </FormItem>
                       )}
                     />
+                  </TabsContent>
+
+                  <TabsContent value="acceso" className="space-y-6 pt-4">
+                    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                      <p className="text-sm text-amber-800 font-serif">
+                        Estas credenciales permiten al cliente acceder a su portal de invitaciones en <strong>/login</strong>. El cliente solo podrá gestionar las invitaciones de esta boda.
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={weddingForm.control}
+                        name="clientUsername"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Usuario del cliente</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Ej: anaycarlos2026"
+                                {...field}
+                                value={field.value ?? ""}
+                                data-testid="input-client-username"
+                              />
+                            </FormControl>
+                            <p className="text-xs text-muted-foreground">El cliente usará esto para iniciar sesión.</p>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={weddingForm.control}
+                        name="clientPassword"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Contraseña del cliente</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Ej: Boda2026Segura"
+                                {...field}
+                                value={field.value ?? ""}
+                                data-testid="input-client-password"
+                              />
+                            </FormControl>
+                            <p className="text-xs text-muted-foreground">Comparte esta contraseña con el cliente.</p>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </TabsContent>
                 </Tabs>
 

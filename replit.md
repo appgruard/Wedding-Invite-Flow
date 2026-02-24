@@ -38,10 +38,11 @@ A multi-wedding invitation management system with animated invitation pages (3 t
 - Countdown timer in Clásico template parses the Spanish wedding date string (e.g. "15 de marzo de 2026")
 
 ## Authentication
-- **Admin** (`/admin`): Uses `ADMIN_PASSWORD` env var. Inline login form directly in the admin page. Full CRUD on weddings + invitations.
-- **Client** (`/login` → `/client`): Uses `CLIENT_PASSWORD` env var. Can only create invitations for existing weddings. Cannot manage weddings or change templates.
+- **Admin** (`/admin`): Uses `ADMIN_PASSWORD` env var (default: `PSinvitation99`). Inline login form. Full CRUD on weddings + invitations.
+- **Client** (`/login` → `/client`): Per-wedding credentials (`clientUsername` + `clientPassword` set in admin Acceso tab). Client only sees and manages invitations for their own wedding. Cannot edit wedding settings or see other weddings.
 - Session-based using express-session with MemoryStore (24h)
 - `requireAuth` = admin only, `requireAnyAuth` = admin or client, `requireClientAuth` = client only
+- Client session stores `clientWeddingId` — all client endpoints enforce this scope automatically
 
 ## Database Tables
 - `weddings` - Wedding event metadata (names, dates, venues, template, video, photos, gifts, etc.)
