@@ -125,13 +125,13 @@ export const TEMPLATES = [
   },
   {
     id: "galaxia",
-    name: "Galaxia Celestial",
+    name: "Estrellas ",
     description: "Cielo estrellado con cristales de luz y paneles de cristal flotantes",
     thumbnail: "✨",
   },
   {
     id: "jardin",
-    name: "Jardín Encantado",
+    name: "Jardín",
     description: "Acuarelas botánicas con marcos de enredaderas y pétalos flotantes",
     thumbnail: "🌿",
   },
