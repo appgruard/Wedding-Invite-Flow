@@ -34,7 +34,10 @@ A multi-wedding invitation management system with animated invitation pages (3 t
 - `videoType = "youtube"`: YouTube embed plays fullscreen before the invitation content
 - `videoType = "mp4"`: Uploaded MP4 plays fullscreen before the invitation content
 - `introDuration`: Controls how long the intro plays (1–10 seconds)
-- For the 90s template, video plays **inside the TV screen** in the intro
+- **90s TV video** (separate from main intro): `tvVideoType` + `tvVideoUrl` control what plays inside the retro TV screen
+  - Default: YouTube video `https://youtu.be/BboMpayJomw`
+  - Options: "none" (flying toasters), "youtube", or "mp4"
+  - Configured in admin Video tab (only shown when template is "nineties")
 - Countdown timer in Clásico template parses the Spanish wedding date string (e.g. "15 de marzo de 2026")
 
 ## Authentication

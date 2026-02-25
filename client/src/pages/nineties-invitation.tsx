@@ -103,8 +103,10 @@ function FlyingToasters({ coupleName }: { coupleName: string }) {
 
 /* ─── TV Intro ───────────────────────────────────────────────────────────── */
 function TV90Intro({ wedding }: { wedding: Wedding }) {
-  const videoId = wedding.videoType === "youtube" && wedding.videoUrl
-    ? (wedding.videoUrl.includes("youtu.be/") ? wedding.videoUrl.split("youtu.be/")[1]?.split("?")[0] : wedding.videoUrl.split("v=")[1]?.split("&")[0])
+  const tvType = wedding.tvVideoType || "youtube";
+  const tvUrl = wedding.tvVideoUrl || "https://youtu.be/BboMpayJomw";
+  const videoId = tvType === "youtube" && tvUrl
+    ? (tvUrl.includes("youtu.be/") ? tvUrl.split("youtu.be/")[1]?.split("?")[0] : tvUrl.split("v=")[1]?.split("&")[0])
     : null;
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
@@ -114,9 +116,9 @@ function TV90Intro({ wedding }: { wedding: Wedding }) {
         {videoId ? (
           <iframe title="tv" style={{ width: "100%", height: "100%", border: "none", filter: "contrast(1.2) brightness(1.1)" }}
             src={`https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&loop=1&mute=1`} allow="autoplay; encrypted-media" allowFullScreen />
-        ) : wedding.videoType === "mp4" && wedding.videoUrl ? (
+        ) : tvType === "mp4" && tvUrl ? (
           <video style={{ width: "100%", height: "100%", filter: "contrast(1.2) brightness(1.1)" }} autoPlay muted playsInline loop>
-            <source src={wedding.videoUrl} type="video/mp4" />
+            <source src={tvUrl} type="video/mp4" />
           </video>
         ) : <FlyingToasters coupleName={wedding.coupleName} />}
         <div style={{ pointerEvents: "none", position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "url('https://upload.wikimedia.org/wikipedia/commons/0/02/Television_static.gif')", mixBlendMode: "multiply" as const, opacity: 0.3, animation: "v90-glitch 0.2s infinite linear", zIndex: 2 }} />

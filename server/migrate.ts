@@ -74,6 +74,12 @@ export async function runMigrations() {
   if (!weddingColNames.includes("allowed_colors")) {
     sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "allowed_colors" TEXT DEFAULT '[]'`);
   }
+  if (!weddingColNames.includes("tv_video_url")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "tv_video_url" TEXT DEFAULT 'https://youtu.be/BboMpayJomw'`);
+  }
+  if (!weddingColNames.includes("tv_video_type")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "tv_video_type" TEXT NOT NULL DEFAULT 'youtube'`);
+  }
 
   sqlite.pragma("foreign_keys = ON");
   sqlite.close();

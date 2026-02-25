@@ -25,6 +25,8 @@ export const weddings = sqliteTable("weddings", {
   videoUrl: text("video_url").default(""),
   videoType: text("video_type").notNull().default("none"),
   introDuration: integer("intro_duration").notNull().default(4000),
+  tvVideoUrl: text("tv_video_url").default("https://youtu.be/BboMpayJomw"),
+  tvVideoType: text("tv_video_type").notNull().default("youtube"),
   musicUrl: text("music_url").default(""),
   musicType: text("music_type").notNull().default("none"),
   clientUsername: text("client_username").default(""),

@@ -204,6 +204,8 @@ export default function AdminPage() {
       videoUrl: "",
       videoType: "none",
       introDuration: 4000,
+      tvVideoUrl: "https://youtu.be/BboMpayJomw",
+      tvVideoType: "youtube",
       musicUrl: "",
       musicType: "none",
       clientUsername: "",
@@ -524,6 +526,8 @@ export default function AdminPage() {
       videoUrl: wedding.videoUrl || "",
       videoType: wedding.videoType,
       introDuration: wedding.introDuration,
+      tvVideoUrl: wedding.tvVideoUrl || "https://youtu.be/BboMpayJomw",
+      tvVideoType: wedding.tvVideoType || "youtube",
       musicUrl: wedding.musicUrl || "",
       musicType: wedding.musicType || "none",
       clientUsername: wedding.clientUsername || "",
@@ -1581,7 +1585,7 @@ export default function AdminPage() {
                   <TabsContent value="video" className="space-y-6 pt-4">
                     <p className="text-sm text-muted-foreground">
                       {weddingForm.watch("template") === "nineties"
-                        ? "Configura el video que se muestra dentro del televisor retro. Sin video, se muestran las tostadoras voladoras."
+                        ? "Configura el video de la intro principal y el video del televisor retro por separado."
                         : weddingForm.watch("template") === "netflix"
                         ? "Configura un video intro. Sin video, se muestra la animación del logo Netflix."
                         : "Configura un video intro. Sin video, se muestran las cortinas de teatro."}
@@ -1689,6 +1693,91 @@ export default function AdminPage() {
                         </FormItem>
                       )}
                     />
+
+                    {weddingForm.watch("template") === "nineties" && (
+                      <div className="space-y-4 border-t pt-6">
+                        <h4 className="text-sm font-semibold">Video del Televisor (plantilla 90s)</h4>
+                        <p className="text-xs text-muted-foreground">
+                          Elige el video que se reproduce dentro del televisor retro en la intro. Por defecto se muestra un video de YouTube.
+                        </p>
+                        <FormField
+                          control={weddingForm.control}
+                          name="tvVideoType"
+                          render={({ field }) => (
+                            <FormItem className="space-y-4">
+                              <FormLabel>Tipo de Video del TV</FormLabel>
+                              <FormControl>
+                                <RadioGroup
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                  className="flex flex-wrap gap-4"
+                                >
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="none" id="tv-video-none" />
+                                    <Label htmlFor="tv-video-none">Tostadoras voladoras</Label>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="youtube" id="tv-video-youtube" />
+                                    <Label htmlFor="tv-video-youtube">YouTube</Label>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="mp4" id="tv-video-mp4" />
+                                    <Label htmlFor="tv-video-mp4">MP4 Upload</Label>
+                                  </div>
+                                </RadioGroup>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        {weddingForm.watch("tvVideoType") === "mp4" && (
+                          <FormField
+                            control={weddingForm.control}
+                            name="tvVideoUrl"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Cargar Archivo MP4 para TV</FormLabel>
+                                <FormControl>
+                                  <div className="flex items-center gap-4">
+                                    {field.value && (
+                                      <div className="w-12 h-12 rounded border flex items-center justify-center bg-muted">
+                                        <Video className="w-6 h-6" />
+                                      </div>
+                                    )}
+                                    <div className="flex-1">
+                                      <Input
+                                        type="file"
+                                        accept="video/mp4"
+                                        onChange={(e) => handleFileUpload(e, "tvVideoUrl")}
+                                        data-testid="input-tv-video-mp4"
+                                      />
+                                    </div>
+                                  </div>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        )}
+
+                        {weddingForm.watch("tvVideoType") === "youtube" && (
+                          <FormField
+                            control={weddingForm.control}
+                            name="tvVideoUrl"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>YouTube URL para TV</FormLabel>
+                                <FormControl>
+                                  <Input {...field} value={field.value || ""} placeholder="https://youtube.com/watch?v=... o https://youtu.be/..." data-testid="input-tv-video-youtube" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        )}
+                      </div>
+                    )}
                   </TabsContent>
 
                   <TabsContent value="acceso" className="space-y-6 pt-4">
