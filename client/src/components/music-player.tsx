@@ -34,7 +34,7 @@ function YouTubeMusicPlayer({
 }
 
 export function MusicPlayer({ musicUrl, musicType, started }: MusicPlayerProps) {
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
   const [ytVideoId, setYtVideoId] = useState<string | null>(null);
   const [ytKey, setYtKey] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
