@@ -290,7 +290,7 @@ export default function NinetiesInvitationPage() {
   const allowedColors: string[] = useMemo(() => { try { return JSON.parse(wedding?.allowedColors || "[]"); } catch { return []; } }, [wedding?.allowedColors]);
 
   useEffect(() => { const t = setInterval(() => setClock(new Date()), 1000); return () => clearInterval(t); }, []);
-  useEffect(() => { if (wedding) { const t = setTimeout(() => setShowIntro(false), wedding.introDuration || 6000); return () => clearTimeout(t); } }, [wedding]);
+  useEffect(() => { if (wedding) { const dur = wedding.introDuration || 60000; const t = setTimeout(() => setShowIntro(false), dur); return () => clearTimeout(t); } }, [wedding]);
 
   const respondMutation = useMutation({
     mutationFn: async ({ status, confirmedSeats }: { status: string; confirmedSeats: number }) => {
@@ -453,8 +453,11 @@ export default function NinetiesInvitationPage() {
       {/* TV Intro */}
       <AnimatePresence>
         {showIntro && wedding && (
-          <motion.div key="intro" exit={{ opacity: 0 }} transition={{ duration: 1.4 }}>
+          <motion.div key="intro" exit={{ opacity: 0 }} transition={{ duration: 1.4 }} onClick={() => setShowIntro(false)} style={{ cursor: "pointer" }}>
             <TV90Intro wedding={wedding} />
+            <div style={{ position: "fixed", bottom: 32, left: 0, right: 0, zIndex: 1001, textAlign: "center", pointerEvents: "none" }}>
+              <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 13, fontFamily: "monospace", letterSpacing: "0.05em", textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}>Toca para saltar</span>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1670,28 +1670,37 @@ export default function AdminPage() {
                     <FormField
                       control={weddingForm.control}
                       name="introDuration"
-                      render={({ field }) => (
+                      render={({ field }) => {
+                        const isNineties = weddingForm.watch("template") === "nineties";
+                        const maxMs = isNineties ? 180000 : 10000;
+                        const stepMs = isNineties ? 5000 : 500;
+                        const secs = field.value / 1000;
+                        const label = secs >= 60 ? `${Math.floor(secs / 60)}m ${Math.round(secs % 60)}s` : `${secs.toFixed(1)} segundos`;
+                        return (
                         <FormItem className="space-y-4">
                           <div className="flex justify-between items-center">
                             <FormLabel>Duración de la Intro</FormLabel>
-                            <span className="text-sm font-medium">{(field.value / 1000).toFixed(1)} segundos</span>
+                            <span className="text-sm font-medium">{label}</span>
                           </div>
                           <FormControl>
                             <Slider
                               min={1000}
-                              max={10000}
-                              step={500}
+                              max={maxMs}
+                              step={stepMs}
                               value={[field.value]}
                               onValueChange={(vals) => field.onChange(vals[0])}
                               data-testid="slider-intro-duration"
                             />
                           </FormControl>
                           <p className="text-xs text-muted-foreground">
-                            Tiempo que dura la animación o video de introducción antes de mostrar la invitación.
+                            {isNineties
+                              ? "Tiempo que dura la intro del televisor (hasta 3 minutos). El invitado puede saltarla tocando la pantalla."
+                              : "Tiempo que dura la animación o video de introducción antes de mostrar la invitación."}
                           </p>
                           <FormMessage />
                         </FormItem>
-                      )}
+                        );
+                      }}
                     />
 
                     {weddingForm.watch("template") === "nineties" && (

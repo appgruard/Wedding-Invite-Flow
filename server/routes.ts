@@ -283,7 +283,9 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       colorStyleId: "clasico",
       videoUrl: "",
       videoType: "none",
-      introDuration: 4000,
+      introDuration: template === "nineties" ? 60000 : 4000,
+      tvVideoUrl: "https://youtu.be/BboMpayJomw",
+      tvVideoType: "youtube",
       createdAt: new Date(),
     };
     res.json({
