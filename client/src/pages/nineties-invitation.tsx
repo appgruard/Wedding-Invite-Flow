@@ -104,10 +104,13 @@ function FlyingToasters({ coupleName }: { coupleName: string }) {
 /* ─── TV Intro ───────────────────────────────────────────────────────────── */
 function TV90Intro({ wedding }: { wedding: Wedding }) {
   const tvType = wedding.tvVideoType || "youtube";
-  const tvUrl = wedding.tvVideoUrl || "https://youtu.be/BboMpayJomw";
-  const videoId = tvType === "youtube" && tvUrl
-    ? (tvUrl.includes("youtu.be/") ? tvUrl.split("youtu.be/")[1]?.split("?")[0] : tvUrl.split("v=")[1]?.split("&")[0])
-    : null;
+  const tvUrl = wedding.tvVideoUrl || "https://youtu.be/BboMpayJomw?t=25";
+  let videoId: string | null = null;
+  let ytStart = 0;
+  if (tvType === "youtube" && tvUrl) {
+    videoId = tvUrl.includes("youtu.be/") ? tvUrl.split("youtu.be/")[1]?.split("?")[0] ?? null : tvUrl.split("v=")[1]?.split("&")[0] ?? null;
+    try { const u = new URL(tvUrl); ytStart = parseInt(u.searchParams.get("t") || u.searchParams.get("start") || "0", 10); } catch {}
+  }
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
       <div style={{ position: "absolute", width: "90vw", height: "50vw", maxWidth: "100%", maxHeight: "100vh", backgroundImage: "url(https://alexandrevacassin.fr/codepen/old-tv/base.webp)", zIndex: 10, backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none" }} />
@@ -115,9 +118,9 @@ function TV90Intro({ wedding }: { wedding: Wedding }) {
         <VCRCanvas />
         {videoId ? (
           <iframe title="tv" style={{ width: "100%", height: "100%", border: "none", filter: "contrast(1.2) brightness(1.1)" }}
-            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&loop=1&mute=1`} allow="autoplay; encrypted-media" allowFullScreen />
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&loop=1${ytStart ? `&start=${ytStart}` : ""}`} allow="autoplay; encrypted-media" allowFullScreen />
         ) : tvType === "mp4" && tvUrl ? (
-          <video style={{ width: "100%", height: "100%", filter: "contrast(1.2) brightness(1.1)" }} autoPlay muted playsInline loop>
+          <video style={{ width: "100%", height: "100%", filter: "contrast(1.2) brightness(1.1)" }} autoPlay playsInline loop>
             <source src={tvUrl} type="video/mp4" />
           </video>
         ) : <FlyingToasters coupleName={wedding.coupleName} />}
