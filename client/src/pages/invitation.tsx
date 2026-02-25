@@ -30,6 +30,8 @@ import { INVITATION_STYLES } from "@shared/schema";
 
 const NetflixInvitationPage = lazy(() => import("./netflix-invitation"));
 const NinetiesInvitationPage = lazy(() => import("./nineties-invitation"));
+const GalaxiaInvitationPage = lazy(() => import("./galaxia-invitation"));
+const JardinInvitationPage = lazy(() => import("./jardin-invitation"));
 
 type InvitationWithWedding = Invitation & { wedding: Wedding | null };
 type Colors = { bg: string; primary: string; accent: string; text: string };
@@ -656,6 +658,22 @@ export default function InvitationPage() {
     return (
       <Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-[#008080]"><div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" /></div>}>
         <NinetiesInvitationPage />
+      </Suspense>
+    );
+  }
+
+  if (template === "galaxia") {
+    return (
+      <Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-[#0B0D21]"><div className="w-10 h-10 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin" /></div>}>
+        <GalaxiaInvitationPage />
+      </Suspense>
+    );
+  }
+
+  if (template === "jardin") {
+    return (
+      <Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-[#FFF8F0]"><div className="w-10 h-10 border-4 border-[#7A8B6F] border-t-transparent rounded-full animate-spin" /></div>}>
+        <JardinInvitationPage />
       </Suspense>
     );
   }

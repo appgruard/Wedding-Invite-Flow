@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { SiTiktok, SiWhatsapp } from "react-icons/si";
-import { Play, Sparkles, Heart, Crown, Monitor, Palette, Pencil, ImageIcon, Music } from "lucide-react";
+import { Play, Sparkles, Heart, Crown, Monitor, Palette, Pencil, ImageIcon, Music, Star, Flower2 } from "lucide-react";
 
 const GOLD = "#C9A84C";
 const WHATSAPP_NUMBER = "8293519324";
@@ -98,6 +98,72 @@ const templates = [
           <div className="h-px w-12 bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent mt-1" />
           <div className="h-4 w-14 rounded mt-1 flex items-center justify-center" style={{ border: `1px solid ${GOLD}80` }}>
             <span className="text-[5px] tracking-wider" style={{ color: GOLD }}>CONFIRMAR</span>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "galaxia",
+    name: "Galaxia Celestial",
+    description: "Cielo estrellado con estrellas animadas, paneles de cristal flotantes y una cuenta regresiva orbital.",
+    icon: <Star className="w-7 h-7" />,
+    previewPath: "/invitation?preview=galaxia",
+    bg: "from-[#0B0D21] to-[#060714]",
+    accent: "#D4AF37",
+    badgeColor: "bg-[#D4AF37] text-black",
+    badge: "Celestial",
+    mockup: (
+      <div className="relative w-full aspect-[9/16] max-w-[120px] mx-auto rounded-xl overflow-hidden shadow-2xl border border-[#D4AF37]/30">
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-2 gap-1.5" style={{ background: "#0B0D21" }}>
+          <div className="absolute inset-0 opacity-40">
+            {[...Array(20)].map((_, i) => (
+              <div key={i} className="absolute rounded-full bg-white" style={{ width: i % 3 === 0 ? 2 : 1, height: i % 3 === 0 ? 2 : 1, top: `${(i * 17 + 5) % 100}%`, left: `${(i * 23 + 7) % 100}%`, opacity: 0.3 + (i % 5) * 0.15 }} />
+            ))}
+          </div>
+          <div className="w-10 h-10 rounded-full border flex items-center justify-center relative z-10" style={{ borderColor: "#D4AF3760", background: "rgba(212,175,55,0.08)" }}>
+            <Star className="w-4 h-4" style={{ color: "#D4AF37" }} />
+          </div>
+          <div className="h-1.5 w-14 rounded relative z-10" style={{ background: "#D4AF3790" }} />
+          <div className="text-[8px] relative z-10" style={{ color: "#D4AF3780" }}>&</div>
+          <div className="h-1.5 w-12 rounded relative z-10" style={{ background: "#D4AF3770" }} />
+          <div className="h-px w-16 relative z-10" style={{ background: "linear-gradient(to right, transparent, #D4AF3740, transparent)" }} />
+          <div className="h-1 w-10 rounded relative z-10" style={{ background: "#E8E8F030" }} />
+          <div className="h-4 w-14 rounded mt-1 flex items-center justify-center relative z-10" style={{ background: "rgba(212,175,55,0.15)", border: "1px solid #D4AF3760" }}>
+            <span className="text-[5px] tracking-wider" style={{ color: "#D4AF37" }}>CONFIRMAR</span>
+          </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "jardin",
+    name: "Jardín Encantado",
+    description: "Acuarelas botánicas con marcos de enredaderas, pétalos flotantes y tipografía manuscrita elegante.",
+    icon: <Flower2 className="w-7 h-7" />,
+    previewPath: "/invitation?preview=jardin",
+    bg: "from-[#E8EFE5] to-[#FFF8F0]",
+    accent: "#7A8B6F",
+    badgeColor: "bg-[#7A8B6F] text-white",
+    badge: "Botánico",
+    mockup: (
+      <div className="relative w-full aspect-[9/16] max-w-[120px] mx-auto rounded-xl overflow-hidden shadow-2xl border border-[#7A8B6F]/30">
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-2 gap-1.5" style={{ background: "#FFF8F0" }}>
+          <div className="w-10 h-10 rounded-full border-2 flex items-center justify-center" style={{ borderColor: "#7A8B6F60", background: "#F0EDE5" }}>
+            <Flower2 className="w-4 h-4" style={{ color: "#7A8B6F" }} />
+          </div>
+          <div className="h-1.5 w-14 rounded" style={{ background: "#8B6F7A80" }} />
+          <div className="text-[8px] font-serif italic" style={{ color: "#7A8B6F" }}>&</div>
+          <div className="h-1.5 w-12 rounded" style={{ background: "#8B6F7A60" }} />
+          <div className="flex items-center gap-1 w-full mt-0.5">
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, transparent, #7A8B6F40)" }} />
+            <Flower2 className="w-2 h-2" style={{ color: "#7A8B6F60" }} />
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to left, transparent, #7A8B6F40)" }} />
+          </div>
+          <div className="h-1 w-10 rounded" style={{ background: "#C4A88240" }} />
+          <div className="h-0.5 w-8 rounded" style={{ background: "#C4A88230" }} />
+          <div className="h-4 w-16 rounded mt-1 flex items-center justify-center" style={{ background: "#7A8B6F", boxShadow: "0 1px 4px #7A8B6F40" }}>
+            <span className="text-[5px] tracking-wider text-white font-medium">CONFIRMAR</span>
           </div>
         </div>
       </div>
@@ -262,10 +328,10 @@ export default function LandingPage() {
               Elige tu <span style={{ color: GOLD }}>estilo base</span>
             </h2>
             <p className="text-base max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.45)" }}>
-              Tres experiencias distintas — todas 100% personalizables en colores, contenido, fotos y video.
+              Cinco experiencias distintas — todas 100% personalizables en colores, contenido, fotos y video.
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {templates.map((t) => (
               <div
                 key={t.id}

@@ -120,8 +120,20 @@ export const TEMPLATES = [
   {
     id: "nineties",
     name: "Años 90",
-    description: "Estilo retro con tostadoras voladoras y estética Windows 95",
+    description: "Estilo retro con tostadoras voladoras y estética vintage",
     thumbnail: "💾",
+  },
+  {
+    id: "galaxia",
+    name: "Galaxia Celestial",
+    description: "Cielo estrellado con cristales de luz y paneles de cristal flotantes",
+    thumbnail: "✨",
+  },
+  {
+    id: "jardin",
+    name: "Jardín Encantado",
+    description: "Acuarelas botánicas con marcos de enredaderas y pétalos flotantes",
+    thumbnail: "🌿",
   },
 ] as const;
 

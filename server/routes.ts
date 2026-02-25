@@ -260,7 +260,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 
   app.get("/api/demo/:template", (req, res) => {
     const template = String(req.params.template);
-    const allowed = ["clasico", "netflix", "nineties"];
+    const allowed = ["clasico", "netflix", "nineties", "galaxia", "jardin"];
     if (!allowed.includes(template)) return res.status(400).json({ message: "Plantilla no válida" });
     const demoWedding = {
       id: `demo-${template}`,

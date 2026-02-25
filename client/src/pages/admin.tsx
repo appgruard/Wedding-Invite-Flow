@@ -1588,6 +1588,10 @@ export default function AdminPage() {
                         ? "Configura el video de la intro principal y el video del televisor retro por separado."
                         : weddingForm.watch("template") === "netflix"
                         ? "Configura un video intro. Sin video, se muestra la animación del logo Netflix."
+                        : weddingForm.watch("template") === "galaxia"
+                        ? "Configura un video intro. Sin video, se muestra la animación de constelaciones y estrellas fugaces."
+                        : weddingForm.watch("template") === "jardin"
+                        ? "Configura un video intro. Sin video, se muestra la animación de acuarelas botánicas."
                         : "Configura un video intro. Sin video, se muestran las cortinas de teatro."}
                     </p>
                     <FormField

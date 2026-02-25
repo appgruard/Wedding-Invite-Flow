@@ -12,7 +12,7 @@ A multi-wedding invitation management system with animated invitation pages (3 t
 - `/estilos` - Invitation style selector panel (password protected)
 
 ## Features
-- **3 invitation templates**: Clásico (curtain reveal), Netflix (N logo animation), 90s (Flying Toasters / Vintage Album)
+- **5 invitation templates**: Clásico (curtain reveal), Netflix (N logo animation), 90s (Flying Toasters / Vintage Album), Galaxia (starfield + glassmorphism), Jardín (watercolor botanical)
 - **Multi-wedding management**: Create/edit/delete multiple wedding events from the admin panel
 - **Per-wedding customization**: couple names, dates, venues, church, photos, messages, gift registries
 - **Video intro support**: YouTube link or MP4 upload, configurable duration
@@ -27,9 +27,11 @@ A multi-wedding invitation management system with animated invitation pages (3 t
 - **Clásico** (`clasico`): Theater curtain reveal animation + elegant wedding invitation layout. Color scheme customizable from 5 options.
 - **Netflix** (`netflix`): Netflix "N" logo animation intro + dark themed invitation styled like Netflix UI.
 - **90s** (`nineties`): Flying Toasters screensaver intro + Windows 95/98 aesthetic invitation with dialog boxes.
+- **Galaxia** (`galaxia`): Animated starfield background with parallax layers, shooting star constellation intro, glassmorphism cards. Deep navy (#0B0D21) + gold (#D4AF37) palette. Cormorant Garamond typography.
+- **Jardín** (`jardin`): Watercolor botanical theme with wash intro animation, floating petal/leaf particles, SVG vine borders. Sage green (#7A8B6F) + dusty rose (#C4A882) palette. Dancing Script + Lora typography.
 
 ## Video Intro (all templates)
-- All 3 templates support video intro; configured in the admin "Video" tab
+- All 5 templates support video intro; configured in the admin "Video" tab
 - `videoType = "none"`: Template's native CSS animation plays (curtains / Netflix N / Flying Toasters)
 - `videoType = "youtube"`: YouTube embed plays fullscreen before the invitation content
 - `videoType = "mp4"`: Uploaded MP4 plays fullscreen before the invitation content
@@ -103,4 +105,6 @@ A multi-wedding invitation management system with animated invitation pages (3 t
 - `client/src/pages/invitation.tsx` - Main invitation router (routes to correct template based on wedding.template)
 - `client/src/pages/netflix-invitation.tsx` - Netflix-themed template
 - `client/src/pages/nineties-invitation.tsx` - 90s Windows-themed template
+- `client/src/pages/galaxia-invitation.tsx` - Galaxy/celestial-themed template
+- `client/src/pages/jardin-invitation.tsx` - Botanical garden-themed template
 - `client/src/pages/admin.tsx` - Admin panel with wedding + invitation management
