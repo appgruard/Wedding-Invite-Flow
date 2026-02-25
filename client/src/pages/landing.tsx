@@ -105,14 +105,14 @@ const templates = [
   },
   {
     id: "galaxia",
-    name: "Galaxia Celestial",
+    name: "Estrellas",
     description: "Cielo estrellado con estrellas animadas, paneles de cristal flotantes y una cuenta regresiva orbital.",
     icon: <Star className="w-7 h-7" />,
     previewPath: "/invitation?preview=galaxia",
     bg: "from-[#0B0D21] to-[#060714]",
     accent: "#D4AF37",
     badgeColor: "bg-[#D4AF37] text-black",
-    badge: "Celestial",
+    badge: "Stars",
     mockup: (
       <div className="relative w-full aspect-[9/16] max-w-[120px] mx-auto rounded-xl overflow-hidden shadow-2xl border border-[#D4AF37]/30">
         <div className="absolute inset-0 flex flex-col items-center justify-center p-2 gap-1.5" style={{ background: "#0B0D21" }}>
@@ -138,7 +138,7 @@ const templates = [
   },
   {
     id: "jardin",
-    name: "Jardín Encantado",
+    name: "Jardín",
     description: "Acuarelas botánicas con marcos de enredaderas, pétalos flotantes y tipografía manuscrita elegante.",
     icon: <Flower2 className="w-7 h-7" />,
     previewPath: "/invitation?preview=jardin",
