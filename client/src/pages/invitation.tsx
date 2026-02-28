@@ -330,7 +330,7 @@ function ClassicTemplate({ invData, invitationId }: { invData: InvitationWithWed
     const curtainDuration = hasVideo ? 4000 : introDuration;
     const openDelay = Math.max(500, curtainDuration - 2200);
     const t1 = setTimeout(() => setCurtainsOpen(true), openDelay);
-    const t2 = setTimeout(() => setContentVisible(true), curtainDuration);
+    const t2 = setTimeout(() => { setContentVisible(true); window.scrollTo(0, 0); }, curtainDuration);
     const t3 = setTimeout(() => setCurtainsMounted(false), curtainDuration + 400);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [introDuration, videoIntroDone, hasVideo]);

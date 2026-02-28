@@ -262,6 +262,8 @@ export default function NetflixInvitationPage() {
     }
   }, [invitation]);
 
+  useEffect(() => { if (!showIntro) window.scrollTo(0, 0); }, [showIntro]);
+
   const respondMutation = useMutation({
     mutationFn: async ({ status, confirmedSeats }: { status: string; confirmedSeats: number }) => {
       const r = await apiRequest("POST", `/api/invitations/${invitationId}/respond`, { status, confirmedSeats });

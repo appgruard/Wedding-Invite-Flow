@@ -452,6 +452,8 @@ export default function GalaxiaInvitationPage() {
     }
   }, [wedding]);
 
+  useEffect(() => { if (!showIntro) window.scrollTo(0, 0); }, [showIntro]);
+
   const respondMutation = useMutation({
     mutationFn: async ({ status, confirmedSeats }: { status: string; confirmedSeats: number }) => {
       const res = await apiRequest("POST", `/api/invitations/${invitationId}/respond`, { status, confirmedSeats });

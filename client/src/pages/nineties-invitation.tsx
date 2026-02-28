@@ -295,6 +295,8 @@ export default function NinetiesInvitationPage() {
   useEffect(() => { const t = setInterval(() => setClock(new Date()), 1000); return () => clearInterval(t); }, []);
   useEffect(() => { if (wedding) { const dur = wedding.introDuration || 60000; const t = setTimeout(() => setShowIntro(false), dur); return () => clearTimeout(t); } }, [wedding]);
 
+  useEffect(() => { if (!showIntro) window.scrollTo(0, 0); }, [showIntro]);
+
   const respondMutation = useMutation({
     mutationFn: async ({ status, confirmedSeats }: { status: string; confirmedSeats: number }) => {
       const res = await apiRequest("POST", `/api/invitations/${invitationId}/respond`, { status, confirmedSeats });
