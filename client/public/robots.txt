@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /client
 Disallow: /api/
 
-Sitemap: https://cartasyeventos.com/sitemap.xml
+Sitemap: https://cartasyeventos.fourone.com.do/sitemap.xml
