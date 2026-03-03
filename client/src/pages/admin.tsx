@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -94,6 +94,121 @@ import {
   Upload,
   X,
 } from "lucide-react";
+
+function parseCouplePhotoPosition(pos: string): { x: number; y: number } {
+  if (!pos || pos === "center") return { x: 50, y: 50 };
+  if (pos === "top") return { x: 50, y: 0 };
+  if (pos === "bottom") return { x: 50, y: 100 };
+  if (pos === "left") return { x: 0, y: 50 };
+  if (pos === "right") return { x: 100, y: 50 };
+  if (pos === "top left") return { x: 0, y: 0 };
+  if (pos === "top right") return { x: 100, y: 0 };
+  if (pos === "bottom left") return { x: 0, y: 100 };
+  if (pos === "bottom right") return { x: 100, y: 100 };
+  const parts = pos.split(" ");
+  const x = parseFloat(parts[0]);
+  const y = parseFloat(parts[1]);
+  if (!isNaN(x) && !isNaN(y)) return { x, y };
+  return { x: 50, y: 50 };
+}
+
+function DraggablePhotoPositioner({
+  imageUrl,
+  value,
+  onChange,
+}: {
+  imageUrl: string;
+  value: string;
+  onChange: (val: string) => void;
+}) {
+  const FRAME = 180;
+  const [isDragging, setIsDragging] = useState(false);
+  const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
+  const { x, y } = parseCouplePhotoPosition(value);
+
+  const handleStart = useCallback((clientX: number, clientY: number) => {
+    setIsDragging(true);
+    dragRef.current = { startX: clientX, startY: clientY, startPosX: x, startPosY: y };
+  }, [x, y]);
+
+  const handleMove = useCallback((clientX: number, clientY: number) => {
+    if (!dragRef.current) return;
+    const { startX, startY, startPosX, startPosY } = dragRef.current;
+    const dx = clientX - startX;
+    const dy = clientY - startY;
+    const newX = Math.max(0, Math.min(100, startPosX - (dx / FRAME) * 100));
+    const newY = Math.max(0, Math.min(100, startPosY - (dy / FRAME) * 100));
+    onChange(`${Math.round(newX)}% ${Math.round(newY)}%`);
+  }, [onChange]);
+
+  const handleEnd = useCallback(() => {
+    setIsDragging(false);
+    dragRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const onMouseMove = (e: MouseEvent) => handleMove(e.clientX, e.clientY);
+    const onTouchMove = (e: TouchEvent) => { if (e.touches[0]) handleMove(e.touches[0].clientX, e.touches[0].clientY); };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", handleEnd);
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("touchend", handleEnd);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", handleEnd);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", handleEnd);
+    };
+  }, [isDragging, handleMove, handleEnd]);
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <div
+        style={{
+          width: FRAME,
+          height: FRAME,
+          borderRadius: "50%",
+          overflow: "hidden",
+          cursor: isDragging ? "grabbing" : "grab",
+          border: "3px solid hsl(var(--border))",
+          outline: isDragging ? "2px solid hsl(var(--primary))" : "2px solid transparent",
+          userSelect: "none",
+          flexShrink: 0,
+          touchAction: "none",
+        }}
+        onMouseDown={(e) => { e.preventDefault(); handleStart(e.clientX, e.clientY); }}
+        onTouchStart={(e) => { if (e.touches[0]) handleStart(e.touches[0].clientX, e.touches[0].clientY); }}
+        data-testid="photo-positioner-frame"
+      >
+        <img
+          src={imageUrl || "/images/couple.png"}
+          alt="Pareja"
+          draggable={false}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: `${x}% ${y}%`,
+            display: "block",
+            pointerEvents: "none",
+          }}
+        />
+      </div>
+      <p className="text-xs text-muted-foreground text-center">
+        Arrastra la foto para ajustar el encuadre
+      </p>
+      <button
+        type="button"
+        onClick={() => onChange("50% 50%")}
+        className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+        data-testid="button-reset-photo-position"
+      >
+        Restablecer al centro
+      </button>
+    </div>
+  );
+}
 
 const createInvitationSchema = z.object({
   guestName: z.string().min(1, "El nombre es requerido"),
@@ -1254,22 +1369,11 @@ export default function AdminPage() {
                           <FormItem>
                             <FormLabel>Posición de la foto de la pareja</FormLabel>
                             <FormControl>
-                              <select
-                                value={field.value || "center"}
+                              <DraggablePhotoPositioner
+                                imageUrl={weddingForm.watch("couplePhotoUrl") || "/images/couple.png"}
+                                value={field.value || "50% 50%"}
                                 onChange={field.onChange}
-                                className="w-full border rounded-md px-3 py-2 text-sm bg-background"
-                                data-testid="select-couple-photo-position"
-                              >
-                                <option value="center">Centro</option>
-                                <option value="top">Arriba</option>
-                                <option value="bottom">Abajo</option>
-                                <option value="left">Izquierda</option>
-                                <option value="right">Derecha</option>
-                                <option value="top left">Arriba izquierda</option>
-                                <option value="top right">Arriba derecha</option>
-                                <option value="bottom left">Abajo izquierda</option>
-                                <option value="bottom right">Abajo derecha</option>
-                              </select>
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
