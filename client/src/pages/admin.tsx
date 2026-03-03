@@ -199,6 +199,10 @@ export default function AdminPage() {
       giftUrl2: "https://www.amazon.com.mx",
       giftLabel2: "Amazon",
       couplePhotoUrl: "/images/couple.png",
+      couplePhotoPosition: "center",
+      venueImageUrl: "",
+      showReception: 1,
+      ceremonyTitle: "Ceremonia Religiosa",
       template: "clasico",
       colorStyleId: "clasico",
       videoUrl: "",
@@ -521,6 +525,10 @@ export default function AdminPage() {
       giftUrl2: wedding.giftUrl2 || "",
       giftLabel2: wedding.giftLabel2 || "",
       couplePhotoUrl: wedding.couplePhotoUrl || "/images/couple.png",
+      couplePhotoPosition: wedding.couplePhotoPosition || "center",
+      venueImageUrl: wedding.venueImageUrl || "",
+      showReception: wedding.showReception ?? 1,
+      ceremonyTitle: wedding.ceremonyTitle || "Ceremonia Religiosa",
       template: wedding.template,
       colorStyleId: wedding.colorStyleId,
       videoUrl: wedding.videoUrl || "",
@@ -1238,9 +1246,104 @@ export default function AdminPage() {
                         </FormItem>
                       )}
                     />
+                    {weddingForm.watch("template") === "jardin" && (
+                      <FormField
+                        control={weddingForm.control}
+                        name="couplePhotoPosition"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Posición de la foto de la pareja</FormLabel>
+                            <FormControl>
+                              <select
+                                value={field.value || "center"}
+                                onChange={field.onChange}
+                                className="w-full border rounded-md px-3 py-2 text-sm bg-background"
+                                data-testid="select-couple-photo-position"
+                              >
+                                <option value="center">Centro</option>
+                                <option value="top">Arriba</option>
+                                <option value="bottom">Abajo</option>
+                                <option value="left">Izquierda</option>
+                                <option value="right">Derecha</option>
+                                <option value="top left">Arriba izquierda</option>
+                                <option value="top right">Arriba derecha</option>
+                                <option value="bottom left">Abajo izquierda</option>
+                                <option value="bottom right">Abajo derecha</option>
+                              </select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                   </TabsContent>
 
                   <TabsContent value="evento" className="space-y-4 pt-4">
+                    {weddingForm.watch("template") === "jardin" && (
+                      <div className="border p-4 rounded-md space-y-4 bg-muted/30">
+                        <h4 className="font-medium text-sm">Opciones exclusivas Jardín</h4>
+                        <FormField
+                          control={weddingForm.control}
+                          name="ceremonyTitle"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Título de la sección de ceremonia</FormLabel>
+                              <FormControl>
+                                <Input {...field} value={field.value || "Ceremonia Religiosa"} placeholder="Ceremonia Religiosa" data-testid="input-ceremony-title" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={weddingForm.control}
+                          name="showReception"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center gap-3">
+                              <FormControl>
+                                <input
+                                  type="checkbox"
+                                  checked={field.value === 1}
+                                  onChange={(e) => field.onChange(e.target.checked ? 1 : 0)}
+                                  className="w-4 h-4 cursor-pointer"
+                                  data-testid="checkbox-show-reception"
+                                />
+                              </FormControl>
+                              <FormLabel className="cursor-pointer mb-0">Mostrar sección de Recepción</FormLabel>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={weddingForm.control}
+                          name="venueImageUrl"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Imagen del lugar (Recepción)</FormLabel>
+                              <FormControl>
+                                <div className="flex items-center gap-4">
+                                  {field.value && (
+                                    <div className="w-20 h-14 rounded-md overflow-hidden border flex-shrink-0">
+                                      <img src={field.value} alt="Lugar" className="w-full h-full object-cover" />
+                                    </div>
+                                  )}
+                                  <div className="flex-1">
+                                    <Input
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={(e) => handleFileUpload(e, "venueImageUrl")}
+                                      className="cursor-pointer"
+                                      data-testid="input-venue-image"
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-1">Foto del salón o jardín</p>
+                                  </div>
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border p-4 rounded-md">
                       <div className="space-y-4">
                         <h4 className="font-medium flex items-center"><Plus className="w-4 h-4 mr-2" /> Ceremonia (Iglesia)</h4>

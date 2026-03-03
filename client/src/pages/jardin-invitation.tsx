@@ -624,6 +624,7 @@ export default function JardinInvitationPage() {
                           height: 200,
                           borderRadius: "50%",
                           objectFit: "cover",
+                          objectPosition: wedding.couplePhotoPosition || "center",
                           display: "block",
                         }}
                         data-testid="img-couple"
@@ -637,7 +638,7 @@ export default function JardinInvitationPage() {
 
           <VineDivider />
 
-          <GardenCard label="Ceremonia Religiosa">
+          <GardenCard label={wedding?.ceremonyTitle || "Ceremonia Religiosa"}>
             <div style={{ textAlign: "center" }}>
               <WatercolorHeading text="Ceremonia" />
               <div className="jardin-detail"><strong>Lugar</strong><br />{wedding?.churchName}</div>
@@ -654,22 +655,34 @@ export default function JardinInvitationPage() {
             </div>
           </GardenCard>
 
-          <GardenCard label="Recepción">
-            <div style={{ textAlign: "center" }}>
-              <WatercolorHeading text="Recepción" />
-              <div className="jardin-detail"><strong>Lugar</strong><br />{wedding?.venueName}</div>
-              <div className="jardin-detail"><strong>Dirección</strong><br />{wedding?.venueAddress}</div>
-              <div className="jardin-detail" style={{ marginBottom: 20 }}><strong>Hora</strong><br />{wedding?.venueTime}</div>
-              <button
-                className="jardin-btn"
-                style={{ width: "100%" }}
-                onClick={() => window.open(`https://maps.google.com/?q=${wedding?.venueAddress}`, "_blank")}
-                data-testid="button-map-venue"
-              >
-                Ver en mapa
-              </button>
-            </div>
-          </GardenCard>
+          {(wedding?.showReception === 1 || wedding?.showReception === undefined) && (
+            <GardenCard label="Recepción">
+              <div style={{ textAlign: "center" }}>
+                <WatercolorHeading text="Recepción" />
+                {wedding?.venueImageUrl && (
+                  <div style={{ marginBottom: 16, borderRadius: 10, overflow: "hidden", border: `1px solid ${SAGE}25` }}>
+                    <img
+                      src={wedding.venueImageUrl}
+                      alt="Lugar de la recepción"
+                      style={{ width: "100%", height: 180, objectFit: "cover", display: "block" }}
+                      data-testid="img-venue"
+                    />
+                  </div>
+                )}
+                <div className="jardin-detail"><strong>Lugar</strong><br />{wedding?.venueName}</div>
+                <div className="jardin-detail"><strong>Dirección</strong><br />{wedding?.venueAddress}</div>
+                <div className="jardin-detail" style={{ marginBottom: 20 }}><strong>Hora</strong><br />{wedding?.venueTime}</div>
+                <button
+                  className="jardin-btn"
+                  style={{ width: "100%" }}
+                  onClick={() => window.open(`https://maps.google.com/?q=${wedding?.venueAddress}`, "_blank")}
+                  data-testid="button-map-venue"
+                >
+                  Ver en mapa
+                </button>
+              </div>
+            </GardenCard>
+          )}
 
           {wedding?.dressCode && (
             <GardenCard label="Código de Vestimenta">

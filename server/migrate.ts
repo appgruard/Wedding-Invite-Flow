@@ -80,6 +80,18 @@ export async function runMigrations() {
   if (!weddingColNames.includes("tv_video_type")) {
     sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "tv_video_type" TEXT NOT NULL DEFAULT 'youtube'`);
   }
+  if (!weddingColNames.includes("couple_photo_position")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "couple_photo_position" TEXT DEFAULT 'center'`);
+  }
+  if (!weddingColNames.includes("venue_image_url")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "venue_image_url" TEXT DEFAULT ''`);
+  }
+  if (!weddingColNames.includes("show_reception")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "show_reception" INTEGER NOT NULL DEFAULT 1`);
+  }
+  if (!weddingColNames.includes("ceremony_title")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "ceremony_title" TEXT DEFAULT 'Ceremonia Religiosa'`);
+  }
 
   sqlite.pragma("foreign_keys = ON");
   sqlite.close();
