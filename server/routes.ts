@@ -233,7 +233,15 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     res.json(invitation);
   });
 
-  app.delete("/api/invitations/:id", requireAuth, async (req, res) => {
+  app.delete("/api/invitations/:id", requireAnyAuth, async (req, res) => {
+    const sess = req.session as any;
+    if (sess.clientAuthenticated && !sess.authenticated) {
+      const invitation = await storage.getInvitation(String(req.params.id));
+      if (!invitation) return res.status(404).json({ message: "Invitacion no encontrada" });
+      if (invitation.weddingId !== sess.clientWeddingId) {
+        return res.status(403).json({ message: "No autorizado" });
+      }
+    }
     const deleted = await storage.deleteInvitation(String(req.params.id));
     if (!deleted) return res.status(404).json({ message: "Invitacion no encontrada" });
     res.json({ success: true });

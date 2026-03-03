@@ -18,7 +18,7 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Heart, Copy, Users, LogOut, UserPlus, Calendar, MapPin } from "lucide-react";
+import { Heart, Copy, Users, LogOut, UserPlus, Calendar, MapPin, Trash2 } from "lucide-react";
 
 const createInvitationSchema = z.object({
   guestName: z.string().min(1, "El nombre es requerido"),
@@ -78,6 +78,17 @@ export default function ClientPage() {
     },
     onError: () => {
       toast({ title: "Error", description: "No se pudo crear la invitación", variant: "destructive" });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => apiRequest("DELETE", `/api/invitations/${id}`, undefined),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/invitations/wedding", weddingId] });
+      toast({ title: "Invitación eliminada", description: "La invitación fue eliminada exitosamente" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "No se pudo eliminar la invitación", variant: "destructive" });
     },
   });
 
@@ -248,6 +259,7 @@ export default function ClientPage() {
                     <TableHead className="text-center">Lugares</TableHead>
                     <TableHead className="text-center">Estado</TableHead>
                     <TableHead className="text-center">Enlace</TableHead>
+                    <TableHead className="text-center">Eliminar</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -265,6 +277,22 @@ export default function ClientPage() {
                           className="gap-1 text-wedding-burgundy"
                         >
                           <Copy className="w-3 h-3" /> Copiar
+                        </Button>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            if (confirm(`¿Eliminar la invitación de ${inv.guestName}?`)) {
+                              deleteMutation.mutate(inv.id);
+                            }
+                          }}
+                          disabled={deleteMutation.isPending}
+                          data-testid={`button-delete-${inv.id}`}
+                          className="gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="w-3 h-3" /> Eliminar
                         </Button>
                       </TableCell>
                     </TableRow>
