@@ -329,6 +329,9 @@ export default function AdminPage() {
       couplePhotoUrl: "/images/couple.png",
       couplePhotoPosition: "center",
       venueImageUrl: "",
+      venueMapUrl: "",
+      churchImageUrl: "",
+      churchMapUrl: "",
       showReception: 1,
       ceremonyTitle: "Ceremonia Religiosa",
       template: "clasico",
@@ -655,6 +658,9 @@ export default function AdminPage() {
       couplePhotoUrl: wedding.couplePhotoUrl || "/images/couple.png",
       couplePhotoPosition: wedding.couplePhotoPosition || "center",
       venueImageUrl: wedding.venueImageUrl || "",
+      venueMapUrl: wedding.venueMapUrl || "",
+      churchImageUrl: wedding.churchImageUrl || "",
+      churchMapUrl: wedding.churchMapUrl || "",
       showReception: wedding.showReception ?? 1,
       ceremonyTitle: wedding.ceremonyTitle || "Ceremonia Religiosa",
       template: wedding.template,
@@ -1430,35 +1436,66 @@ export default function AdminPage() {
                             </FormItem>
                           )}
                         />
-                        <FormField
-                          control={weddingForm.control}
-                          name="venueImageUrl"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Imagen del lugar (Recepción)</FormLabel>
-                              <FormControl>
-                                <div className="flex items-center gap-4">
-                                  {field.value && (
-                                    <div className="w-20 h-14 rounded-md overflow-hidden border flex-shrink-0">
-                                      <img src={field.value} alt="Lugar" className="w-full h-full object-cover" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <FormField
+                            control={weddingForm.control}
+                            name="churchImageUrl"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Imagen del lugar (Ceremonia)</FormLabel>
+                                <FormControl>
+                                  <div className="flex items-center gap-3">
+                                    {field.value && (
+                                      <div className="w-16 h-12 rounded-md overflow-hidden border flex-shrink-0">
+                                        <img src={field.value} alt="Ceremonia" className="w-full h-full object-cover" />
+                                      </div>
+                                    )}
+                                    <div className="flex-1">
+                                      <Input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleFileUpload(e, "churchImageUrl")}
+                                        className="cursor-pointer"
+                                        data-testid="input-church-image"
+                                      />
+                                      <p className="text-xs text-muted-foreground mt-1">Foto de la iglesia</p>
                                     </div>
-                                  )}
-                                  <div className="flex-1">
-                                    <Input
-                                      type="file"
-                                      accept="image/*"
-                                      onChange={(e) => handleFileUpload(e, "venueImageUrl")}
-                                      className="cursor-pointer"
-                                      data-testid="input-venue-image"
-                                    />
-                                    <p className="text-xs text-muted-foreground mt-1">Foto del salón o jardín</p>
                                   </div>
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={weddingForm.control}
+                            name="venueImageUrl"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Imagen del lugar (Recepción)</FormLabel>
+                                <FormControl>
+                                  <div className="flex items-center gap-3">
+                                    {field.value && (
+                                      <div className="w-16 h-12 rounded-md overflow-hidden border flex-shrink-0">
+                                        <img src={field.value} alt="Recepción" className="w-full h-full object-cover" />
+                                      </div>
+                                    )}
+                                    <div className="flex-1">
+                                      <Input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleFileUpload(e, "venueImageUrl")}
+                                        className="cursor-pointer"
+                                        data-testid="input-venue-image"
+                                      />
+                                      <p className="text-xs text-muted-foreground mt-1">Foto del salón o jardín</p>
+                                    </div>
+                                  </div>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
                       </div>
                     )}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border p-4 rounded-md">
@@ -1497,6 +1534,18 @@ export default function AdminPage() {
                             </FormItem>
                           )}
                         />
+                        <FormField
+                          control={weddingForm.control}
+                          name="churchMapUrl"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Enlace al mapa (Ceremonia)</FormLabel>
+                              <FormControl><Input {...field} value={field.value || ""} placeholder="https://maps.google.com/..." data-testid="input-church-map-url" /></FormControl>
+                              <p className="text-xs text-muted-foreground">Opcional. Si se deja vacío se usa la dirección.</p>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                       </div>
                       <div className="space-y-4">
                         <h4 className="font-medium flex items-center"><Music className="w-4 h-4 mr-2" /> Recepción (Salón)</h4>
@@ -1529,6 +1578,18 @@ export default function AdminPage() {
                             <FormItem>
                               <FormLabel>Hora</FormLabel>
                               <FormControl><Input {...field} value={field.value || ""} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={weddingForm.control}
+                          name="venueMapUrl"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Enlace al mapa (Recepción)</FormLabel>
+                              <FormControl><Input {...field} value={field.value || ""} placeholder="https://maps.google.com/..." data-testid="input-venue-map-url" /></FormControl>
+                              <p className="text-xs text-muted-foreground">Opcional. Si se deja vacío se usa la dirección.</p>
                               <FormMessage />
                             </FormItem>
                           )}

@@ -92,6 +92,15 @@ export async function runMigrations() {
   if (!weddingColNames.includes("ceremony_title")) {
     sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "ceremony_title" TEXT DEFAULT 'Ceremonia Religiosa'`);
   }
+  if (!weddingColNames.includes("venue_map_url")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "venue_map_url" TEXT DEFAULT ''`);
+  }
+  if (!weddingColNames.includes("church_image_url")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "church_image_url" TEXT DEFAULT ''`);
+  }
+  if (!weddingColNames.includes("church_map_url")) {
+    sqlite.exec(`ALTER TABLE "weddings" ADD COLUMN "church_map_url" TEXT DEFAULT ''`);
+  }
 
   sqlite.pragma("foreign_keys = ON");
   sqlite.close();

@@ -658,13 +658,23 @@ export default function JardinInvitationPage() {
           <GardenCard label={wedding?.ceremonyTitle || "Ceremonia Religiosa"}>
             <div style={{ textAlign: "center" }}>
               <WatercolorHeading text="Ceremonia" />
+              {wedding?.churchImageUrl && (
+                <div style={{ marginBottom: 16, borderRadius: 10, overflow: "hidden", border: `1px solid ${SAGE}25` }}>
+                  <img
+                    src={wedding.churchImageUrl}
+                    alt="Lugar de la ceremonia"
+                    style={{ width: "100%", height: 180, objectFit: "cover", display: "block" }}
+                    data-testid="img-church"
+                  />
+                </div>
+              )}
               <div className="jardin-detail"><strong>Lugar</strong><br />{wedding?.churchName}</div>
               <div className="jardin-detail"><strong>Dirección</strong><br />{wedding?.churchAddress}</div>
               <div className="jardin-detail" style={{ marginBottom: 20 }}><strong>Hora</strong><br />{wedding?.churchTime}</div>
               <button
                 className="jardin-btn"
                 style={{ width: "100%" }}
-                onClick={() => window.open(`https://maps.google.com/?q=${wedding?.churchAddress}`, "_blank")}
+                onClick={() => window.open(wedding?.churchMapUrl || `https://maps.google.com/?q=${encodeURIComponent(wedding?.churchAddress || "")}`, "_blank")}
                 data-testid="button-map-church"
               >
                 Ver en mapa
@@ -692,7 +702,7 @@ export default function JardinInvitationPage() {
                 <button
                   className="jardin-btn"
                   style={{ width: "100%" }}
-                  onClick={() => window.open(`https://maps.google.com/?q=${wedding?.venueAddress}`, "_blank")}
+                  onClick={() => window.open(wedding?.venueMapUrl || `https://maps.google.com/?q=${encodeURIComponent(wedding?.venueAddress || "")}`, "_blank")}
                   data-testid="button-map-venue"
                 >
                   Ver en mapa
