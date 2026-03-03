@@ -162,9 +162,6 @@ export default function ConfirmPage() {
             <h1 className="text-2xl font-sans mb-1" data-testid="text-validation-title" style={{ color: colors.primary }}>
               {isValid ? "Invitacion Valida" : "Invitacion Declinada"}
             </h1>
-            <p className="text-sm font-serif" style={{ color: textMuted }}>
-              Boda Ana Maria & Carlos Eduardo
-            </p>
           </div>
 
           <div className="p-6 space-y-5">
@@ -228,9 +225,6 @@ export default function ConfirmPage() {
               </div>
               <div>
                 <p className="text-xs font-serif uppercase tracking-wider" style={{ color: textMuted }}>Fecha</p>
-                <p className="text-lg font-sans dark:text-[#D4C4B0]" style={{ color: colors.text }}>
-                  15 de Marzo, 2026
-                </p>
               </div>
             </motion.div>
 
@@ -245,10 +239,7 @@ export default function ConfirmPage() {
               </div>
               <div>
                 <p className="text-xs font-serif uppercase tracking-wider" style={{ color: textMuted }}>Ceremonia</p>
-                <p className="text-lg font-sans dark:text-[#D4C4B0]" style={{ color: colors.text }}>
-                  Parroquia San Jose - 4:00 PM
-                </p>
-              </div>
+               </div>
             </motion.div>
           </div>
 
