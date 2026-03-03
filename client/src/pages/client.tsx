@@ -27,7 +27,7 @@ const createInvitationSchema = z.object({
 type CreateInvitationForm = z.infer<typeof createInvitationSchema>;
 
 function statusBadge(status: string) {
-  if (status === "confirmed") return <Badge className="bg-green-100 text-green-800">Confirmado</Badge>;
+  if (status === "accepted") return <Badge className="bg-green-100 text-green-800">Confirmado</Badge>;
   if (status === "declined") return <Badge className="bg-red-100 text-red-800">Declinado</Badge>;
   return <Badge className="bg-yellow-100 text-yellow-800">Pendiente</Badge>;
 }
@@ -114,7 +114,7 @@ export default function ClientPage() {
 
   if (!authenticated) return null;
 
-  const confirmedCount = invitations.filter((i) => i.status === "confirmed").length;
+  const confirmedCount = invitations.filter((i) => i.status === "accepted").length;
   const totalSeats = invitations.reduce((sum, i) => sum + i.seats, 0);
   const confirmedSeats = invitations.reduce((sum, i) => sum + (i.confirmedSeats ?? 0), 0);
 
