@@ -95,21 +95,35 @@ import {
   X,
 } from "lucide-react";
 
-function parseCouplePhotoPosition(pos: string): { x: number; y: number } {
-  if (!pos || pos === "center") return { x: 50, y: 50 };
-  if (pos === "top") return { x: 50, y: 0 };
-  if (pos === "bottom") return { x: 50, y: 100 };
-  if (pos === "left") return { x: 0, y: 50 };
-  if (pos === "right") return { x: 100, y: 50 };
-  if (pos === "top left") return { x: 0, y: 0 };
-  if (pos === "top right") return { x: 100, y: 0 };
-  if (pos === "bottom left") return { x: 0, y: 100 };
-  if (pos === "bottom right") return { x: 100, y: 100 };
-  const parts = pos.split(" ");
+function parseCouplePhotoOffset(val: string): { x: number; y: number } {
+  if (!val || val === "center" || val === "50% 50%") return { x: 0, y: 0 };
+  if (val.includes("%")) {
+    const parts = val.split(" ");
+    const px = parseFloat(parts[0]);
+    const py = parseFloat(parts[1]);
+    if (!isNaN(px) && !isNaN(py)) return { x: (px - 50) / 50, y: (py - 50) / 50 };
+    return { x: 0, y: 0 };
+  }
+  const parts = val.split(" ");
   const x = parseFloat(parts[0]);
   const y = parseFloat(parts[1]);
-  if (!isNaN(x) && !isNaN(y)) return { x, y };
-  return { x: 50, y: 50 };
+  if (!isNaN(x) && !isNaN(y)) return { x: Math.max(-1, Math.min(1, x)), y: Math.max(-1, Math.min(1, y)) };
+  return { x: 0, y: 0 };
+}
+
+function couplePhotoStyle(val: string, frameSize: number): React.CSSProperties {
+  const SCALE = 1.6;
+  const wrapSize = frameSize * SCALE;
+  const padding = (wrapSize - frameSize) / 2;
+  const { x, y } = parseCouplePhotoOffset(val);
+  return {
+    position: "absolute" as const,
+    width: wrapSize,
+    height: wrapSize,
+    top: -padding + y * padding,
+    left: -padding + x * padding,
+    pointerEvents: "none" as const,
+  };
 }
 
 function DraggablePhotoPositioner({
@@ -124,7 +138,8 @@ function DraggablePhotoPositioner({
   const FRAME = 180;
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
-  const { x, y } = parseCouplePhotoPosition(value);
+  const { x, y } = parseCouplePhotoOffset(value);
+  const SENSITIVITY = FRAME / 2;
 
   const handleStart = useCallback((clientX: number, clientY: number) => {
     setIsDragging(true);
@@ -136,10 +151,10 @@ function DraggablePhotoPositioner({
     const { startX, startY, startPosX, startPosY } = dragRef.current;
     const dx = clientX - startX;
     const dy = clientY - startY;
-    const newX = Math.max(0, Math.min(100, startPosX - (dx / FRAME) * 100));
-    const newY = Math.max(0, Math.min(100, startPosY - (dy / FRAME) * 100));
-    onChange(`${Math.round(newX)}% ${Math.round(newY)}%`);
-  }, [onChange]);
+    const newX = Math.max(-1, Math.min(1, startPosX + dx / SENSITIVITY));
+    const newY = Math.max(-1, Math.min(1, startPosY + dy / SENSITIVITY));
+    onChange(`${newX.toFixed(3)} ${newY.toFixed(3)}`);
+  }, [onChange, SENSITIVITY]);
 
   const handleEnd = useCallback(() => {
     setIsDragging(false);
@@ -162,6 +177,8 @@ function DraggablePhotoPositioner({
     };
   }, [isDragging, handleMove, handleEnd]);
 
+  const wrapStyle = couplePhotoStyle(value, FRAME);
+
   return (
     <div className="flex flex-col items-center gap-3">
       <div
@@ -176,31 +193,27 @@ function DraggablePhotoPositioner({
           userSelect: "none",
           flexShrink: 0,
           touchAction: "none",
+          position: "relative",
         }}
         onMouseDown={(e) => { e.preventDefault(); handleStart(e.clientX, e.clientY); }}
         onTouchStart={(e) => { if (e.touches[0]) handleStart(e.touches[0].clientX, e.touches[0].clientY); }}
         data-testid="photo-positioner-frame"
       >
-        <img
-          src={imageUrl || "/images/couple.png"}
-          alt="Pareja"
-          draggable={false}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: `${x}% ${y}%`,
-            display: "block",
-            pointerEvents: "none",
-          }}
-        />
+        <div style={wrapStyle}>
+          <img
+            src={imageUrl || "/images/couple.png"}
+            alt="Pareja"
+            draggable={false}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          />
+        </div>
       </div>
       <p className="text-xs text-muted-foreground text-center">
         Arrastra la foto para ajustar el encuadre
       </p>
       <button
         type="button"
-        onClick={() => onChange("50% 50%")}
+        onClick={() => onChange("0 0")}
         className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
         data-testid="button-reset-photo-position"
       >

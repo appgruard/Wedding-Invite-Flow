@@ -616,19 +616,36 @@ export default function JardinInvitationPage() {
                       background: CREAM,
                       borderRadius: "50%",
                     }}>
-                      <img
-                        src={wedding.couplePhotoUrl}
-                        alt="Pareja"
-                        style={{
-                          width: 200,
-                          height: 200,
-                          borderRadius: "50%",
-                          objectFit: "cover",
-                          objectPosition: wedding.couplePhotoPosition || "center",
-                          display: "block",
-                        }}
-                        data-testid="img-couple"
-                      />
+                      {(() => {
+                        const FRAME = 200;
+                        const SCALE = 1.6;
+                        const wrapSize = FRAME * SCALE;
+                        const padding = (wrapSize - FRAME) / 2;
+                        const rawVal = wedding.couplePhotoPosition || "0 0";
+                        let ox = 0, oy = 0;
+                        if (rawVal && rawVal !== "center") {
+                          if (rawVal.includes("%")) {
+                            const p = rawVal.split(" ");
+                            const px = parseFloat(p[0]), py = parseFloat(p[1]);
+                            if (!isNaN(px) && !isNaN(py)) { ox = (px - 50) / 50; oy = (py - 50) / 50; }
+                          } else {
+                            const p = rawVal.split(" ");
+                            const px = parseFloat(p[0]), py = parseFloat(p[1]);
+                            if (!isNaN(px) && !isNaN(py)) { ox = Math.max(-1, Math.min(1, px)); oy = Math.max(-1, Math.min(1, py)); }
+                          }
+                        }
+                        return (
+                          <div style={{ width: FRAME, height: FRAME, borderRadius: "50%", overflow: "hidden", position: "relative" }} data-testid="img-couple">
+                            <div style={{ position: "absolute", width: wrapSize, height: wrapSize, top: -padding + oy * padding, left: -padding + ox * padding }}>
+                              <img
+                                src={wedding.couplePhotoUrl}
+                                alt="Pareja"
+                                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 </motion.div>
