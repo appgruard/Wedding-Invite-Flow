@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Volume2, VolumeX } from "lucide-react";
+import { Volume2, VolumeX, Play } from "lucide-react";
 
 interface MusicPlayerProps {
   musicUrl: string | null | undefined;
@@ -33,8 +33,27 @@ function YouTubeMusicPlayer({
   );
 }
 
+const buttonBase: React.CSSProperties = {
+  position: "fixed",
+  bottom: 20,
+  right: 20,
+  zIndex: 9999,
+  borderRadius: "50px",
+  background: "rgba(0,0,0,0.55)",
+  backdropFilter: "blur(8px)",
+  border: "1px solid rgba(255,255,255,0.25)",
+  color: "white",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+  transition: "background 0.2s",
+  boxShadow: "0 2px 12px rgba(0,0,0,0.3)",
+};
+
 export function MusicPlayer({ musicUrl, musicType, started }: MusicPlayerProps) {
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const [ytVideoId, setYtVideoId] = useState<string | null>(null);
   const [ytKey, setYtKey] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -49,7 +68,7 @@ export function MusicPlayer({ musicUrl, musicType, started }: MusicPlayerProps) 
   }, [musicUrl, musicType]);
 
   useEffect(() => {
-    if (musicType !== "mp3" || !musicUrl || !started) return;
+    if (musicType !== "mp3" || !musicUrl || !playing) return;
     const audio = new Audio(musicUrl);
     audio.loop = true;
     audio.muted = muted;
@@ -57,13 +76,17 @@ export function MusicPlayer({ musicUrl, musicType, started }: MusicPlayerProps) 
     audioRef.current = audio;
     audio.play().catch(() => {});
     return () => { audio.pause(); audio.src = ""; };
-  }, [musicUrl, musicType, started]);
+  }, [musicUrl, musicType, playing]);
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.muted = muted;
     }
   }, [muted]);
+
+  const handlePlay = useCallback(() => {
+    setPlaying(true);
+  }, []);
 
   const toggleMute = useCallback(() => {
     if (musicType === "youtube") {
@@ -76,33 +99,46 @@ export function MusicPlayer({ musicUrl, musicType, started }: MusicPlayerProps) 
 
   if (!musicUrl || musicType === "none") return null;
 
+  if (started && !playing) {
+    return (
+      <button
+        onClick={handlePlay}
+        aria-label="Reproducir música"
+        data-testid="button-music-play"
+        style={{
+          ...buttonBase,
+          gap: 8,
+          padding: "10px 18px",
+          animation: "pulse-music 2s infinite",
+        }}
+      >
+        <style>{`
+          @keyframes pulse-music {
+            0%, 100% { box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+            50% { box-shadow: 0 2px 22px rgba(255,255,255,0.3); }
+          }
+        `}</style>
+        <Play size={16} />
+        <span style={{ fontSize: 13, fontWeight: 500, letterSpacing: "0.02em" }}>Reproducir música</span>
+      </button>
+    );
+  }
+
+  if (!playing) return null;
+
   return (
     <>
       {musicType === "youtube" && ytVideoId && (
-        <YouTubeMusicPlayer key={ytKey} videoId={ytVideoId} started={started} muted={muted} />
+        <YouTubeMusicPlayer key={ytKey} videoId={ytVideoId} started={playing} muted={muted} />
       )}
       <button
         onClick={toggleMute}
         aria-label={muted ? "Activar música" : "Silenciar música"}
         data-testid="button-music-toggle"
         style={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          zIndex: 9999,
+          ...buttonBase,
           width: 44,
           height: 44,
-          borderRadius: "50%",
-          background: "rgba(0,0,0,0.55)",
-          backdropFilter: "blur(8px)",
-          border: "1px solid rgba(255,255,255,0.25)",
-          color: "white",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          cursor: "pointer",
-          transition: "background 0.2s",
-          boxShadow: "0 2px 12px rgba(0,0,0,0.3)",
         }}
       >
         {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
